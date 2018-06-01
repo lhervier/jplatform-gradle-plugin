@@ -13,7 +13,7 @@ class JModulePlugin implements Plugin<Project> {
 		project.extensions.create("jModule", JModuleExtension)
 		
 		// Add custom tasks
-		project.task("fetchPluginXml", type: FetchPluginXmlTask, group: "jPlatform")
+		project.task("fetchPlugin", type: FetchPluginTask, group: "jPlatform")
 		
 		// Add custom dependency configuration
 		project.configurations {
@@ -39,7 +39,7 @@ class JModulePlugin implements Plugin<Project> {
 				))
 			}
 			
-			// List all implementation dependencies
+			// List all implementation dependencies (for debug)
 			println "Dependencies :"
 			project.configurations.implementation.dependencies.all {
 				println "-> ${it.name} / ${it.version}"
