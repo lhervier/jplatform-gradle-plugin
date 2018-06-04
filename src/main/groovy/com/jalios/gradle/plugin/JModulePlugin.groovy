@@ -3,6 +3,11 @@ package com.jalios.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+import com.jalios.gradle.plugin.ext.JModuleExtension
+import com.jalios.gradle.plugin.ext.JPlatformExtension
+import com.jalios.gradle.plugin.task.FetchPluginTask
+import com.jalios.gradle.plugin.task.InstallPluginTask
+
 class JModulePlugin implements Plugin<Project> {
 	void apply(Project project) {
 		// jModule projects are java projects
@@ -14,6 +19,7 @@ class JModulePlugin implements Plugin<Project> {
 		
 		// Add custom tasks
 		project.task("fetchPlugin", type: FetchPluginTask, group: "jPlatform")
+		project.task("installPlugin", type: InstallPluginTask, group: "jPlatform")
 		
 		// Add custom dependency configuration
 		project.configurations {

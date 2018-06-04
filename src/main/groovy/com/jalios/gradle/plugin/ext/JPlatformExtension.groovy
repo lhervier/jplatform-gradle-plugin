@@ -1,4 +1,4 @@
-package com.jalios.gradle.plugin
+package com.jalios.gradle.plugin.ext
 
 class JPlatformExtension {
 
