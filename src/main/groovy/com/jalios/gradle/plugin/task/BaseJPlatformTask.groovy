@@ -3,18 +3,19 @@ package com.jalios.gradle.plugin.task
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-import com.jalios.gradle.plugin.JModule
-import com.jalios.gradle.plugin.JPlatform
+import com.jalios.gradle.plugin.jplatform.JModule
+import com.jalios.gradle.plugin.jplatform.JPlatform
+import com.jalios.gradle.plugin.jplatform.PluginProp
 
 abstract class BaseJPlatformTask extends DefaultTask {
 
-	protected JModule jModule
-	protected JPlatform jPlatform
+	protected JModule currModule
+	protected JPlatform platform
 	
 	@TaskAction
 	def taskAction() {
-		this.jModule = new JModule(this.project)
-		this.jPlatform = new JPlatform(this.project)
+		this.currModule = new JModule(this.project, "src/main/module", this.project.jModule.name)
+		this.platform = new JPlatform(this.project, project.jPlatform.path)
 		
 		this.run()
 	}

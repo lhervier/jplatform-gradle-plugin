@@ -1,27 +1,55 @@
 package com.jalios.gradle.plugin.task
 
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.TaskAction
+import com.jalios.gradle.plugin.jplatform.JModule
+import com.jalios.gradle.plugin.util.FileUtil
 
 /**
  * This task will install the module into the jPlatform
- * installation
- * 
  * @author Lionel HERVIER
  */
 class InstallPluginTask extends BaseJPlatformTask {
 
 	void run() {
-		// Remove private and public plugin folder in jPlatform
-		this.jPlatform.privFolder(this.jModule.name).deleteDir()
-		this.jPlatform.pubFolder(this.jModule.name).deleteDir()
+		JModule platformModule = this.platform.module(this.currModule.name)
 		
-		// Copy folders from jModule to jPlatform
-		new AntBuilder().copy(todir: jPlatform.privFolder(this.jModule.name).absolutePath) {
-			fileset(dir: this.jModule.privFolder.absolutePath)
+		// Files present in current module
+		List<String> currModuleFiles = this.currModule.files()
+		println "Current module file :"
+		currModuleFiles.each { path ->
+			println "- ${path}"
 		}
-		new AntBuilder().copy(todir: jPlatform.pubFolder(this.jModule.name).absolutePath) {
-			fileset(dir: this.jModule.pubFolder.absolutePath)
+		
+		// Get platform plugin files (normal, and generated)
+		Map<String, String> platformGenFiles = platformModule.generatedFiles()
+		println "Platform module generated files :"
+		platformGenFiles.each { generated, source ->
+			println "- ${generated} generated from ${source}"
+		}
+		List<String> platformFiles = platformModule.files()
+		println "Platform module files :"
+		platformFiles.each { path ->
+			println "- ${path}"
+		}
+		
+		// Remove files that are no longer present in current module
+		println "Removing files that are no longer present in the current module"
+		platformFiles.each { path ->
+			if( !currModuleFiles.contains(path) ) {
+				FileUtil.delete(platformModule, path)
+			}
+		}
+		
+		// Remove generated files whose corresponding source no longer exist in current module
+		println "Removing generated files whose corresponding source no longer exist in current module"
+		platformGenFiles.each { generated, source ->
+			if( !currModuleFiles.contains(source) ) {
+				FileUtil.delete(platformModule, generated)
+			}
+		}
+		
+		// Overwrite platform module files
+		currModuleFiles.each { path ->
+			FileUtil.copy(this.currModule, platformModule, path)
 		}
 	}
 }

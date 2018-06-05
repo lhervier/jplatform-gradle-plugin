@@ -37,6 +37,9 @@ class JModulePlugin implements Plugin<Project> {
 			// Add a custom default dependency to a local jar
 			// project.dependencies.add("implementation", project.files("src/main/libs/gson-2.8.5.jar"))
 			
+			// Add dependency to javax.servlet as compileOnly
+			project.dependencies.add("compileOnly", "javax.servlet:javax.servlet-api:3.1.0")
+			
 			// Add dependencies to all jar files from jPlatform
 			if( path?.trim()) {
 				project.dependencies.add("implementation", project.fileTree(
