@@ -15,6 +15,9 @@ class FileUtil {
 	 * @return the list of file path
 	 */
 	public static void paths(File folder, Closure closure) {
+		if( !folder.exists() ) {
+			return
+		}
 		folder.eachFileRecurse(FileType.FILES) { file ->
 			String rel = file.absolutePath.substring(folder.absolutePath.length() + 1)
 			closure(rel.replace('\\', '/'))
