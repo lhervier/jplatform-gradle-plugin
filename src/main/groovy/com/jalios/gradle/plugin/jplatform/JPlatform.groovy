@@ -2,10 +2,6 @@ package com.jalios.gradle.plugin.jplatform
 
 import org.gradle.api.Project
 
-import com.jalios.gradle.plugin.BaseJPlatformElement
-import com.jalios.gradle.plugin.ext.JModuleExtension
-import com.jalios.gradle.plugin.ext.JPlatformExtension
-
 class JPlatform {
 
 	private def jModules = [:]

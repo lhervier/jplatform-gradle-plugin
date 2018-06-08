@@ -22,9 +22,9 @@ class JModulePlugin implements Plugin<Project> {
 		project.task("installPlugin", type: InstallPluginTask, group: "jPlatform")
 		
 		// Add custom dependency configuration
-		project.configurations {
-			jPlatform
-		}
+//		project.configurations {
+//			jPlatform
+//		}
 		
 		// Executed at the end of the configuration phase
 		project.afterEvaluate {
@@ -46,12 +46,6 @@ class JModulePlugin implements Plugin<Project> {
 					dir : "${path}/WEB-INF/lib/",
 					include: ['*.jar']
 				))
-			}
-			
-			// List all implementation dependencies (for debug)
-			println "Dependencies :"
-			project.configurations.implementation.dependencies.all {
-				println "-> ${it.name} / ${it.version}"
 			}
 		}
 	}

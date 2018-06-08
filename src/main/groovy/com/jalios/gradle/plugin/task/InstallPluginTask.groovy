@@ -13,42 +13,39 @@ class InstallPluginTask extends BaseJPlatformTask {
 		JModule platformModule = this.platform.module(this.currModule.name)
 		
 		// Files present in current module
-		List<String> currModuleFiles = this.currModule.files()
 		println "Current module file :"
-		currModuleFiles.each { path ->
+		this.currModule.files.each { path ->
 			println "- ${path}"
 		}
 		
 		// Get platform plugin files (normal, and generated)
-		Map<String, String> platformGenFiles = platformModule.generatedFiles()
 		println "Platform module generated files :"
-		platformGenFiles.each { generated, source ->
-			println "- ${generated} generated from ${source}"
+		platformModule.generatedFiles.each { genFile ->
+			println "- ${genFile.path} generated from ${genFile.source}"
 		}
-		List<String> platformFiles = platformModule.files()
 		println "Platform module files :"
-		platformFiles.each { path ->
+		platformModule.files.each { path ->
 			println "- ${path}"
 		}
 		
 		// Remove files that are no longer present in current module
 		println "Removing files that are no longer present in the current module"
-		platformFiles.each { path ->
-			if( !currModuleFiles.contains(path) ) {
+		platformModule.files.each { path ->
+			if( !currModule.files.contains(path) ) {
 				FileUtil.delete(platformModule, path)
 			}
 		}
 		
 		// Remove generated files whose corresponding source no longer exist in current module
 		println "Removing generated files whose corresponding source no longer exist in current module"
-		platformGenFiles.each { generated, source ->
-			if( !currModuleFiles.contains(source) ) {
-				FileUtil.delete(platformModule, generated)
+		platformModule.generatedFiles.each { genFile ->
+			if( !currModule.files.contains(genFile.source) ) {
+				FileUtil.delete(platformModule, genFile.path)
 			}
 		}
 		
 		// Overwrite platform module files
-		currModuleFiles.each { path ->
+		currModule.files.each { path ->
 			FileUtil.copy(this.currModule, platformModule, path)
 		}
 	}

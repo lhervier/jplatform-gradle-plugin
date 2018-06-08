@@ -14,13 +14,11 @@ class FileUtil {
 	 * @param folder the root folder
 	 * @return the list of file path
 	 */
-	public static def paths(File folder) {
-		def ret = []
+	public static void paths(File folder, Closure closure) {
 		folder.eachFileRecurse(FileType.FILES) { file ->
-			String rel = file.absolutePath.substring(folder.absolutePath.length())
-			ret.push(rel.replace('\\', '/'))
+			String rel = file.absolutePath.substring(folder.absolutePath.length() + 1)
+			closure(rel.replace('\\', '/'))
 		}
-		return ret
 	}
 	
 	/**

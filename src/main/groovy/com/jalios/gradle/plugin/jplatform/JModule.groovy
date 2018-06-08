@@ -3,18 +3,43 @@ package com.jalios.gradle.plugin.jplatform
 import org.gradle.api.Project
 
 import com.jalios.gradle.plugin.ext.JModuleExtension
+import com.jalios.gradle.plugin.jplatform.gen.CssExtractor
+import com.jalios.gradle.plugin.jplatform.gen.SignatureXmlExtractor
+import com.jalios.gradle.plugin.jplatform.source.PluginXmlExtractor
+import com.jalios.gradle.plugin.jplatform.source.PrivateFilesExtractor
+import com.jalios.gradle.plugin.jplatform.source.PublicFilesExtractor
+import com.jalios.gradle.plugin.jplatform.source.TypesTemplatesExtractor
+import com.jalios.gradle.plugin.jplatform.source.WebappFilesExtractor
 import com.jalios.gradle.plugin.util.FileUtil
 
 class JModule {
 
+	private static List<ISourceFileExtractor> SOURCE_EXTRACTORS = [
+			new PluginXmlExtractor(),
+			new PublicFilesExtractor(),
+			new PrivateFilesExtractor(),
+			new WebappFilesExtractor(),
+			new TypesTemplatesExtractor()
+	]
+	
+	private static List<IGeneratedFileExtractor> GEN_EXTRACTORS = [
+			new SignatureXmlExtractor(),
+			new CssExtractor()
+	]
+	
+	final boolean exists
 	final String name
 	final File rootFolder
 	final File pubFolder
 	final File privFolder
 	final PluginProp pluginProp
+	final def pluginXml
 	
 	private final String pubFolderPath
 	private final String privFolderPath
+	
+	final List<String> files = []
+	final List<GeneratedFile> generatedFiles = []
 	
 	/**
 	 * Constructor
@@ -23,72 +48,44 @@ class JModule {
 	 * @param name the name of the module
 	 */
 	JModule(Project project, String rootPath, String name) {
-		println "Creating JModule '${name}'"
 		this.name = name
-		println "- rootPath = ${rootPath}"
 		this.rootFolder = project.file(rootPath)
-		println "- rootFolder = ${this.rootFolder.absolutePath}"
 		
 		this.pubFolderPath = "plugins/${this.name}"
-		println "- pubFolderPath = ${this.pubFolderPath}"
 		this.privFolderPath = "WEB-INF/plugins/${this.name}"
-		println "- privFolderPath = ${this.privFolderPath}"
 		
 		this.pubFolder = new File(this.rootFolder, this.pubFolderPath)
-		println "- pubFolder = ${this.pubFolder.absolutePath}"
 		this.privFolder = new File(this.rootFolder, this.privFolderPath)
-		println "- privFolder = ${this.privFolder.absolutePath}"
 		
 		this.pluginProp = new PluginProp(new File(this.privFolder, "properties/plugin.prop"))
-	}
-	
-	/**
-	 * Check if module exists
-	 */
-	public boolean exists() {
-		File pluginXml = new File(this.privFolder, "plugin.xml")
-		return pluginXml.exists()
-	}
-	
-	/**
-	 * Compute the list of files that compose the module
-	 */
-	public List<String> files() {
-		def ret = []
 		
-		// All files from public and private folders
-		FileUtil.paths(this.pubFolder).each {
-			ret.push(this.pubFolderPath + it)
-		}
-		FileUtil.paths(this.privFolder).each {
-			ret.push(this.privFolderPath + it)
-		}
+		XmlParser parser = new XmlParser()
+		parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+		parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+		def fPluginXml = new File(this.privFolder, "plugin.xml")
+		this.exists = fPluginXml.exists()
+		if( !this.exists )
+			return
 		
-		// Remove generated files
-		this.generatedFiles().each { key, value ->
-			ret.removeElement(key)
-		}
+		this.pluginXml = parser.parse(fPluginXml)
 		
-		return ret
-	}
-	
-	/**
-	 * Compute the list of generated files
-	 */
-	public Map<String, String> generatedFiles() {
-		def ret = [:]
-		
-		// signature.xml is generated because it is plugin
-		ret["${this.privFolderPath}/signature.xml".toString()] = "${this.privFolderPath}/plugin.xml".toString()
-		
-		// css files are generated from less files
-		this.pluginProp.each { key, value ->
-			if( !key.startsWith("channel.less.") ) {
-				return
+		// compute the list of generated files
+		GEN_EXTRACTORS.each { extractor ->
+			extractor.extract(this) { genFile -> 
+				this.generatedFiles.add(genFile)
 			}
-			ret[key.substring("channel.less.".length())] = value
 		}
 		
-		return ret
+		// compute the list of source files
+		SOURCE_EXTRACTORS.each { extractor ->
+			extractor.extract(this) { path ->
+				this.files.add(path.toString())
+			}
+		}
+		
+		// Remove generated files from source files list
+		this.generatedFiles.each { genFile ->
+			this.files.removeElement(genFile.path.toString())
+		}
 	}
 }
