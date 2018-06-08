@@ -14,8 +14,8 @@ abstract class BaseJPlatformTask extends DefaultTask {
 	
 	@TaskAction
 	def taskAction() {
-		this.currModule = new JModule(this.project, "src/main/module", this.project.jModule.name)
-		this.platform = new JPlatform(this.project, project.jPlatform.path)
+		this.currModule = new JModule(this.project.file("src/main/module"), this.project.jModule.name)
+		this.platform = new JPlatform(this.project.file(project.jPlatform.path))
 		
 		this.run()
 	}

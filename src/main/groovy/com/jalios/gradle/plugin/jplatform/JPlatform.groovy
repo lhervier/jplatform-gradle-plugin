@@ -5,17 +5,16 @@ import org.gradle.api.Project
 class JPlatform {
 
 	private def jModules = [:]
-	private Project project
-	private String root
+	
+	final File rootFolder
 	
 	/**
 	 * Constructor
 	 * @param project current project
 	 * @param rootPath the root path
 	 */
-	JPlatform(Project project, String rootPath) {
-		this.project = project
-		this.root = rootPath
+	JPlatform(File rootFolder) {
+		this.rootFolder = rootFolder
 	}
 	
 	/**
@@ -25,7 +24,15 @@ class JPlatform {
 	JModule module(String name) {
 		if( this.jModules[name] != null )
 			return this.jModules[name]
-		this.jModules[name] = new JModule(this.project, this.root, name)
+		this.jModules[name] = new JModule(this.rootFolder, name)
 		return this.jModules[name]
+	}
+	
+	String getTypePath(String name) {
+		String path = "WEB-INF/data/types/${name}.xml"
+		File typeFile = new File(this.rootFolder, path)
+		if( !typeFile.exists() )
+			return null
+		return path
 	}
 }

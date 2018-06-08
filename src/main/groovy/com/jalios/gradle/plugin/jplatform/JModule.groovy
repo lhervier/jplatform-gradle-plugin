@@ -8,6 +8,7 @@ import com.jalios.gradle.plugin.jplatform.gen.SignatureXmlExtractor
 import com.jalios.gradle.plugin.jplatform.source.PluginXmlExtractor
 import com.jalios.gradle.plugin.jplatform.source.PrivateFilesExtractor
 import com.jalios.gradle.plugin.jplatform.source.PublicFilesExtractor
+import com.jalios.gradle.plugin.jplatform.source.TypesExtractor
 import com.jalios.gradle.plugin.jplatform.source.TypesTemplatesExtractor
 import com.jalios.gradle.plugin.jplatform.source.WebappFilesExtractor
 import com.jalios.gradle.plugin.util.FileUtil
@@ -19,7 +20,8 @@ class JModule {
 			new PublicFilesExtractor(),
 			new PrivateFilesExtractor(),
 			new WebappFilesExtractor(),
-			new TypesTemplatesExtractor()
+			new TypesTemplatesExtractor(),
+			new TypesExtractor()
 	]
 	
 	private static List<IGeneratedFileExtractor> GEN_EXTRACTORS = [
@@ -43,13 +45,12 @@ class JModule {
 	
 	/**
 	 * Constructor
-	 * @param project the current project
-	 * @param rootPath path to the root of the platform
+	 * @param rootFolder root of the platform
 	 * @param name the name of the module
 	 */
-	JModule(Project project, String rootPath, String name) {
+	JModule(File rootFolder, String name) {
 		this.name = name
-		this.rootFolder = project.file(rootPath)
+		this.rootFolder = rootFolder
 		
 		this.pubFolderPath = "plugins/${this.name}"
 		this.privFolderPath = "WEB-INF/plugins/${this.name}"

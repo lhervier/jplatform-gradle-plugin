@@ -27,10 +27,14 @@ class FileUtil {
 	 * @param dest
 	 * @param path
 	 */
-	public static void copy(JModule src, JModule dest, String path) {
-		println "Copying '${path}' from module '${src.name}' to '${dest.name}'"
-		File srcFile = new File(src.rootFolder, path)
-		File destFile = new File(dest.rootFolder, path)
+	public static void copy(File srcFolder, File destFolder, String path) {
+		println "Copying '${path}' from '${srcFolder}' to '${destFolder}'"
+		File srcFile = new File(srcFolder, path)
+		if( !srcFile.exists() ) {
+			println "  => It does not exist..."
+			return
+		}
+		File destFile = new File(destFolder, path)
 		
 		destFile.getParentFile().mkdirs()
 		
@@ -40,8 +44,6 @@ class FileUtil {
 				java.nio.file.StandardCopyOption.REPLACE_EXISTING,
 				java.nio.file.StandardCopyOption.COPY_ATTRIBUTES
 		)
-	
-		// FileUtils.copyFile(new File(src.rootFolder, path), new File(dest.rootFolder, path), true)
 	}
 	
 	/**

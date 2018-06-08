@@ -46,7 +46,7 @@ class InstallPluginTask extends BaseJPlatformTask {
 		
 		// Overwrite platform module files
 		currModule.files.each { path ->
-			FileUtil.copy(this.currModule, platformModule, path)
+			FileUtil.copy(this.currModule.rootFolder, this.platform.rootFolder, path)
 		}
 	}
 }

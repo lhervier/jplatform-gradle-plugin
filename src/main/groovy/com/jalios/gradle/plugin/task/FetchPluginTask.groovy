@@ -29,7 +29,7 @@ class FetchPluginTask extends BaseJPlatformTask {
 		// Copy files from jPlatform module to currentModule
 		println "Copying files from jPlatform plugin into current module:"
 		platformModule.files.each { path ->
-			FileUtil.copy(platformModule, this.currModule, path)
+			FileUtil.copy(this.platform.rootFolder, this.currModule.rootFolder, path)
 		}
 	}
 }
