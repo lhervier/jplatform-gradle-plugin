@@ -48,6 +48,7 @@ class JModulePlugin implements Plugin<Project> {
 					dir : "${path}/WEB-INF/lib/",
 					include: ['*.jar']
 				))
+				project.dependencies.add("implementation", project.files("${path}/WEB-INF/classes"))
 			}
 		}
 	}
