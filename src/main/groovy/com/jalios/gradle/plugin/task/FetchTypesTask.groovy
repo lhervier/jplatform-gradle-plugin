@@ -20,7 +20,7 @@ class FetchTypesTask extends BaseJPlatformTask {
 		
 		// Using type extractor to extract files from platform plugin
 		// while getting the list of types to extract from current plugin
-		new TypesExtractor().extractTypes(
+		new TypesExtractor().extractGeneratedFilesForTypes(
 				this.currModule.pluginXml.types.type, 
 				this.platform.module(this.currModule.name)
 		) { path ->
