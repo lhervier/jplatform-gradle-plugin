@@ -73,7 +73,9 @@ class TypesExtractor implements ISourceFileExtractor {
 			"do${name}Diff.jsp",
 			"do${name}FormHandler.jsp",
 			"do${name}FullDisplay.jsp",
+			"do${name}Report.jsp",
 			"do${name}ResultDisplay.jsp",
+			"editForm${name}.jsp",
 			"edit${name}.jsp",
 			"edit${name}Modal.jsp"
 		]
@@ -84,7 +86,10 @@ class TypesExtractor implements ISourceFileExtractor {
 	 */
 	void extractTypeStdJsps(String name, JModule module, Closure closure) {
 		this.getStdJsps(name).each { jsp ->
-			closure("types/${name}/${jsp}")
+			String path = "types/${name}/${jsp}"
+			if( new File(module.rootFolder, path).exists() ) {
+				closure(path)
+			}
 		}
 	}
 	
