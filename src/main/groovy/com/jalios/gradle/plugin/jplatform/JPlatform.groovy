@@ -2,6 +2,10 @@ package com.jalios.gradle.plugin.jplatform
 
 import org.gradle.api.Project
 
+/**
+ * Describes the JPlatform installation
+ * @author Lionel HERVIER
+ */
 class JPlatform {
 
 	/**

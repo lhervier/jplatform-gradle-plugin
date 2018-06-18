@@ -13,8 +13,16 @@ import com.jalios.gradle.plugin.jplatform.source.TypesTemplatesExtractor
 import com.jalios.gradle.plugin.jplatform.source.WebappFilesExtractor
 import com.jalios.gradle.plugin.util.FileUtil
 
+/**
+ * Describes a module (inside a JPlatform installation,
+ * or inside a source folder)
+ * @author Lionel HERVIER
+ */
 class JModule {
 
+	/**
+	 * Objects that will extract source files
+	 */
 	private static List<ISourceFileExtractor> SOURCE_EXTRACTORS = [
 			new PluginXmlExtractor(),
 			new PublicFilesExtractor(),
@@ -24,24 +32,70 @@ class JModule {
 			new TypesExtractor()
 	]
 	
+	/**
+	 * Objects that will extract generated files
+	 */
 	private static List<IGeneratedFileExtractor> GEN_EXTRACTORS = [
 			new SignatureXmlExtractor(),
 			new CssExtractor()
 	]
 	
+	/**
+	 * Does the module exists ?
+	 */
 	final boolean exists
+	
+	/**
+	 * Module name
+	 */
 	final String name
+	
+	/**
+	 * Root (webapp) folder of the module
+	 */
 	final File rootFolder
+	
+	/**
+	 * Public folder
+	 */
 	final File pubFolder
+	
+	/**
+	 * Private folder
+	 */
 	final File privFolder
+	
+	/**
+	 * plugin.prop file
+	 */
 	final PluginProp pluginProp
+	
+	/**
+	 * plugin.xml file
+	 */
 	final def pluginXml
 	
-	private final String pubFolderPath
-	private final String privFolderPath
-	
+	/**
+	 * Files that compose the module
+	 */
 	final List<String> files = []
+	
+	/**
+	 * Generated files inside the module
+	 */
 	final List<GeneratedFile> generatedFiles = []
+	
+	// ==============================================================
+	
+	/**
+	 * Path to the public folder (relative to the root folder)
+	 */
+	private final String pubFolderPath
+	
+	/**
+	 * Path to the private folder (relative to the root folder)
+	 */
+	private final String privFolderPath
 	
 	/**
 	 * Constructor
