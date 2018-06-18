@@ -2,6 +2,7 @@ package com.jalios.gradle.plugin.jplatform.source
 
 import com.jalios.gradle.plugin.jplatform.ISourceFileExtractor
 import com.jalios.gradle.plugin.jplatform.JModule
+import com.jalios.gradle.plugin.jplatform.PluginXml.JFiles
 import com.jalios.gradle.plugin.util.FileUtil
 
 import groovy.lang.Closure
@@ -14,7 +15,7 @@ import groovy.lang.Closure
  */
 abstract class BaseFilesExtractor implements ISourceFileExtractor {
 
-	abstract String getTagName(JModule module)
+	abstract JFiles getTagName(JModule module)
 	
 	abstract File getBaseFolder(JModule module)
 	
@@ -22,17 +23,15 @@ abstract class BaseFilesExtractor implements ISourceFileExtractor {
 	
 	@Override
 	public void extract(JModule module, Closure closure) {
-		def tag = module.pluginXml[this.getTagName(module)]
-		tag.directory.each { dirNode ->
-			def dirPath = dirNode["@path"]
-			def dirFolder = new File(this.getBaseFolder(module), dirPath)
+		this.getTagName(module).directories.each { dir ->
+			def dirFolder = new File(this.getBaseFolder(module), dir.path)
 			FileUtil.paths(dirFolder) {path ->
-				closure("${this.getBaseFolderPath(module)}/${dirPath}/${path}")
+				closure("${this.getBaseFolderPath(module)}/${dir.path}/${path}")
 			}
 		}
-		tag.file.each { file ->
-			def filePath = file["@path"]
-			closure("${this.getBaseFolderPath(module)}/${filePath}")
+		
+		this.getTagName(module).files.each { file ->
+			closure("${this.getBaseFolderPath(module)}/${file.path}")
 		}
 	}
 

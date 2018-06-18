@@ -1,12 +1,7 @@
 package com.jalios.gradle.plugin.jplatform.source
 
-import java.io.File
-
-import com.jalios.gradle.plugin.jplatform.ISourceFileExtractor
 import com.jalios.gradle.plugin.jplatform.JModule
-import com.jalios.gradle.plugin.util.FileUtil
-
-import groovy.lang.Closure
+import com.jalios.gradle.plugin.jplatform.PluginXml.JFiles
 
 /**
  * Extract all the public files
@@ -17,8 +12,8 @@ import groovy.lang.Closure
 class WebappFilesExtractor extends BaseFilesExtractor {
 
 	@Override
-	String getTagName(JModule module) {
-		return 'webapp-files'
+	JFiles getTagName(JModule module) {
+		return module.pluginXml.webappFiles
 	}
 	
 	@Override

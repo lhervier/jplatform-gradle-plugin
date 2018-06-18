@@ -2,6 +2,7 @@ package com.jalios.gradle.plugin.jplatform.source
 
 import com.jalios.gradle.plugin.jplatform.ISourceFileExtractor
 import com.jalios.gradle.plugin.jplatform.JModule
+import com.jalios.gradle.plugin.jplatform.PluginXml
 import com.jalios.gradle.plugin.util.FileUtil
 
 import groovy.lang.Closure
@@ -12,25 +13,15 @@ import groovy.lang.Closure
  */
 class TypesExtractor implements ISourceFileExtractor {
 
+	/**
+	 * Extract all source files from types
+	 */
 	@Override
 	public void extract(JModule module, Closure closure) {
-		// Extractng all types from current module
-		this.extractTypes(module.pluginXml.types.type, module, closure)
-	}
-
-	/**
-	 * Extract files for a given set of types in a given module.
-	 * Used by FetchTypesTask
-	 * @param types types to extract
-	 * @param module module where to find the types
-	 * @param closure
-	 */
-	void extractTypes(def types, JModule module, Closure closure) {
-		types.each { typeNode ->
-			String name = typeNode["@name"]
-			this.extractTypeXml(name, module, closure)
-			this.extractTypeStdJsps(name, module, closure)
-			this.extractTypeJsps(name, module, closure)
+		module.pluginXml.types.types.each { type ->
+			this.extractTypeXml(type.name, module, closure)
+			this.extractTypeStdJsps(type.name, module, closure)
+			this.extractTypeJsps(type.name, module, closure)
 		}
 	}
 	
@@ -38,11 +29,10 @@ class TypesExtractor implements ISourceFileExtractor {
 	 * Extract types generated files.
 	 * Method used by FetchTypesTask
 	 */
-	void extractGeneratedFilesForTypes(def types, JModule module, Closure closure) {
-		types.each { typeNode ->
-			String name = typeNode["@name"]
-			this.extractTypeXml(name, module, closure)
-			this.extractTypeStdJsps(name, module, closure)
+	void extractGeneratedFilesForTypes(PluginXml pluginXml, JModule module, Closure closure) {
+		pluginXml.types.types.each { type ->
+			this.extractTypeXml(type.name, module, closure)
+			this.extractTypeStdJsps(type.name, module, closure)
 		}
 	}
 	

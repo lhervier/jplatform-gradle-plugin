@@ -73,7 +73,7 @@ class JModule {
 	/**
 	 * plugin.xml file
 	 */
-	final def pluginXml
+	final PluginXml pluginXml
 	
 	/**
 	 * Files that compose the module
@@ -112,17 +112,16 @@ class JModule {
 		this.pubFolder = new File(this.rootFolder, this.pubFolderPath)
 		this.privFolder = new File(this.rootFolder, this.privFolderPath)
 		
-		this.pluginProp = new PluginProp(new File(this.privFolder, "properties/plugin.prop"))
-		
-		XmlParser parser = new XmlParser()
-		parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
-		parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
-		def fPluginXml = new File(this.privFolder, "plugin.xml")
-		this.exists = fPluginXml.exists()
-		if( !this.exists )
+		File fPluginXml = new File(this.privFolder, "plugin.xml")
+		if( !fPluginXml.exists() ) {
+			this.exists = false
 			return
+		} else {
+			this.exists = true
+		}
 		
-		this.pluginXml = parser.parse(fPluginXml)
+		this.pluginXml = new PluginXml(fPluginXml.newReader("UTF-8"))
+		this.pluginProp = new PluginProp(new File(this.privFolder, "properties/plugin.prop"))
 		
 		// compute the list of generated files
 		GEN_EXTRACTORS.each { extractor ->

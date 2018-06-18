@@ -9,6 +9,9 @@ import groovy.lang.Closure
 /**
  * Declare files from "types" subfolder of public folder.
  * Types templates must be stored here.
+ * 
+ * FIXME: Read entries from plugin.xml
+ * 
  * @author Lionel HERVIER
  */
 class TypesTemplatesExtractor implements ISourceFileExtractor {

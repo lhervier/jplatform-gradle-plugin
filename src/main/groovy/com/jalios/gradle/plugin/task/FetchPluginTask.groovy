@@ -15,7 +15,7 @@ import com.jalios.gradle.plugin.util.FileUtil
 class FetchPluginTask extends BaseJPlatformTask {
 
 	void run() {
-		// Check that the current module exists
+		// Check that the current module does not exists
 		if( this.currModule.exists ) {
 			throw new Exception("Error : Plugin already imported in local module code. Remove ${this.currModule.privFolder.absolutePath} and ${this.currModule.pubFolder.absolutePath} folders before fetching if you want to overwrite it with version from jPlatform.")
 		}
