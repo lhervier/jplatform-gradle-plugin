@@ -9,16 +9,15 @@ import com.jalios.gradle.plugin.jplatform.JModule
 class CssExtractor implements IGeneratedFileExtractor {
 
 	@Override
-	public void extract(JModule module, Closure closure) {
+	public void extract(JModule module, Closure<GeneratedFile> closure) {
 		module.pluginProp.each { key, value ->
 			if( !key.startsWith("channel.less.") ) {
 				return
 			}
-			GeneratedFile gf = new GeneratedFile(
+			closure(new GeneratedFile(
 					path: key.substring("channel.less.".length()),
 					source: value
-			)
-			closure(gf)
+			))
 		}
 	}
 

@@ -22,7 +22,7 @@ abstract class BaseFilesExtractor implements ISourceFileExtractor {
 	abstract String getBaseFolderPath(JModule module)
 	
 	@Override
-	public void extract(JModule module, Closure closure) {
+	public void extract(JModule module, Closure<String> closure) {
 		this.getTagName(module).directories.each { dir ->
 			def dirFolder = new File(this.getBaseFolder(module), dir.path)
 			FileUtil.paths(dirFolder) {path ->

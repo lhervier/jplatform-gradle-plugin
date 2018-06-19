@@ -17,7 +17,7 @@ class TypesExtractor implements ISourceFileExtractor {
 	 * Extract all source files from types
 	 */
 	@Override
-	public void extract(JModule module, Closure closure) {
+	public void extract(JModule module, Closure<String> closure) {
 		module.pluginXml.types.types.each { type ->
 			this.extractTypeXml(type.name, module, closure)
 			this.extractTypeStdJsps(type.name, module, closure)

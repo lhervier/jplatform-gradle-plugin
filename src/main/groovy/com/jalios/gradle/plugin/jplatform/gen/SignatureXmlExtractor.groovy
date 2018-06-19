@@ -14,12 +14,11 @@ import com.jalios.gradle.plugin.jplatform.PluginProp
 class SignatureXmlExtractor implements IGeneratedFileExtractor {
 
 	@Override
-	public void extract(JModule module, Closure closure) {
-		GeneratedFile ret = new GeneratedFile(
+	public void extract(JModule module, Closure<GeneratedFile> closure) {
+		closure(new GeneratedFile(
 				path: "${module.privFolderPath}/signature.xml",
 				source: "${module.privFolderPath}/plugin.xml"
-		)
-		closure(ret)
+		))
 	}
 
 }

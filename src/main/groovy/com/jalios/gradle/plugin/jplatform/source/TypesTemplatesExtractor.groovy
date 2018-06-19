@@ -17,7 +17,7 @@ import groovy.lang.Closure
 class TypesTemplatesExtractor implements ISourceFileExtractor {
 
 	@Override
-	public void extract(JModule module, Closure closure) {
+	public void extract(JModule module, Closure<String> closure) {
 		File pubTypes = new File(module.pubFolder, "types")
 		if( !pubTypes.exists() )
 			return
