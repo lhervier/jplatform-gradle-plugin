@@ -14,14 +14,27 @@ class FileUtil {
 	 * @param folder the root folder
 	 * @return the list of file path
 	 */
-	public static void paths(File folder, Closure closure) {
-		if( !folder.exists() ) {
-			return
+	public static void paths(File folder, String pattern, Closure<String> closure) {
+		def ant = new AntBuilder()
+		def scanner = ant.fileScanner {
+			fileset(dir: folder.absolutePath) {
+				include(name: pattern)
+			}
 		}
-		folder.eachFileRecurse(FileType.FILES) { file ->
+		for( file in scanner ) {
 			String rel = file.absolutePath.substring(folder.absolutePath.length() + 1)
 			closure(rel.replace('\\', '/'))
 		}
+	}
+	
+	/**
+	 * Return the list of all the files stored
+	 * in a given folder
+	 * @param folder the root folder
+	 * @return the list of file path
+	 */
+	public static void paths(File folder, Closure<String> closure) {
+		this.paths(folder, "**/*", closure)
 	}
 	
 	/**

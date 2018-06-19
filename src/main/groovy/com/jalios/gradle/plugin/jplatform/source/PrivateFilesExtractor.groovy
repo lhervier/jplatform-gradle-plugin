@@ -11,17 +11,13 @@ import com.jalios.gradle.plugin.jplatform.PluginXml.JFiles
  */
 class PrivateFilesExtractor extends BaseFilesExtractor {
 
-	JFiles getTagName(JModule module) {
+	@Override
+	JFiles getJFiles(JModule module) {
 		return module.pluginXml.privateFiles
 	}
 	
 	@Override
-	File getBaseFolder(JModule module) {
-		return module.privFolder;
-	}
-	
-	@Override
-	public String getBaseFolderPath(JModule module) {
+	String getFolderPath(JModule module) {
 		return module.privFolderPath;
 	}
 }

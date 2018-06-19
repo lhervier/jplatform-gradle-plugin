@@ -66,6 +66,16 @@ class JModule {
 	final File privFolder
 	
 	/**
+	 * Path to the public folder (relative to the root folder)
+	 */
+	final String pubFolderPath
+	
+	/**
+	 * Path to the private folder (relative to the root folder)
+	 */
+	final String privFolderPath
+	
+	/**
 	 * plugin.prop file
 	 */
 	final PluginProp pluginProp
@@ -84,18 +94,6 @@ class JModule {
 	 * Generated files inside the module
 	 */
 	final List<GeneratedFile> generatedFiles = []
-	
-	// ==============================================================
-	
-	/**
-	 * Path to the public folder (relative to the root folder)
-	 */
-	private final String pubFolderPath
-	
-	/**
-	 * Path to the private folder (relative to the root folder)
-	 */
-	private final String privFolderPath
 	
 	/**
 	 * Constructor
