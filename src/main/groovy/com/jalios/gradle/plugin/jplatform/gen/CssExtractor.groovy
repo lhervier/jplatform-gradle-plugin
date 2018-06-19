@@ -10,10 +10,7 @@ class CssExtractor implements IGeneratedFileExtractor {
 
 	@Override
 	public void extract(JModule module, Closure<GeneratedFile> closure) {
-		module.pluginProp.each { key, value ->
-			if( !key.startsWith("channel.less.") ) {
-				return
-			}
+		module.pluginProp.each("channel.less.") { key, value ->
 			closure(new GeneratedFile(
 					path: key.substring("channel.less.".length()),
 					source: value
