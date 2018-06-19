@@ -121,7 +121,7 @@ class JModule {
 		}
 		
 		this.pluginXml = new PluginXml(fPluginXml.newReader("UTF-8"))
-		this.pluginProp = new PluginProp(new File(this.privFolder, "properties/plugin.prop"))
+		this.pluginProp = new PluginProp(new File(this.privFolder, "properties/plugin.prop").newReader("UTF-8"))
 		
 		// compute the list of generated files
 		GEN_EXTRACTORS.each { extractor ->

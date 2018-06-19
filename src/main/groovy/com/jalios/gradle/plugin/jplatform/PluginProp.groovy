@@ -7,11 +7,8 @@ class PluginProp {
 
 	private Map<String, String> props = [:]
 	
-	PluginProp(File pluginProp) {
-		if( !pluginProp.exists() )
-			return
-		
-		pluginProp.eachLine("UTF-8") { line ->
+	PluginProp(Reader pluginProp) {
+		pluginProp.eachLine { line ->
 			line = line.trim()
 			
 			// Comment

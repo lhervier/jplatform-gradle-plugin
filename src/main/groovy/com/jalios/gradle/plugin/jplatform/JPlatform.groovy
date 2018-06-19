@@ -11,7 +11,7 @@ class JPlatform {
 	/**
 	 * List of all loaded modules
 	 */
-	private def jModules = [:]
+	private Map<String, JModule> jModules = [:]
 	
 	/**
 	 * Root folder of the JPlatform
