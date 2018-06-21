@@ -21,11 +21,6 @@ import com.jalios.gradle.plugin.jplatform.source.impl.WebappFilesExtractor
 class JModule {
 
 	/**
-	 * Does the module exists ?
-	 */
-	boolean exists
-	
-	/**
 	 * Module name
 	 */
 	final String name
@@ -77,13 +72,14 @@ class JModule {
 	 * Loads the module
 	 */
 	void init(List<GeneratedFileExtractor> genFileExtractors, List<SourceFileExtractor> srcFileExtractors) {
-		this.privFsPath = "WEB-INF/plugins/${this.name}"
-		this.privFs = this.rootFs.createFrom(this.privFsPath)
-		
-		if( !this.privFs.exists("plugin.xml") ) {
-			this.exists = false
+		String privFsPath = "WEB-INF/plugins/${this.name}"
+		JFileSystem privFs = this.rootFs.createFrom(privFsPath)
+		if( !privFs.exists("plugin.xml") ) {
 			return
 		}
+		
+		this.privFsPath = privFsPath
+		this.privFs = privFs
 		
 		this.pubFsPath = "plugins/${this.name}"
 		this.pubFs = this.rootFs.createFrom(this.pubFsPath)
@@ -97,14 +93,14 @@ class JModule {
 		}
 		
 		// compute the list of generated files
-		genFileExtractors.each { extractor ->
+		genFileExtractors?.each { extractor ->
 			extractor.extract(this) { genPath -> 
 				this.generatedPaths.add(genPath)
 			}
 		}
 		
 		// compute the list of source files
-		srcFileExtractors.each { extractor ->
+		srcFileExtractors?.each { extractor ->
 			extractor.extract(this) { path ->
 				this.paths.add(path.toString())
 			}

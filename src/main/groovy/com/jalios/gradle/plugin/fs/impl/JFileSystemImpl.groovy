@@ -3,6 +3,7 @@ package com.jalios.gradle.plugin.fs.impl
 import java.io.InputStream
 import java.nio.file.Files
 
+import com.jalios.gradle.plugin.JException
 import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.jplatform.JModule
 
@@ -20,7 +21,7 @@ class JFileSystemImpl extends JFileSystem {
 	 */
 	public JFileSystemImpl(File rootFolder) {
 		if( !rootFolder.absolute ) {
-			throw new Exception("FileSystem root folder must be absolute")
+			throw new JException("FileSystem root folder must be absolute")
 		}
 		this.rootFolder = rootFolder
 	}
@@ -55,7 +56,7 @@ class JFileSystemImpl extends JFileSystem {
 		println "Setting content of '${destFile.absolutePath}'"
 		if( destFile.exists() ) {
 			if( !destFile.delete() ) {
-				throw new Exception("Unable to replace existing file...")
+				throw new JException("Unable to replace existing file...")
 			}
 		}
 		destFile.getParentFile().mkdirs()
@@ -81,7 +82,7 @@ class JFileSystemImpl extends JFileSystem {
 			return
 		}
 		if( !f.delete() ) {
-			throw new Exception("Unable to remove file ${path}")
+			throw new JException("Unable to remove file ${path}")
 		}
 	}
 }

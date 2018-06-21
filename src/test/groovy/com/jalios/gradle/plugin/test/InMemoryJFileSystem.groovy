@@ -5,6 +5,7 @@ import java.io.InputStream
 import org.gradle.internal.impldep.bsh.This
 import org.gradle.internal.impldep.org.apache.commons.collections.map.HashedMap
 
+import com.jalios.gradle.plugin.JException
 import com.jalios.gradle.plugin.fs.JFileSystem
 
 import groovy.lang.Closure
@@ -57,7 +58,7 @@ class InMemoryJFileSystem extends JFileSystem {
 	@Override
 	public void getContentAsStream(String path, Closure<InputStream> closure) {
 		if( !this.exists(path) ) {
-			throw new Exception("File ${path} does not exists. Unable to get content.")
+			throw new JException("File ${path} does not exists. Unable to get content.")
 		}
 		
 		InputStream inStream = new ByteArrayInputStream(this.files.get(path))

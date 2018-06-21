@@ -8,7 +8,7 @@ import groovy.lang.Closure
 class PluginXmlExtractor implements SourceFileExtractor {
 
 	@Override
-	public void extract(JModule module, Closure<String> closure) {
+	void extract(JModule module, Closure<String> closure) {
 		closure("${module.privFsPath}/plugin.xml")
 	}
 

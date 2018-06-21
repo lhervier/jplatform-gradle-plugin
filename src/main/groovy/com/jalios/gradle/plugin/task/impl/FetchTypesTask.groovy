@@ -1,8 +1,9 @@
-package com.jalios.gradle.plugin.task
+package com.jalios.gradle.plugin.task.impl
 
 import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.source.impl.TypesExtractor
+import com.jalios.gradle.plugin.task.JPlatformTask
 
 /**
  * Task to fetch files generated for the set of types declared
@@ -10,29 +11,22 @@ import com.jalios.gradle.plugin.jplatform.source.impl.TypesExtractor
  * TODO: User should confirm that he is ok pour replace existing files
  * @author Lionel HERVIER
  */
-class FetchTypesTask extends BaseJPlatformTask {
+class FetchTypesTask implements JPlatformTask {
 
-	public FetchTypesTask(
-			String moduleName, 
-			JFileSystem jPlatformFs, 
-			JFileSystem moduleFs) {
-		super(moduleName, jPlatformFs, moduleFs);
-	}
-	
 	@Override
-	public void run() {
-		if( !this.currModule.exists ) {
+	void run(JModule platformModule, JModule currModule) {
+		if( currModule.pluginXml == null ) {
 			return
 		}
 		
 		// Using type extractor to extract files from platform plugin
 		// while getting the list of types to extract from current plugin
 		new TypesExtractor().extractGeneratedFilesForTypes(
-				this.currModule.pluginXml, 
+				currModule.pluginXml, 
 				platformModule
 		) { path ->
-			this.platformModule.rootFs.getContentAsStream(path) { inStream ->
-				this.currModule.rootFs.setContentFromStream(path, inStream)
+			platformModule.rootFs.getContentAsStream(path) { inStream ->
+				currModule.rootFs.setContentFromStream(path, inStream)
 			}
 		}
 	}

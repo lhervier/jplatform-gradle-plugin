@@ -5,9 +5,9 @@ import org.gradle.api.Project
 
 import com.jalios.gradle.plugin.ext.JModuleExtension
 import com.jalios.gradle.plugin.ext.JPlatformExtension
-import com.jalios.gradle.plugin.task.impl.FetchPluginTaskImpl
-import com.jalios.gradle.plugin.task.impl.FetchTypesTaskImpl
-import com.jalios.gradle.plugin.task.impl.InstallPluginTaskImpl
+import com.jalios.gradle.plugin.task.gradle.FetchPluginTaskImpl
+import com.jalios.gradle.plugin.task.gradle.FetchTypesTaskImpl
+import com.jalios.gradle.plugin.task.gradle.InstallPluginTaskImpl
 
 class JModulePlugin implements Plugin<Project> {
 	void apply(Project project) {

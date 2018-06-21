@@ -4,5 +4,5 @@ import com.jalios.gradle.plugin.jplatform.JModule
 
 interface SourceFileExtractor {
 
-	abstract void extract(JModule module, Closure<String> closure)
+	void extract(JModule module, Closure<String> closure)
 }

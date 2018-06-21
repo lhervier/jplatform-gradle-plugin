@@ -6,6 +6,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+import com.jalios.gradle.plugin.JException
 import com.jalios.gradle.plugin.fs.impl.JFileSystemImpl
 
 class TestJFileSystemImpl {
@@ -23,7 +24,7 @@ class TestJFileSystemImpl {
 	@After
 	void destroy() {
 		if( !this.root.deleteDir() ) {
-			throw new Exception("Unable to remove '${this.root.absolutePath}")
+			throw new JException("Unable to remove '${this.root.absolutePath}")
 		}
 	}
 	
