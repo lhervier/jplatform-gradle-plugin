@@ -1,6 +1,6 @@
 package com.jalios.gradle.plugin.task
 
-import com.jalios.gradle.plugin.fs.FileSystemFactory
+import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedFileExtractor
 import com.jalios.gradle.plugin.jplatform.gen.impl.CssExtractor
@@ -18,23 +18,20 @@ abstract class BaseJPlatformTask {
 	protected JModule currModule
 	protected JModule platformModule
 	
-	private FileSystemFactory fsFactory
 	private String moduleName
-	private String jPlatformPath
-	private String modulePath
+	private JFileSystem jPlatformFs
+	private JFileSystem moduleFs
 	
-	public BaseJPlatformTask(
-			FileSystemFactory fsFactory, 
+	public BaseJPlatformTask( 
 			String moduleName, 
-			String jPlatformPath, 
-			String modulePath) {
-		this.fsFactory = fsFactory
+			JFileSystem jPlatformFs, 
+			JFileSystem moduleFs) {
 		this.moduleName = moduleName
-		this.jPlatformPath = jPlatformPath
-		this.modulePath = modulePath
+		this.jPlatformFs = jPlatformFs
+		this.moduleFs = moduleFs
 	}
 	
-	def taskAction() {
+	final void taskAction() {
 		List<GeneratedFileExtractor> genFileExtractors = [
 			new CssExtractor(),
 			new SignatureXmlExtractor()
@@ -50,13 +47,13 @@ abstract class BaseJPlatformTask {
 		
 		this.currModule = new JModule(
 			this.moduleName,
-			this.fsFactory.newFs("src/main/module")
+			this.moduleFs
 		);
 		this.currModule.init(genFileExtractors, srcFileExtractors)
 		
 		this.platformModule = new JModule(
 			this.moduleName,
-			this.fsFactory.newFs(this.jPlatformPath)
+			this.jPlatformFs
 		)
 		this.platformModule.init(genFileExtractors, srcFileExtractors)
 		

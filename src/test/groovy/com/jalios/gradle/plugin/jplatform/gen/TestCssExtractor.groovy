@@ -7,18 +7,18 @@ import org.junit.Test
 
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.gen.impl.CssExtractor
-import com.jalios.gradle.plugin.test.InMemoryFileSystem
+import com.jalios.gradle.plugin.test.InMemoryJFileSystem
 import com.jalios.gradle.plugin.test.util.ByteUtils
 
 class TestCssExtractor {
 
-	InMemoryFileSystem fs
+	InMemoryJFileSystem fs
 	JModule module
 	CssExtractor extractor
 	
 	@Before
 	void before() {
-		this.fs = new InMemoryFileSystem()
+		this.fs = new InMemoryJFileSystem()
 		this.fs.addFile(
 				"WEB-INF/plugins/TestPlugin/plugin.xml",
 				ByteUtils.extractBytes("""

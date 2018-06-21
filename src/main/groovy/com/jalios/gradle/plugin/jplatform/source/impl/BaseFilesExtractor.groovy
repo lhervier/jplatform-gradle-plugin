@@ -1,6 +1,6 @@
 package com.jalios.gradle.plugin.jplatform.source.impl
 
-import com.jalios.gradle.plugin.fs.FileSystem
+import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.jplatform.PluginXml.JFiles
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 
@@ -15,7 +15,7 @@ abstract class BaseFilesExtractor implements SourceFileExtractor {
 	/**
 	 * Extract files
 	 */
-	protected void extract(FileSystem fs, JFiles jfiles, Closure<String> closure) {
+	protected void extract(JFileSystem fs, JFiles jfiles, Closure<String> closure) {
 		jfiles.directories.each { dir ->
 			fs.paths("${dir.path}/**/*", closure)
 		}

@@ -1,6 +1,6 @@
 package com.jalios.gradle.plugin.task
 
-import com.jalios.gradle.plugin.fs.FileSystemFactory
+import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.source.impl.TypesExtractor
 
@@ -13,11 +13,10 @@ import com.jalios.gradle.plugin.jplatform.source.impl.TypesExtractor
 class FetchTypesTask extends BaseJPlatformTask {
 
 	public FetchTypesTask(
-			FileSystemFactory fsFactory, 
 			String moduleName, 
-			String jPlatformPath, 
-			String modulePath) {
-		super(fsFactory, moduleName, jPlatformPath, modulePath);
+			JFileSystem jPlatformFs, 
+			JFileSystem moduleFs) {
+		super(moduleName, jPlatformFs, moduleFs);
 	}
 	
 	@Override

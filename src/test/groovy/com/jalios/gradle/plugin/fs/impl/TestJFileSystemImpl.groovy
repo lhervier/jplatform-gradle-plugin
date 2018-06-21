@@ -6,18 +6,18 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-import com.jalios.gradle.plugin.fs.impl.FileSystemImpl
+import com.jalios.gradle.plugin.fs.impl.JFileSystemImpl
 
-class TestFileSystemImpl {
+class TestJFileSystemImpl {
 
 	private File root
 	
-	private FileSystemImpl fs
+	private JFileSystemImpl fs
 		
 	@Before
 	void init() {
 		this.root = File.createTempDir()
-		this.fs = new FileSystemImpl(this.root)
+		this.fs = new JFileSystemImpl(this.root)
 	}
 	
 	@After
@@ -120,7 +120,7 @@ class TestFileSystemImpl {
 		new File(this.root, path).text = "Content of the first file"
 		
 		File root2 = File.createTempDir()
-		FileSystemImpl fs2 = new FileSystemImpl(root2)
+		JFileSystemImpl fs2 = new JFileSystemImpl(root2)
 		
 		assert !new File(root2, path).exists()
 		

@@ -5,13 +5,13 @@ import static org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
-class TestInMemoryFileSystem {
+class TestInMemoryJFileSystem {
 
-	private InMemoryFileSystem fs
+	private InMemoryJFileSystem fs
 	
 	@Before
 	void setup() {
-		this.fs = new InMemoryFileSystem()
+		this.fs = new InMemoryJFileSystem()
 	}
 
 	@Test
@@ -128,7 +128,7 @@ class TestInMemoryFileSystem {
 		
 		this.fs.addFile(path, (byte[]) [48, 49, 50, 51])
 		
-		InMemoryFileSystem fs2 = new InMemoryFileSystem()
+		InMemoryJFileSystem fs2 = new InMemoryJFileSystem()
 		this.fs.getContentAsStream(path) { inStream ->
 			fs2.setContentFromStream(path, inStream)
 		}

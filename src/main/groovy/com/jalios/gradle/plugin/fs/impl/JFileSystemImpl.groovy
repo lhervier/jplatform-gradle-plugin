@@ -3,13 +3,12 @@ package com.jalios.gradle.plugin.fs.impl
 import java.io.InputStream
 import java.nio.file.Files
 
-import com.jalios.gradle.plugin.fs.FileSystem
+import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.jplatform.JModule
 
 import groovy.io.FileType
-import net.rubygrapefruit.platform.FileSystemInfo
 
-class FileSystemImpl extends FileSystem {
+class JFileSystemImpl extends JFileSystem {
 
 	/**
 	 * The root folder
@@ -19,7 +18,7 @@ class FileSystemImpl extends FileSystem {
 	/**
 	 * Constructor
 	 */
-	public FileSystemImpl(File rootFolder) {
+	public JFileSystemImpl(File rootFolder) {
 		if( !rootFolder.absolute ) {
 			throw new Exception("FileSystem root folder must be absolute")
 		}
@@ -27,8 +26,8 @@ class FileSystemImpl extends FileSystem {
 	}
 	
 	@Override
-	public FileSystem createFrom(String path) {
-		return new FileSystemImpl(new File(this.rootFolder, path));
+	public JFileSystem createFrom(String path) {
+		return new JFileSystemImpl(new File(this.rootFolder, path));
 	}
 
 	@Override

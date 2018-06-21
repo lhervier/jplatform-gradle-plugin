@@ -1,6 +1,6 @@
 package com.jalios.gradle.plugin.task
 
-import com.jalios.gradle.plugin.fs.FileSystemFactory
+import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.jplatform.JModule
 
 /**
@@ -15,11 +15,10 @@ import com.jalios.gradle.plugin.jplatform.JModule
 class FetchPluginTask extends BaseJPlatformTask {
 
 	public FetchPluginTask(
-			FileSystemFactory fsFactory, 
 			String moduleName, 
-			String jPlatformPath, 
-			String modulePath) {
-		super(fsFactory, moduleName, jPlatformPath, modulePath);
+			JFileSystem jPlatformFs, 
+			JFileSystem moduleFs) {
+		super(moduleName, jPlatformFs, moduleFs);
 	}
 
 	void run() {

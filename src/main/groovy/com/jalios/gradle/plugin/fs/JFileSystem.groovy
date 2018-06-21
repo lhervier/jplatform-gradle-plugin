@@ -4,9 +4,9 @@ import com.jalios.gradle.plugin.jplatform.JModule
 
 import groovy.lang.Closure
 
-abstract class FileSystem {
+abstract class JFileSystem {
 
-	abstract FileSystem createFrom(String path)
+	abstract JFileSystem createFrom(String path)
 	
 	abstract boolean exists(String path)
 	

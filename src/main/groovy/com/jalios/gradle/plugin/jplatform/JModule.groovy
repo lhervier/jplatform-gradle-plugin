@@ -1,6 +1,6 @@
 package com.jalios.gradle.plugin.jplatform
 
-import com.jalios.gradle.plugin.fs.FileSystem
+import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedFileExtractor
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedPath
 import com.jalios.gradle.plugin.jplatform.gen.impl.CssExtractor
@@ -33,9 +33,9 @@ class JModule {
 	/**
 	 * Filesystem of the module
 	 */
-	final FileSystem rootFs
-	FileSystem pubFs
-	FileSystem privFs
+	final JFileSystem rootFs
+	JFileSystem pubFs
+	JFileSystem privFs
 	
 	/**
 	 * Paths of file systems
@@ -68,7 +68,7 @@ class JModule {
 	 */
 	JModule(
 			String name, 
-			FileSystem rootFs) {
+			JFileSystem rootFs) {
 		this.name = name
 		this.rootFs = rootFs
 	}

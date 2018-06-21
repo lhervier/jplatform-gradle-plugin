@@ -5,11 +5,11 @@ import java.io.InputStream
 import org.gradle.internal.impldep.bsh.This
 import org.gradle.internal.impldep.org.apache.commons.collections.map.HashedMap
 
-import com.jalios.gradle.plugin.fs.FileSystem
+import com.jalios.gradle.plugin.fs.JFileSystem
 
 import groovy.lang.Closure
 
-class InMemoryFileSystem extends FileSystem {
+class InMemoryJFileSystem extends JFileSystem {
 
 	private Map<String, byte[]> files = new HashMap<>()
 	
@@ -69,8 +69,8 @@ class InMemoryFileSystem extends FileSystem {
 	}
 
 	@Override
-	public FileSystem createFrom(String path) {
-		InMemoryFileSystem ret = new InMemoryFileSystem()
+	public JFileSystem createFrom(String path) {
+		InMemoryJFileSystem ret = new InMemoryJFileSystem()
 		this.paths("${path}/**") { subPath ->
 			ret.files.put(
 					subPath.substring(path.length() + 1), 
