@@ -29,15 +29,14 @@ class FetchPluginTask extends BaseJPlatformTask {
 		}
 		
 		// Check that module exist in jPlatform
-		JModule platformModule = this.platform.module(this.currModule.name)
-		if( !platformModule.exists ) {
+		if( !this.platformModule.exists ) {
 			throw new Exception("Error : Plugin ${this.currModule.name} does not exist in jPlatform")
 		}
 		
 		// Copy files from jPlatform module to currentModule
 		println "Copying files from jPlatform plugin into current module:"
-		platformModule.paths.each { path ->
-			platformModule.rootFs.getContentAsStream(path) { inStream ->
+		this.platformModule.paths.each { path ->
+			this.platformModule.rootFs.getContentAsStream(path) { inStream ->
 				this.currModule.rootFs.setContentFromStream(path, inStream)
 			}
 		}

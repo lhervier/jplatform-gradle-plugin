@@ -11,7 +11,7 @@ import com.jalios.gradle.plugin.jplatform.JPlatform
 abstract class BaseJPlatformTask {
 	
 	protected JModule currModule
-	protected JPlatform platform
+	protected JModule platformModule
 	
 	private FileSystemFactory fsFactory
 	private String moduleName
@@ -27,13 +27,16 @@ abstract class BaseJPlatformTask {
 	
 	def taskAction() {
 		FileSystem moduleFs = this.fsFactory.newFs("src/main/module")
-		FileSystem platformFs = this.fsFactory.newFs(this.getJPlatformPath())
+		FileSystem platformFs = this.fsFactory.newFs(this.jPlatformPath)
 		
 		this.currModule = new JModule(
-			this.getModuleName(),
+			this.moduleName,
 			moduleFs
 		)
-		this.platform = new JPlatform(platformFs)
+		this.platformModule = new JModule(
+			this.moduleName,
+			platformFs
+		)
 		
 		this.run()
 	}
