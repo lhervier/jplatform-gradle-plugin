@@ -40,45 +40,45 @@ class JModule {
 	/**
 	 * Does the module exists ?
 	 */
-	final boolean exists
+	boolean exists
 	
 	/**
 	 * Module name
 	 */
-	final String name
+	String name
 	
 	/**
 	 * Filesystem of the module
 	 */
-	final FileSystem rootFs
-	final FileSystem pubFs
-	final FileSystem privFs
+	FileSystem rootFs
+	FileSystem pubFs
+	FileSystem privFs
 	
 	/**
 	 * Paths of file systems
 	 */
-	final String privFsPath
-	final String pubFsPath
+	String privFsPath
+	String pubFsPath
 	
 	/**
 	 * plugin.prop file
 	 */
-	final PluginProp pluginProp
+	PluginProp pluginProp
 	
 	/**
 	 * plugin.xml file
 	 */
-	final PluginXml pluginXml
+	PluginXml pluginXml
 	
 	/**
 	 * Paths that compose the module
 	 */
-	final List<String> paths = []
+	List<String> paths = []
 	
 	/**
 	 * Generated paths inside the module
 	 */
-	final List<GeneratedPath> generatedPaths = []
+	List<GeneratedPath> generatedPaths = []
 	
 	/**
 	 * Constructor
@@ -91,6 +91,13 @@ class JModule {
 		this.name = name
 		this.rootFs = rootFs
 		
+		this.reload()
+	}
+	
+	/**
+	 * Loads the module
+	 */
+	void reload() {
 		this.privFsPath = "WEB-INF/plugins/${name}"
 		this.privFs = this.rootFs.createFrom(this.privFsPath)
 		

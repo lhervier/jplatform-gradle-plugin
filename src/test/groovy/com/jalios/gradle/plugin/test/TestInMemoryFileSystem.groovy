@@ -25,12 +25,10 @@ class TestInMemoryFileSystem {
 	void whenFileExists_thenOK() {
 		this.fs.addFile("test.txt");
 		assert this.fs.exists("test.txt")
-		assert this.fs.exists("/test.txt")
 		assert !this.fs.exists("test2.txt")
 		
 		this.fs.addFile("folder1/test2.txt")
 		assert this.fs.exists("folder1/test2.txt")
-		assert this.fs.exists("/folder1/test2.txt")
 		assert !this.fs.exists("folder1/test3.txt")
 	}
 	
@@ -128,11 +126,7 @@ class TestInMemoryFileSystem {
 	void whenCopyingFile_thenFileCopied() {
 		String path = "folder1/folder1.1/test1.txt"
 		
-		this.fs.addFile(path)
-		this.fs.setContentFromStream(
-				path, 
-				new ByteArrayInputStream((byte[]) [48, 49, 50, 51])
-		)
+		this.fs.addFile(path, (byte[]) [48, 49, 50, 51])
 		
 		InMemoryFileSystem fs2 = new InMemoryFileSystem()
 		this.fs.getContentAsStream(path) { inStream ->
@@ -145,8 +139,7 @@ class TestInMemoryFileSystem {
 	
 	@Test
 	void whenGetContent_thenContentSent() {
-		this.fs.addFile("test.txt")
-		this.fs.setContentFromStream("test.txt", new ByteArrayInputStream((byte[]) [48, 49, 50]))
+		this.fs.addFile("test.txt", (byte[]) [48, 49, 50])
 		this.fs.getContentAsReader("test.txt", "UTF-8") { reader ->
 			assert reader.readLine() == "012"
 		}

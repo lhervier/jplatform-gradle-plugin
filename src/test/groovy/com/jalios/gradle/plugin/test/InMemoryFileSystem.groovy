@@ -14,7 +14,11 @@ class InMemoryFileSystem extends FileSystem {
 	private Map<String, byte[]> files = new HashMap<>()
 	
 	public void addFile(String name) {
-		this.files.put(name, new byte[0])
+		this.addFile(name, new byte[0])
+	}
+	
+	public void addFile(String name, byte[] content) {
+		this.files.put(name, content)
 	}
 	
 	boolean match(String path, String pattern) {
@@ -67,7 +71,7 @@ class InMemoryFileSystem extends FileSystem {
 	@Override
 	public FileSystem createFrom(String path) {
 		InMemoryFileSystem ret = new InMemoryFileSystem()
-		this.paths("${path}/**/*") { subPath ->
+		this.paths("${path}/**") { subPath ->
 			ret.files.put(
 					subPath.substring(path.length() + 1), 
 					this.files.get(subPath)
