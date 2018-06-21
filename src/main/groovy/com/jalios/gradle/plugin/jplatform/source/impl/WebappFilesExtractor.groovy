@@ -14,8 +14,8 @@ import groovy.lang.Closure
 class WebappFilesExtractor extends BaseFilesExtractor {
 
 	@Override
-	public void extract(Closure<String> closure) {
-		this.extract(this.module.rootFs, this.module.pluginXml.webappFiles, closure)
+	public void extract(JModule module, Closure<String> closure) {
+		this.extract(module.rootFs, module.pluginXml.webappFiles, closure)
 	}
 
 }

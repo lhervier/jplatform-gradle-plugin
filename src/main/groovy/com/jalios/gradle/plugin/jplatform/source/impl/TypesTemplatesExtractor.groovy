@@ -1,5 +1,6 @@
 package com.jalios.gradle.plugin.jplatform.source.impl
 
+import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 
 /**
@@ -10,15 +11,15 @@ import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
  * 
  * @author Lionel HERVIER
  */
-class TypesTemplatesExtractor extends SourceFileExtractor {
+class TypesTemplatesExtractor implements SourceFileExtractor {
 
 	@Override
-	public void extract(Closure<String> closure) {
-		if( !this.module.pubFs.exists("types") )
+	public void extract(JModule module, Closure<String> closure) {
+		if( !module.pubFs.exists("types") )
 			return
 		
-		this.module.pubFs.paths("types/**/*") {path ->
-			closure("${this.module.pubFsPath}/${path}")
+		module.pubFs.paths("types/**/*") {path ->
+			closure("${module.pubFsPath}/${path}")
 		}
 	}
 

@@ -12,9 +12,9 @@ import groovy.lang.Closure
  */
 class PrivateFilesExtractor extends BaseFilesExtractor {
 	@Override
-	public void extract(Closure<String> closure) {
-		this.extract(this.module.privFs, this.module.pluginXml.privateFiles) { path ->
-			closure("${this.module.privFsPath}/${path}")
+	public void extract(JModule module, Closure<String> closure) {
+		this.extract(module.privFs, module.pluginXml.privateFiles) { path ->
+			closure("${module.privFsPath}/${path}")
 		}
 	}
 }

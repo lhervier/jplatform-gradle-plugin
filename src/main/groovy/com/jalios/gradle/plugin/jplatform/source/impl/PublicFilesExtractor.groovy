@@ -14,9 +14,9 @@ import groovy.lang.Closure
 class PublicFilesExtractor extends BaseFilesExtractor {
 
 	@Override
-	public void extract(Closure<String> closure) {
-		this.extract(this.module.pubFs, this.module.pluginXml.publicFiles) { path ->
-			closure("${this.module.pubFsPath}/${path}")
+	public void extract(JModule module, Closure<String> closure) {
+		this.extract(module.pubFs, module.pluginXml.publicFiles) { path ->
+			closure("${module.pubFsPath}/${path}")
 		}
 	}
 

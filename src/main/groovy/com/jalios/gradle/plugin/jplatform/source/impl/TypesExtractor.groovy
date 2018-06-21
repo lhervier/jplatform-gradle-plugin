@@ -1,5 +1,6 @@
 package com.jalios.gradle.plugin.jplatform.source.impl
 
+import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.PluginXml
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 
@@ -7,17 +8,17 @@ import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
  * Extract declared types (and templates)
  * @author Lionel HERVIER
  */
-class TypesExtractor extends SourceFileExtractor {
+class TypesExtractor implements SourceFileExtractor {
 
 	/**
 	 * Extract all source files from types
 	 */
 	@Override
-	public void extract(Closure<String> closure) {
-		this.module.pluginXml.types.types.each { type ->
-			this.extractTypeXml(type.name, closure)
-			this.extractTypeStdJsps(type.name, closure)
-			this.extractTypeJsps(type.name, closure)
+	public void extract(JModule module, Closure<String> closure) {
+		module.pluginXml.types.types.each { type ->
+			this.extractTypeXml(module, type.name, closure)
+			this.extractTypeStdJsps(module, type.name, closure)
+			this.extractTypeJsps(module, type.name, closure)
 		}
 	}
 	
@@ -25,10 +26,10 @@ class TypesExtractor extends SourceFileExtractor {
 	 * Extract types generated files.
 	 * Method used by FetchTypesTask
 	 */
-	void extractGeneratedFilesForTypes(PluginXml pluginXml, Closure closure) {
+	void extractGeneratedFilesForTypes(JModule module, PluginXml pluginXml, Closure closure) {
 		pluginXml.types.types.each { type ->
-			this.extractTypeXml(type.name, closure)
-			this.extractTypeStdJsps(type.name, closure)
+			this.extractTypeXml(module, type.name, closure)
+			this.extractTypeStdJsps(module, type.name, closure)
 		}
 	}
 	
@@ -38,21 +39,21 @@ class TypesExtractor extends SourceFileExtractor {
 	 * @param module
 	 * @param closure
 	 */
-	void extractTypeXml(String name, Closure closure) {
+	void extractTypeXml(JModule module, String name, Closure closure) {
 		// Add xml file
 		def xml = "WEB-INF/data/types/${name}/${name}.xml"
-		if( this.module.rootFs.exists(xml) ) {
+		if( module.rootFs.exists(xml) ) {
 			closure(xml)
 		}
 		
 		// Add template file
 		def templates = "WEB-INF/data/types/${name}/${name}-templates.xml"
-		if( this.module.rootFs.exists(templates) ) {
+		if( module.rootFs.exists(templates) ) {
 			closure(templates)
 		}
 	}
 	
-	private List<String> getStdJsps(String name) {
+	private List<String> getStdJsps(JModule module, String name) {
 		return [
 			"types/${name}/doEdit${name}.jsp",
 			"types/${name}/doEdit${name}Modal.jsp",
@@ -70,10 +71,10 @@ class TypesExtractor extends SourceFileExtractor {
 	/**
 	 * Extract standard jsp for a given type in a given module
 	 */
-	void extractTypeStdJsps(String name, Closure closure) {
+	void extractTypeStdJsps(JModule module, String name, Closure closure) {
 		this.getStdJsps(name).each { jsp ->
 			String path = "types/${name}/${jsp}"
-			if( this.module.rootFs.exists(path) ) {
+			if( module.rootFs.exists(path) ) {
 				closure(path)
 			}
 		}
@@ -82,9 +83,9 @@ class TypesExtractor extends SourceFileExtractor {
 	/**
 	 * Extract all other jsps for a given type in a given module
 	 */
-	void extractTypeJsps(String name, Closure closure) {
+	void extractTypeJsps(JModule module, String name, Closure closure) {
 		List<String> stds = this.getStdJsps(name)
-		this.module.rootFs.paths("types/${name}/**/*.jsp") { path ->
+		module.rootFs.paths("types/${name}/**/*.jsp") { path ->
 			if( !stds.contains(path) ) {
 				return
 			}

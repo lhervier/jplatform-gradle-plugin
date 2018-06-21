@@ -11,10 +11,10 @@ import com.jalios.gradle.plugin.jplatform.gen.GeneratedPath
  * signature.xml file is generated because a plugin.xml file exists
  * @author Lionel HERVIER
  */
-class SignatureXmlExtractor extends GeneratedFileExtractor {
+class SignatureXmlExtractor implements GeneratedFileExtractor {
 
 	@Override
-	public void extract(Closure<GeneratedPath> closure) {
+	public void extract(JModule module, Closure<GeneratedPath> closure) {
 		closure(new GeneratedPath(
 				path: "${module.privFsPath}/signature.xml",
 				source: "${module.privFsPath}/plugin.xml"

@@ -21,26 +21,6 @@ import com.jalios.gradle.plugin.jplatform.source.impl.WebappFilesExtractor
 class JModule {
 
 	/**
-	 * Objects that will extract source files
-	 */
-	private static List<Class<? extends SourceFileExtractor>> SOURCE_EXTRACTORS = [
-			PluginXmlExtractor.class,
-			PublicFilesExtractor.class,
-			PrivateFilesExtractor.class,
-			WebappFilesExtractor.class,
-			TypesTemplatesExtractor.class,
-			TypesExtractor.class
-	]
-	
-	/**
-	 * Objects that will extract generated files
-	 */
-	private static List<Class<GeneratedFileExtractor>> GEN_EXTRACTORS = [
-			SignatureXmlExtractor.class,
-			CssExtractor.class
-	]
-	
-	/**
 	 * Does the module exists ?
 	 */
 	boolean exists
@@ -48,12 +28,12 @@ class JModule {
 	/**
 	 * Module name
 	 */
-	String name
+	final String name
 	
 	/**
 	 * Filesystem of the module
 	 */
-	FileSystem rootFs
+	final FileSystem rootFs
 	FileSystem pubFs
 	FileSystem privFs
 	
@@ -85,32 +65,28 @@ class JModule {
 	
 	/**
 	 * Constructor
-	 * @param name the name of the module
-	 * @param rootFs root file system of the module
-	 * @param privFs private file system of the module
-	 * @param pubFs public file system of the module
 	 */
-	JModule(String name, FileSystem rootFs) {
+	JModule(
+			String name, 
+			FileSystem rootFs) {
 		this.name = name
 		this.rootFs = rootFs
-		
-		this.reload()
 	}
 	
 	/**
 	 * Loads the module
 	 */
-	void reload() {
-		this.privFsPath = "WEB-INF/plugins/${name}"
+	void init(List<GeneratedFileExtractor> genFileExtractors, List<SourceFileExtractor> srcFileExtractors) {
+		this.privFsPath = "WEB-INF/plugins/${this.name}"
 		this.privFs = this.rootFs.createFrom(this.privFsPath)
-		
-		this.pubFsPath = "plugins/${name}"
-		this.pubFs = this.rootFs.createFrom(this.pubFsPath)
 		
 		if( !this.privFs.exists("plugin.xml") ) {
 			this.exists = false
 			return
 		}
+		
+		this.pubFsPath = "plugins/${this.name}"
+		this.pubFs = this.rootFs.createFrom(this.pubFsPath)
 		
 		this.privFs.getContentAsReader("plugin.xml", "UTF-8") { reader ->
 			this.pluginXml = new PluginXml(reader)
@@ -121,18 +97,14 @@ class JModule {
 		}
 		
 		// compute the list of generated files
-		GEN_EXTRACTORS.each { extractorClass ->
-			GeneratedFileExtractor extractor = extractorClass.newInstance()
-			extractor.module = this
+		genFileExtractors.each { extractor ->
 			extractor.extract(this) { genPath -> 
 				this.generatedPaths.add(genPath)
 			}
 		}
 		
 		// compute the list of source files
-		SOURCE_EXTRACTORS.each { extractorClass ->
-			SourceFileExtractor extractor = extractorClass.newInstance()
-			extractor.module = this
+		srcFileExtractors.each { extractor ->
 			extractor.extract(this) { path ->
 				this.paths.add(path.toString())
 			}

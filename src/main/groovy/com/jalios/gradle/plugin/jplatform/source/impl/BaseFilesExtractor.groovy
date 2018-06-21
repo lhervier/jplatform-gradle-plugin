@@ -10,7 +10,7 @@ import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
  * TODO: Attribute "path" on plugin/[private|public|webapp]-files/file tags does not support wildcards (ie "css/portal/*.css")
  * @author Lionel HERVIER
  */
-abstract class BaseFilesExtractor extends SourceFileExtractor {
+abstract class BaseFilesExtractor implements SourceFileExtractor {
 
 	/**
 	 * Extract files

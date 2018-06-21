@@ -2,9 +2,7 @@ package com.jalios.gradle.plugin.jplatform.gen
 
 import com.jalios.gradle.plugin.jplatform.JModule
 
-abstract class GeneratedFileExtractor {
+interface GeneratedFileExtractor {
 
-	JModule module
-	
-	abstract void extract(Closure<GeneratedPath> closure)
+	void extract(JModule module, Closure<GeneratedPath> closure)
 }

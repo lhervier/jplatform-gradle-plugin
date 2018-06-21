@@ -6,11 +6,11 @@ import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedFileExtractor
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedPath
 
-class CssExtractor extends GeneratedFileExtractor {
+class CssExtractor implements GeneratedFileExtractor {
 
 	@Override
-	public void extract(Closure<GeneratedPath> closure) {
-		this.module.pluginProp.each("channel.less.") { key, value ->
+	public void extract(JModule module, Closure<GeneratedPath> closure) {
+		module.pluginProp.each("channel.less.") { key, value ->
 			closure(new GeneratedPath(
 					path: key.substring("channel.less.".length()),
 					source: value
