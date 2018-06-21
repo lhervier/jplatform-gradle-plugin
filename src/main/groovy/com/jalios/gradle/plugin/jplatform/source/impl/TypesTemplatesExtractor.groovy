@@ -1,6 +1,6 @@
-package com.jalios.gradle.plugin.jplatform.source
+package com.jalios.gradle.plugin.jplatform.source.impl
 
-import com.jalios.gradle.plugin.jplatform.SourceFileExtractor
+import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 
 /**
  * Declare files from "types" subfolder of public folder.

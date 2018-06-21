@@ -1,4 +1,4 @@
-package com.jalios.gradle.plugin.jplatform.source
+package com.jalios.gradle.plugin.jplatform.source.impl
 
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.PluginXml.JFiles

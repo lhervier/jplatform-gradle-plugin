@@ -1,4 +1,4 @@
-package com.jalios.gradle.plugin.jplatform
+package com.jalios.gradle.plugin.jplatform.gen
 
 class GeneratedPath {
 	String path

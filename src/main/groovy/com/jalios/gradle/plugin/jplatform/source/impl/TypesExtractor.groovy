@@ -1,7 +1,7 @@
-package com.jalios.gradle.plugin.jplatform.source
+package com.jalios.gradle.plugin.jplatform.source.impl
 
 import com.jalios.gradle.plugin.jplatform.PluginXml
-import com.jalios.gradle.plugin.jplatform.SourceFileExtractor
+import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 
 /**
  * Extract declared types (and templates)

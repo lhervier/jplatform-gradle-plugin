@@ -1,14 +1,17 @@
 package com.jalios.gradle.plugin.jplatform
 
 import com.jalios.gradle.plugin.fs.FileSystem
-import com.jalios.gradle.plugin.jplatform.gen.CssExtractor
-import com.jalios.gradle.plugin.jplatform.gen.SignatureXmlExtractor
-import com.jalios.gradle.plugin.jplatform.source.PluginXmlExtractor
-import com.jalios.gradle.plugin.jplatform.source.PrivateFilesExtractor
-import com.jalios.gradle.plugin.jplatform.source.PublicFilesExtractor
-import com.jalios.gradle.plugin.jplatform.source.TypesExtractor
-import com.jalios.gradle.plugin.jplatform.source.TypesTemplatesExtractor
-import com.jalios.gradle.plugin.jplatform.source.WebappFilesExtractor
+import com.jalios.gradle.plugin.jplatform.gen.GeneratedFileExtractor
+import com.jalios.gradle.plugin.jplatform.gen.GeneratedPath
+import com.jalios.gradle.plugin.jplatform.gen.impl.CssExtractor
+import com.jalios.gradle.plugin.jplatform.gen.impl.SignatureXmlExtractor
+import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.PluginXmlExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.PrivateFilesExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.PublicFilesExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.TypesExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.TypesTemplatesExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.WebappFilesExtractor
 
 /**
  * Describes a module (inside a JPlatform installation,

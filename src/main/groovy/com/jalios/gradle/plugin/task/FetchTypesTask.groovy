@@ -2,7 +2,7 @@ package com.jalios.gradle.plugin.task
 
 import com.jalios.gradle.plugin.fs.FileSystemFactory
 import com.jalios.gradle.plugin.jplatform.JModule
-import com.jalios.gradle.plugin.jplatform.source.TypesExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.TypesExtractor
 
 /**
  * Task to fetch files generated for the set of types declared

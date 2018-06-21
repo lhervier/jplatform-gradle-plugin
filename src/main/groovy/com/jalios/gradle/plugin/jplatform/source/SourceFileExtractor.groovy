@@ -1,4 +1,6 @@
-package com.jalios.gradle.plugin.jplatform
+package com.jalios.gradle.plugin.jplatform.source
+
+import com.jalios.gradle.plugin.jplatform.JModule
 
 abstract class SourceFileExtractor {
 

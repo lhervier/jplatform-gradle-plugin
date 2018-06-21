@@ -5,8 +5,8 @@ import static org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
-import com.jalios.gradle.plugin.jplatform.GeneratedPath
 import com.jalios.gradle.plugin.jplatform.JModule
+import com.jalios.gradle.plugin.jplatform.gen.impl.CssExtractor
 import com.jalios.gradle.plugin.test.InMemoryFileSystem
 import com.jalios.gradle.plugin.test.util.ByteUtils
 
