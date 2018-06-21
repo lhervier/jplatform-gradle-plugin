@@ -5,9 +5,9 @@ import org.gradle.api.Project
 
 import com.jalios.gradle.plugin.ext.JModuleExtension
 import com.jalios.gradle.plugin.ext.JPlatformExtension
-import com.jalios.gradle.plugin.task.FetchPluginTask
-import com.jalios.gradle.plugin.task.FetchTypesTask
-import com.jalios.gradle.plugin.task.InstallPluginTask
+import com.jalios.gradle.plugin.task.impl.FetchPluginTaskImpl
+import com.jalios.gradle.plugin.task.impl.FetchTypesTaskImpl
+import com.jalios.gradle.plugin.task.impl.InstallPluginTaskImpl
 
 class JModulePlugin implements Plugin<Project> {
 	void apply(Project project) {
@@ -19,9 +19,9 @@ class JModulePlugin implements Plugin<Project> {
 		project.extensions.create("jModule", JModuleExtension)
 		
 		// Add custom tasks
-		project.task("fetchPlugin", type: FetchPluginTask, group: "jPlatform")
-		project.task("installPlugin", type: InstallPluginTask, group: "jPlatform")
-		project.task("fetchTypes", type: FetchTypesTask, group: "jPlatform")
+		project.task("fetchPlugin", type: FetchPluginTaskImpl, group: "jPlatform")
+		project.task("installPlugin", type: InstallPluginTaskImpl, group: "jPlatform")
+		project.task("fetchTypes", type: FetchTypesTaskImpl, group: "jPlatform")
 		
 		// Add custom dependency configuration
 //		project.configurations {

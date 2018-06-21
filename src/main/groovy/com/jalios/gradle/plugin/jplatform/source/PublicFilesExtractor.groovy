@@ -3,6 +3,8 @@ package com.jalios.gradle.plugin.jplatform.source
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.PluginXml.JFiles
 
+import groovy.lang.Closure
+
 /**
  * Extract all the public files
  * TODO: Attribute "include" on plugin/public-files/file tags is not supported (and not documented)
@@ -12,13 +14,10 @@ import com.jalios.gradle.plugin.jplatform.PluginXml.JFiles
 class PublicFilesExtractor extends BaseFilesExtractor {
 
 	@Override
-	JFiles getJFiles(JModule module) {
-		return module.pluginXml.publicFiles
-	}
-	
-	@Override
-	String getFolderPath(JModule module) {
-		return module.pubFolderPath;
+	public void extract(Closure<String> closure) {
+		this.extract(this.module.pubFs, this.module.pluginXml.publicFiles) { path ->
+			closure("${this.module.pubFsPath}/${path}")
+		}
 	}
 
 }

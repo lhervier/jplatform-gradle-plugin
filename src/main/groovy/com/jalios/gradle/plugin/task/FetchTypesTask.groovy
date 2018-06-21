@@ -1,8 +1,8 @@
 package com.jalios.gradle.plugin.task
 
+import com.jalios.gradle.plugin.fs.FileSystemFactory
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.source.TypesExtractor
-import com.jalios.gradle.plugin.util.FileUtil
 
 /**
  * Task to fetch files generated for the set of types declared
@@ -12,6 +12,14 @@ import com.jalios.gradle.plugin.util.FileUtil
  */
 class FetchTypesTask extends BaseJPlatformTask {
 
+	public FetchTypesTask(
+			FileSystemFactory fsFactory, 
+			String moduleName, 
+			String jPlatformPath, 
+			String modulePath) {
+		super(fsFactory, moduleName, jPlatformPath, modulePath);
+	}
+	
 	@Override
 	public void run() {
 		if( !this.currModule.exists ) {
@@ -20,11 +28,14 @@ class FetchTypesTask extends BaseJPlatformTask {
 		
 		// Using type extractor to extract files from platform plugin
 		// while getting the list of types to extract from current plugin
+		JModule platformModule = this.platform.module(this.currModule.name)
 		new TypesExtractor().extractGeneratedFilesForTypes(
 				this.currModule.pluginXml, 
-				this.platform.module(this.currModule.name)
+				platformModule
 		) { path ->
-			FileUtil.copy(this.platform.rootFolder, this.currModule.rootFolder, path)
+			platformModule.rootFs.getContentAsStream(path) { inStream ->
+				this.currModule.rootFs.setContentFromStream(path, inStream)
+			}
 		}
 	}
 

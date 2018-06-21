@@ -1,27 +1,23 @@
 package com.jalios.gradle.plugin.jplatform.source
 
-import com.jalios.gradle.plugin.jplatform.ISourceFileExtractor
-import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.PluginXml
-import com.jalios.gradle.plugin.util.FileUtil
-
-import groovy.lang.Closure
+import com.jalios.gradle.plugin.jplatform.SourceFileExtractor
 
 /**
  * Extract declared types (and templates)
  * @author Lionel HERVIER
  */
-class TypesExtractor implements ISourceFileExtractor {
+class TypesExtractor extends SourceFileExtractor {
 
 	/**
 	 * Extract all source files from types
 	 */
 	@Override
-	public void extract(JModule module, Closure<String> closure) {
-		module.pluginXml.types.types.each { type ->
-			this.extractTypeXml(type.name, module, closure)
-			this.extractTypeStdJsps(type.name, module, closure)
-			this.extractTypeJsps(type.name, module, closure)
+	public void extract(Closure<String> closure) {
+		this.module.pluginXml.types.types.each { type ->
+			this.extractTypeXml(type.name, closure)
+			this.extractTypeStdJsps(type.name, closure)
+			this.extractTypeJsps(type.name, closure)
 		}
 	}
 	
@@ -29,10 +25,10 @@ class TypesExtractor implements ISourceFileExtractor {
 	 * Extract types generated files.
 	 * Method used by FetchTypesTask
 	 */
-	void extractGeneratedFilesForTypes(PluginXml pluginXml, JModule module, Closure closure) {
+	void extractGeneratedFilesForTypes(PluginXml pluginXml, Closure closure) {
 		pluginXml.types.types.each { type ->
-			this.extractTypeXml(type.name, module, closure)
-			this.extractTypeStdJsps(type.name, module, closure)
+			this.extractTypeXml(type.name, closure)
+			this.extractTypeStdJsps(type.name, closure)
 		}
 	}
 	
@@ -42,42 +38,42 @@ class TypesExtractor implements ISourceFileExtractor {
 	 * @param module
 	 * @param closure
 	 */
-	void extractTypeXml(String name, JModule module, Closure closure) {
+	void extractTypeXml(String name, Closure closure) {
 		// Add xml file
 		def xml = "WEB-INF/data/types/${name}/${name}.xml"
-		if( new File(module.rootFolder, xml).exists() ) {
+		if( this.module.rootFs.exists(xml) ) {
 			closure(xml)
 		}
 		
 		// Add template file
 		def templates = "WEB-INF/data/types/${name}/${name}-templates.xml"
-		if( new File(module.rootFolder, templates).exists() ) {
+		if( this.module.rootFs.exists(templates) ) {
 			closure(templates)
 		}
 	}
 	
 	private List<String> getStdJsps(String name) {
 		return [
-			"doEdit${name}.jsp",
-			"doEdit${name}Modal.jsp",
-			"do${name}Diff.jsp",
-			"do${name}FormHandler.jsp",
-			"do${name}FullDisplay.jsp",
-			"do${name}Report.jsp",
-			"do${name}ResultDisplay.jsp",
-			"editForm${name}.jsp",
-			"edit${name}.jsp",
-			"edit${name}Modal.jsp"
+			"types/${name}/doEdit${name}.jsp",
+			"types/${name}/doEdit${name}Modal.jsp",
+			"types/${name}/do${name}Diff.jsp",
+			"types/${name}/do${name}FormHandler.jsp",
+			"types/${name}/do${name}FullDisplay.jsp",
+			"types/${name}/do${name}Report.jsp",
+			"types/${name}/do${name}ResultDisplay.jsp",
+			"types/${name}/editForm${name}.jsp",
+			"types/${name}/edit${name}.jsp",
+			"types/${name}/edit${name}Modal.jsp"
 		]
 	}
 	
 	/**
 	 * Extract standard jsp for a given type in a given module
 	 */
-	void extractTypeStdJsps(String name, JModule module, Closure closure) {
+	void extractTypeStdJsps(String name, Closure closure) {
 		this.getStdJsps(name).each { jsp ->
 			String path = "types/${name}/${jsp}"
-			if( new File(module.rootFolder, path).exists() ) {
+			if( this.module.rootFs.exists(path) ) {
 				closure(path)
 			}
 		}
@@ -86,17 +82,13 @@ class TypesExtractor implements ISourceFileExtractor {
 	/**
 	 * Extract all other jsps for a given type in a given module
 	 */
-	void extractTypeJsps(String name, JModule module, Closure closure) {
+	void extractTypeJsps(String name, Closure closure) {
 		List<String> stds = this.getStdJsps(name)
-		// Add jsps from type folder
-		FileUtil.paths(new File(module.rootFolder, "types/${name}")) { path ->
-			if( !path.endsWith(".jsp") ) {
-				return
-			}
+		this.module.rootFs.paths("types/${name}/**/*.jsp") { path ->
 			if( !stds.contains(path) ) {
 				return
 			}
-			closure("types/${name}/${path}")
+			closure(path)
 		}
 	}
 }

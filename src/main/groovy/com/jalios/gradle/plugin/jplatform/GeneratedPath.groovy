@@ -1,6 +1,6 @@
 package com.jalios.gradle.plugin.jplatform
 
-class GeneratedFile {
+class GeneratedPath {
 	String path
 	String source
 }

@@ -1,8 +1,6 @@
 package com.jalios.gradle.plugin.jplatform
 
-import org.gradle.api.Project
-
-import com.jalios.gradle.plugin.ext.JModuleExtension
+import com.jalios.gradle.plugin.fs.FileSystem
 import com.jalios.gradle.plugin.jplatform.gen.CssExtractor
 import com.jalios.gradle.plugin.jplatform.gen.SignatureXmlExtractor
 import com.jalios.gradle.plugin.jplatform.source.PluginXmlExtractor
@@ -11,7 +9,6 @@ import com.jalios.gradle.plugin.jplatform.source.PublicFilesExtractor
 import com.jalios.gradle.plugin.jplatform.source.TypesExtractor
 import com.jalios.gradle.plugin.jplatform.source.TypesTemplatesExtractor
 import com.jalios.gradle.plugin.jplatform.source.WebappFilesExtractor
-import com.jalios.gradle.plugin.util.FileUtil
 
 /**
  * Describes a module (inside a JPlatform installation,
@@ -23,21 +20,21 @@ class JModule {
 	/**
 	 * Objects that will extract source files
 	 */
-	private static List<ISourceFileExtractor> SOURCE_EXTRACTORS = [
-			new PluginXmlExtractor(),
-			new PublicFilesExtractor(),
-			new PrivateFilesExtractor(),
-			new WebappFilesExtractor(),
-			new TypesTemplatesExtractor(),
-			new TypesExtractor()
+	private static List<Class<? extends SourceFileExtractor>> SOURCE_EXTRACTORS = [
+			PluginXmlExtractor.class,
+			PublicFilesExtractor.class,
+			PrivateFilesExtractor.class,
+			WebappFilesExtractor.class,
+			TypesTemplatesExtractor.class,
+			TypesExtractor.class
 	]
 	
 	/**
 	 * Objects that will extract generated files
 	 */
-	private static List<IGeneratedFileExtractor> GEN_EXTRACTORS = [
-			new SignatureXmlExtractor(),
-			new CssExtractor()
+	private static List<Class<GeneratedFileExtractor>> GEN_EXTRACTORS = [
+			SignatureXmlExtractor.class,
+			CssExtractor.class
 	]
 	
 	/**
@@ -51,29 +48,17 @@ class JModule {
 	final String name
 	
 	/**
-	 * Root (webapp) folder of the module
+	 * Filesystem of the module
 	 */
-	final File rootFolder
+	final FileSystem rootFs
+	final FileSystem pubFs
+	final FileSystem privFs
 	
 	/**
-	 * Public folder
+	 * Paths of file systems
 	 */
-	final File pubFolder
-	
-	/**
-	 * Private folder
-	 */
-	final File privFolder
-	
-	/**
-	 * Path to the public folder (relative to the root folder)
-	 */
-	final String pubFolderPath
-	
-	/**
-	 * Path to the private folder (relative to the root folder)
-	 */
-	final String privFolderPath
+	final String privFsPath
+	final String pubFsPath
 	
 	/**
 	 * plugin.prop file
@@ -86,58 +71,66 @@ class JModule {
 	final PluginXml pluginXml
 	
 	/**
-	 * Files that compose the module
+	 * Paths that compose the module
 	 */
-	final List<String> files = []
+	final List<String> paths = []
 	
 	/**
-	 * Generated files inside the module
+	 * Generated paths inside the module
 	 */
-	final List<GeneratedFile> generatedFiles = []
+	final List<GeneratedPath> generatedPaths = []
 	
 	/**
 	 * Constructor
-	 * @param rootFolder root of the platform
 	 * @param name the name of the module
+	 * @param rootFs root file system of the module
+	 * @param privFs private file system of the module
+	 * @param pubFs public file system of the module
 	 */
-	JModule(File rootFolder, String name) {
+	JModule(String name, FileSystem rootFs) {
 		this.name = name
-		this.rootFolder = rootFolder
+		this.rootFs = rootFs
 		
-		this.pubFolderPath = "plugins/${this.name}"
-		this.privFolderPath = "WEB-INF/plugins/${this.name}"
+		this.privFsPath = "WEB-INF/plugins/${name}"
+		this.privFs = this.rootFs.createFrom(this.privFsPath)
 		
-		this.pubFolder = new File(this.rootFolder, this.pubFolderPath)
-		this.privFolder = new File(this.rootFolder, this.privFolderPath)
+		this.pubFsPath = "plugins/${name}"
+		this.pubFs = this.rootFs.createFrom(this.pubFsPath)
 		
-		File fPluginXml = new File(this.privFolder, "plugin.xml")
-		if( !fPluginXml.exists() ) {
+		if( !this.privFs.exists("plugin.xml") ) {
 			this.exists = false
 			return
-		} else {
-			this.exists = true
 		}
 		
-		this.pluginXml = new PluginXml(fPluginXml.newReader("UTF-8"))
-		this.pluginProp = new PluginProp(new File(this.privFolder, "properties/plugin.prop").newReader("UTF-8"))
+		this.privFs.getContentAsReader("plugin.xml", "UTF-8") { reader ->
+			this.pluginXml = new PluginXml(reader)
+		}
+		
+		this.privFs.getContentAsReader("properties/plugin.prop", "UTF-8") { reader ->
+			this.pluginProp = new PluginProp(reader)
+		}
 		
 		// compute the list of generated files
-		GEN_EXTRACTORS.each { extractor ->
-			extractor.extract(this) { genFile -> 
-				this.generatedFiles.add(genFile)
+		GEN_EXTRACTORS.each { extractorClass ->
+			GeneratedFileExtractor extractor = extractorClass.newInstance()
+			extractor.module = this
+			extractor.extract(this) { genPath -> 
+				this.generatedPaths.add(genPath)
 			}
 		}
 		
 		// compute the list of source files
-		SOURCE_EXTRACTORS.each { extractor ->
+		SOURCE_EXTRACTORS.each { extractorClass ->
+			SourceFileExtractor extractor = extractorClass.newInstance()
+			extractor.module = this
 			extractor.extract(this) { path ->
-				this.files.add(path.toString())
+				this.paths.add(path.toString())
 			}
 		}
 		
 		// Remove generated files from source files list
-		this.generatedFiles.each { genFile ->
-			this.files.removeElement(genFile.path.toString())
+		this.generatedPaths.each { genPath ->
+			this.paths.removeElement(genPath.path.toString())
 		}
 	}
 }

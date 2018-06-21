@@ -2,6 +2,8 @@ package com.jalios.gradle.plugin.jplatform
 
 import org.gradle.api.Project
 
+import com.jalios.gradle.plugin.fs.FileSystem
+
 /**
  * Describes the JPlatform installation
  * @author Lionel HERVIER
@@ -16,14 +18,14 @@ class JPlatform {
 	/**
 	 * Root folder of the JPlatform
 	 */
-	final File rootFolder
+	final FileSystem rootFs
 	
 	/**
 	 * Constructor
-	 * @param rootFolder path to the root folder of JPlatform
+	 * @param rootFs root file system of JPlatform
 	 */
-	JPlatform(File rootFolder) {
-		this.rootFolder = rootFolder
+	JPlatform(FileSystem rootFs) {
+		this.rootFs = rootFs
 	}
 	
 	/**
@@ -34,7 +36,7 @@ class JPlatform {
 	JModule module(String name) {
 		if( this.jModules[name] != null )
 			return this.jModules[name]
-		this.jModules[name] = new JModule(this.rootFolder, name)
+		this.jModules[name] = new JModule(name, this.rootFs)
 		return this.jModules[name]
 	}
 }

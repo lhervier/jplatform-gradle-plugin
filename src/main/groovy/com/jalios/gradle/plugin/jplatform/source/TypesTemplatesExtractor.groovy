@@ -1,10 +1,6 @@
 package com.jalios.gradle.plugin.jplatform.source
 
-import com.jalios.gradle.plugin.jplatform.ISourceFileExtractor
-import com.jalios.gradle.plugin.jplatform.JModule
-import com.jalios.gradle.plugin.util.FileUtil
-
-import groovy.lang.Closure
+import com.jalios.gradle.plugin.jplatform.SourceFileExtractor
 
 /**
  * Declare files from "types" subfolder of public folder.
@@ -14,16 +10,15 @@ import groovy.lang.Closure
  * 
  * @author Lionel HERVIER
  */
-class TypesTemplatesExtractor implements ISourceFileExtractor {
+class TypesTemplatesExtractor extends SourceFileExtractor {
 
 	@Override
-	public void extract(JModule module, Closure<String> closure) {
-		File pubTypes = new File(module.pubFolder, "types")
-		if( !pubTypes.exists() )
+	public void extract(Closure<String> closure) {
+		if( !this.module.pubFs.exists("types") )
 			return
 		
-		FileUtil.paths(pubTypes) {path ->
-			closure("${module.pubFolderPath}/types/${path}")
+		this.module.pubFs.paths("types/**/*") {path ->
+			closure("${this.module.pubFsPath}/${path}")
 		}
 	}
 

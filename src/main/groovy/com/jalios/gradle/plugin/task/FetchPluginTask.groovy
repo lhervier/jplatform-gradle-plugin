@@ -1,7 +1,7 @@
 package com.jalios.gradle.plugin.task
 
+import com.jalios.gradle.plugin.fs.FileSystemFactory
 import com.jalios.gradle.plugin.jplatform.JModule
-import com.jalios.gradle.plugin.util.FileUtil
 
 /**
  * This task will fetch a (newly created) plugin into jPlatform,
@@ -13,6 +13,14 @@ import com.jalios.gradle.plugin.util.FileUtil
  * @author Lionel HERVIER
  */
 class FetchPluginTask extends BaseJPlatformTask {
+
+	public FetchPluginTask(
+			FileSystemFactory fsFactory, 
+			String moduleName, 
+			String jPlatformPath, 
+			String modulePath) {
+		super(fsFactory, moduleName, jPlatformPath, modulePath);
+	}
 
 	void run() {
 		// Check that the current module does not exists
@@ -28,8 +36,10 @@ class FetchPluginTask extends BaseJPlatformTask {
 		
 		// Copy files from jPlatform module to currentModule
 		println "Copying files from jPlatform plugin into current module:"
-		platformModule.files.each { path ->
-			FileUtil.copy(this.platform.rootFolder, this.currModule.rootFolder, path)
+		platformModule.paths.each { path ->
+			platformModule.rootFs.getContentAsStream(path) { inStream ->
+				this.currModule.rootFs.setContentFromStream(path, inStream)
+			}
 		}
 	}
 }

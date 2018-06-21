@@ -1,15 +1,15 @@
 package com.jalios.gradle.plugin.jplatform.source
 
-import com.jalios.gradle.plugin.jplatform.ISourceFileExtractor
+import com.jalios.gradle.plugin.jplatform.SourceFileExtractor
 import com.jalios.gradle.plugin.jplatform.JModule
 
 import groovy.lang.Closure
 
-class PluginXmlExtractor implements ISourceFileExtractor {
+class PluginXmlExtractor extends SourceFileExtractor {
 
 	@Override
-	public void extract(JModule module, Closure<String> closure) {
-		closure("${module.privFolderPath}/plugin.xml")
+	public void extract(Closure<String> closure) {
+		closure("${module.privFsPath}/plugin.xml")
 	}
 
 }
