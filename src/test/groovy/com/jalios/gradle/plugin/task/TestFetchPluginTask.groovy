@@ -12,7 +12,6 @@ import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 import com.jalios.gradle.plugin.jplatform.source.impl.PluginXmlExtractor
-import com.jalios.gradle.plugin.task.impl.FetchPluginTask
 import com.jalios.gradle.plugin.test.InMemoryJFileSystem
 import com.jalios.gradle.plugin.test.util.ByteUtils
 

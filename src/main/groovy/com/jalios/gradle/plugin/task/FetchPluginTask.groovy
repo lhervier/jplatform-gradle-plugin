@@ -1,9 +1,8 @@
-package com.jalios.gradle.plugin.task.impl
+package com.jalios.gradle.plugin.task
 
 import com.jalios.gradle.plugin.JException
 import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.jplatform.JModule
-import com.jalios.gradle.plugin.task.JPlatformTask
 
 /**
  * This task will fetch a (newly created) plugin into jPlatform,
