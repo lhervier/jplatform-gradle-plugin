@@ -88,8 +88,10 @@ class JModule {
 			this.pluginXml = new PluginXml(reader)
 		}
 		
-		this.privFs.getContentAsReader("properties/plugin.prop", "UTF-8") { reader ->
-			this.pluginProp = new PluginProp(reader)
+		if( this.privFs.exists("properties/plugin.prop") ) {
+			this.privFs.getContentAsReader("properties/plugin.prop", "UTF-8") { reader ->
+				this.pluginProp = new PluginProp(reader)
+			}
 		}
 		
 		// compute the list of generated files

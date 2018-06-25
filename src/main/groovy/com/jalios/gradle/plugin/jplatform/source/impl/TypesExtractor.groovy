@@ -1,5 +1,6 @@
 package com.jalios.gradle.plugin.jplatform.source.impl
 
+import com.jalios.gradle.plugin.ex.JTaskException
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.PluginXml
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
@@ -42,9 +43,10 @@ class TypesExtractor implements SourceFileExtractor {
 	void extractTypeXml(JModule module, String name, Closure closure) {
 		// Add xml file
 		def xml = "WEB-INF/data/types/${name}/${name}.xml"
-		if( module.rootFs.exists(xml) ) {
-			closure(xml)
+		if( !module.rootFs.exists(xml) ) {
+			throw new JTaskException("Type '${name}' does not exist in module '${module.name}'")
 		}
+		closure(xml)
 		
 		// Add template file
 		def templates = "WEB-INF/data/types/${name}/${name}-templates.xml"
@@ -72,10 +74,9 @@ class TypesExtractor implements SourceFileExtractor {
 	 * Extract standard jsp for a given type in a given module
 	 */
 	void extractTypeStdJsps(JModule module, String name, Closure closure) {
-		this.getStdJsps(name).each { jsp ->
-			String path = "types/${name}/${jsp}"
-			if( module.rootFs.exists(path) ) {
-				closure(path)
+		this.getStdJsps(module, name).each { jsp ->
+			if( module.rootFs.exists(jsp) ) {
+				closure(jsp)
 			}
 		}
 	}
@@ -84,7 +85,7 @@ class TypesExtractor implements SourceFileExtractor {
 	 * Extract all other jsps for a given type in a given module
 	 */
 	void extractTypeJsps(JModule module, String name, Closure closure) {
-		List<String> stds = this.getStdJsps(name)
+		List<String> stds = this.getStdJsps(module, name)
 		module.rootFs.paths("types/${name}/**/*.jsp") { path ->
 			if( !stds.contains(path) ) {
 				return

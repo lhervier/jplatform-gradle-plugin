@@ -5,50 +5,27 @@ import org.junit.Test
 
 import com.jalios.gradle.plugin.ex.JTaskException
 import com.jalios.gradle.plugin.jplatform.JModule
+import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.PluginXmlExtractor
 import com.jalios.gradle.plugin.test.InMemoryJFileSystem
+import com.jalios.gradle.plugin.test.util.ByteUtils
 
-class TestFetchPluginTask {
+class TestFetchPluginTask extends BaseTestTask {
 
 	FetchPluginTask task
-	InMemoryJFileSystem currModuleFs
-	InMemoryJFileSystem platformModuleFs
-	JModule currModule
-	JModule platformModule
 	
-	private void addPluginXml(JModule module) {
-		module.rootFs.addFile("WEB-INF/plugins/${module.name}/plugin.xml", ByteUtils.extractBytes("""
-			<plugin name="${module.name}">
-			</plugin>
-		"""))
-	}
-	
-	private void addPluginProp(JModule module) {
-		module.rootFs.addFile("WEB-INF/plugins/${module.name}/properties/plugin.prop", ByteUtils.extractBytes("""
-			
-		"""))
-	}
-	
-	@Before
+	@Override
 	void setUp() {
-		this.currModuleFs = new InMemoryJFileSystem()
-		this.currModule = new JModule("TestPlugin", this.currModuleFs)
-		
-		this.platformModuleFs = new InMemoryJFileSystem()
-		this.platformModule = new JModule("TestPlugin", this.platformModuleFs)
-		
 		this.task = new FetchPluginTask()
 	}
 
 	@Test(expected = JTaskException.class)
 	void whenCurrModuleExists_thenFetchFails() {
-		this.currModuleFs.addFile(
-			"WEB-INF/plugins/TestPlugin/plugin.xml", 
-			ByteUtils.extractBytes("""
-				<plugin name="TestPlugin">
-				</plugin>
-			"""))
-		this.platformModule.init(null, null)
+		this.addPluginXml(this.currModule)
 		this.currModule.init(null, null)
+		
+		this.platformModule.init(null, null)
+		this.addPluginXml(this.platformModule)
 		
 		this.task.run(this.platformModule, this.currModule)
 	}

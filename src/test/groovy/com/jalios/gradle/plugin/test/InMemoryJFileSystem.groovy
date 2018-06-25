@@ -13,11 +13,11 @@ class InMemoryJFileSystem extends JFileSystem {
 	private Map<String, byte[]> files = new HashMap<>()
 	
 	public void addFile(String name) {
-		this.addFile(name, new byte[0])
+		this.addFile(name.toString(), new byte[0])
 	}
 	
 	public void addFile(String name, byte[] content) {
-		this.files.put(name, content)
+		this.files.put(name.toString(), content)
 	}
 	
 	boolean match(String path, String pattern) {
@@ -25,32 +25,32 @@ class InMemoryJFileSystem extends JFileSystem {
 		regexp = regexp.replaceAll("\\*\\*", ".%STAR%")
 		regexp = regexp.replaceAll("\\*", "[^\\/]%STAR%")
 		regexp = regexp.replaceAll("%STAR%", "*")
-		return path ==~ ~regexp
+		return path.toString() ==~ ~regexp
 	}
 	
 	// ===================================================================
 	
 	@Override
 	public boolean exists(String path) throws JFileSystemException {
-		return this.files.containsKey(path)
+		return this.files.containsKey(path.toString())
 	}
 
 	@Override
 	public void paths(String pattern, Closure<String> closure) throws JFileSystemException {
 		this.files.each { path, content ->
-			if( this.match(path, pattern) )
+			if( this.match(path, pattern.toString()) )
 				closure(path)
 		}
 	}
 	
 	@Override
 	public void delete(String path) throws JFileSystemException {
-		this.files.remove(path)
+		this.files.remove(path.toString())
 	}
 
 	@Override
 	public void setContentFromStream(String path, InputStream inStream) throws JFileSystemException {
-		this.files.put(path, inStream.bytes)
+		this.files.put(path.toString(), inStream.bytes)
 	}
 
 	@Override
@@ -59,7 +59,7 @@ class InMemoryJFileSystem extends JFileSystem {
 			throw new JFileSystemException("File ${path} does not exists. Unable to get content.")
 		}
 		
-		InputStream inStream = new ByteArrayInputStream(this.files.get(path))
+		InputStream inStream = new ByteArrayInputStream(this.files.get(path.toString()))
 		try {
 			closure(inStream)
 		} finally {

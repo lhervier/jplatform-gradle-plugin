@@ -17,7 +17,7 @@ class FetchPluginTask implements JPlatformTask {
 	void run(JModule platformModule, JModule currModule) throws JTaskException {
 		// Check that the current module does not exists
 		if( currModule.pluginXml != null ) {
-			throw new JTaskException("Error : Plugin already imported in local module code. Remove ${currModule.privFolder.absolutePath} and ${currModule.pubFolder.absolutePath} folders before fetching if you want to overwrite it with version from jPlatform.")
+			throw new JTaskException("Error : Plugin already imported in local module code. Remove ${currModule.privFsPath} and ${currModule.pubFsPath} folders before fetching if you want to overwrite it with version from jPlatform.")
 		}
 		
 		// Check that module exist in jPlatform
