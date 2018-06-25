@@ -1,7 +1,6 @@
 package com.jalios.gradle.plugin.task
 
-import com.jalios.gradle.plugin.JException
-import com.jalios.gradle.plugin.fs.JFileSystem
+import com.jalios.gradle.plugin.ex.JTaskException
 import com.jalios.gradle.plugin.jplatform.JModule
 
 /**
@@ -15,15 +14,15 @@ import com.jalios.gradle.plugin.jplatform.JModule
  */
 class FetchPluginTask implements JPlatformTask {
 
-	void run(JModule platformModule, JModule currModule) {
+	void run(JModule platformModule, JModule currModule) throws JTaskException {
 		// Check that the current module does not exists
 		if( currModule.pluginXml != null ) {
-			throw new JException("Error : Plugin already imported in local module code. Remove ${currModule.privFolder.absolutePath} and ${currModule.pubFolder.absolutePath} folders before fetching if you want to overwrite it with version from jPlatform.")
+			throw new JTaskException("Error : Plugin already imported in local module code. Remove ${currModule.privFolder.absolutePath} and ${currModule.pubFolder.absolutePath} folders before fetching if you want to overwrite it with version from jPlatform.")
 		}
 		
 		// Check that module exist in jPlatform
 		if( platformModule.pluginXml == null ) {
-			throw new JException("Error : Plugin ${currModule.name} does not exist in jPlatform")
+			throw new JTaskException("Error : Plugin ${currModule.name} does not exist in jPlatform")
 		}
 		
 		// Copy files from jPlatform module to currentModule

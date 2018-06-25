@@ -1,11 +1,9 @@
 package com.jalios.gradle.plugin.test
 
 import java.io.InputStream
+import java.util.Map
 
-import org.gradle.internal.impldep.bsh.This
-import org.gradle.internal.impldep.org.apache.commons.collections.map.HashedMap
-
-import com.jalios.gradle.plugin.JException
+import com.jalios.gradle.plugin.ex.JFileSystemException
 import com.jalios.gradle.plugin.fs.JFileSystem
 
 import groovy.lang.Closure
@@ -33,12 +31,12 @@ class InMemoryJFileSystem extends JFileSystem {
 	// ===================================================================
 	
 	@Override
-	public boolean exists(String path) {
+	public boolean exists(String path) throws JFileSystemException {
 		return this.files.containsKey(path)
 	}
 
 	@Override
-	public void paths(String pattern, Closure<String> closure) {
+	public void paths(String pattern, Closure<String> closure) throws JFileSystemException {
 		this.files.each { path, content ->
 			if( this.match(path, pattern) )
 				closure(path)
@@ -46,19 +44,19 @@ class InMemoryJFileSystem extends JFileSystem {
 	}
 	
 	@Override
-	public void delete(String path) {
+	public void delete(String path) throws JFileSystemException {
 		this.files.remove(path)
 	}
 
 	@Override
-	public void setContentFromStream(String path, InputStream inStream) {
+	public void setContentFromStream(String path, InputStream inStream) throws JFileSystemException {
 		this.files.put(path, inStream.bytes)
 	}
 
 	@Override
-	public void getContentAsStream(String path, Closure<InputStream> closure) {
+	public void getContentAsStream(String path, Closure<InputStream> closure) throws JFileSystemException {
 		if( !this.exists(path) ) {
-			throw new JException("File ${path} does not exists. Unable to get content.")
+			throw new JFileSystemException("File ${path} does not exists. Unable to get content.")
 		}
 		
 		InputStream inStream = new ByteArrayInputStream(this.files.get(path))
@@ -70,7 +68,7 @@ class InMemoryJFileSystem extends JFileSystem {
 	}
 
 	@Override
-	public JFileSystem createFrom(String path) {
+	public JFileSystem createFrom(String path) throws JFileSystemException {
 		InMemoryJFileSystem ret = new InMemoryJFileSystem()
 		this.paths("${path}/**") { subPath ->
 			ret.files.put(

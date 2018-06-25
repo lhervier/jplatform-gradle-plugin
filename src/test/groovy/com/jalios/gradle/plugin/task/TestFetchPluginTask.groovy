@@ -1,21 +1,11 @@
 package com.jalios.gradle.plugin.task
 
-import static org.junit.Assert.*
-
-import org.gradle.internal.impldep.bsh.This
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-import com.jalios.gradle.plugin.JException
-import com.jalios.gradle.plugin.fs.JFileSystem
+import com.jalios.gradle.plugin.ex.JTaskException
 import com.jalios.gradle.plugin.jplatform.JModule
-import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
-import com.jalios.gradle.plugin.jplatform.source.impl.PluginXmlExtractor
 import com.jalios.gradle.plugin.test.InMemoryJFileSystem
-import com.jalios.gradle.plugin.test.util.ByteUtils
-
-import groovy.lang.Closure
 
 class TestFetchPluginTask {
 
@@ -49,7 +39,7 @@ class TestFetchPluginTask {
 		this.task = new FetchPluginTask()
 	}
 
-	@Test(expected = JException.class)
+	@Test(expected = JTaskException.class)
 	void whenCurrModuleExists_thenFetchFails() {
 		this.currModuleFs.addFile(
 			"WEB-INF/plugins/TestPlugin/plugin.xml", 
@@ -63,7 +53,7 @@ class TestFetchPluginTask {
 		this.task.run(this.platformModule, this.currModule)
 	}
 	
-	@Test(expected = JException.class)
+	@Test(expected = JTaskException.class)
 	void whenPlatformModuleDoesNotExist_thenFetchFail() {
 		this.platformModule.init(null, null)
 		this.currModule.init(null, null)

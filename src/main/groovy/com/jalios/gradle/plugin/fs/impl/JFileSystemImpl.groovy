@@ -1,13 +1,7 @@
 package com.jalios.gradle.plugin.fs.impl
 
-import java.io.InputStream
-import java.nio.file.Files
-
-import com.jalios.gradle.plugin.JException
+import com.jalios.gradle.plugin.ex.JFileSystemException
 import com.jalios.gradle.plugin.fs.JFileSystem
-import com.jalios.gradle.plugin.jplatform.JModule
-
-import groovy.io.FileType
 
 class JFileSystemImpl extends JFileSystem {
 
@@ -19,25 +13,25 @@ class JFileSystemImpl extends JFileSystem {
 	/**
 	 * Constructor
 	 */
-	public JFileSystemImpl(File rootFolder) {
+	public JFileSystemImpl(File rootFolder) throws JFileSystemException {
 		if( !rootFolder.absolute ) {
-			throw new JException("FileSystem root folder must be absolute")
+			throw new JFileSystemException("FileSystem root folder must be absolute")
 		}
 		this.rootFolder = rootFolder
 	}
 	
 	@Override
-	public JFileSystem createFrom(String path) {
+	public JFileSystem createFrom(String path) throws JFileSystemException {
 		return new JFileSystemImpl(new File(this.rootFolder, path));
 	}
 
 	@Override
-	boolean exists(String path) {
+	boolean exists(String path) throws JFileSystemException {
 		return new File(this.rootFolder, path).exists()
 	}
 	
 	@Override
-	void paths(String pattern, Closure<String> closure) {
+	void paths(String pattern, Closure<String> closure) throws JFileSystemException {
 		def ant = new AntBuilder()
 		def scanner = ant.fileScanner {
 			fileset(dir: rootFolder.absolutePath) {
@@ -51,12 +45,12 @@ class JFileSystemImpl extends JFileSystem {
 	}
 	
 	@Override
-	void setContentFromStream(String path, InputStream inStream) {
+	void setContentFromStream(String path, InputStream inStream) throws JFileSystemException {
 		File destFile = new File(this.rootFolder, path)
 		println "Setting content of '${destFile.absolutePath}'"
 		if( destFile.exists() ) {
 			if( !destFile.delete() ) {
-				throw new JException("Unable to replace existing file...")
+				throw new JFileSystemException("Unable to replace existing file...")
 			}
 		}
 		destFile.getParentFile().mkdirs()
@@ -64,7 +58,7 @@ class JFileSystemImpl extends JFileSystem {
 	}
 	
 	@Override
-	public void getContentAsStream(String path, Closure<InputStream> closure) {
+	public void getContentAsStream(String path, Closure<InputStream> closure) throws JFileSystemException {
 		File f = new File(this.rootFolder, path)
 		InputStream fileIn = new FileInputStream(f);
 		try {
@@ -75,14 +69,14 @@ class JFileSystemImpl extends JFileSystem {
 	}
 	
 	@Override
-	void delete(String path) {
+	void delete(String path) throws JFileSystemException {
 		File f = new File(this.rootFolder, path)
 		println "Removing '${f.absolutePath}'"
 		if( !f.exists() ) {
 			return
 		}
 		if( !f.delete() ) {
-			throw new JException("Unable to remove file ${path}")
+			throw new JFileSystemException("Unable to remove file ${path}")
 		}
 	}
 }
