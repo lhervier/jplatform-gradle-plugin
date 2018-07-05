@@ -3,8 +3,6 @@ package com.jalios.gradle.plugin.jplatform
 import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedFileExtractor
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedPath
-import com.jalios.gradle.plugin.jplatform.gen.impl.CssExtractor
-import com.jalios.gradle.plugin.jplatform.gen.impl.SignatureXmlExtractor
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 import com.jalios.gradle.plugin.jplatform.source.impl.PluginXmlExtractor
 import com.jalios.gradle.plugin.jplatform.source.impl.PrivateFilesExtractor

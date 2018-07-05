@@ -1,4 +1,4 @@
-package com.jalios.gradle.plugin.jplatform.gen
+package com.jalios.gradle.plugin.jplatform.gen.impl
 
 import static org.junit.Assert.*
 
@@ -6,7 +6,6 @@ import org.junit.Before
 import org.junit.Test
 
 import com.jalios.gradle.plugin.jplatform.JModule
-import com.jalios.gradle.plugin.jplatform.gen.impl.SignatureXmlExtractor
 import com.jalios.gradle.plugin.test.InMemoryJFileSystem
 import com.jalios.gradle.plugin.test.util.ByteUtils
 

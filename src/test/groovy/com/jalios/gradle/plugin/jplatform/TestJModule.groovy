@@ -1,5 +1,6 @@
 package com.jalios.gradle.plugin.jplatform
 
+import com.jalios.gradle.plugin.jplatform.gen.GeneratedFileExtractor
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedPath
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 
@@ -11,7 +12,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-import com.jalios.gradle.plugin.jplatform.gen.GeneratedFileExtractor
 import com.jalios.gradle.plugin.test.InMemoryJFileSystem
 import com.jalios.gradle.plugin.test.util.ByteUtils
 

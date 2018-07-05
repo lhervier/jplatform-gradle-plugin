@@ -6,21 +6,20 @@ import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 
 /**
  * Base class for all FilesExtractors
- * TODO: Attribute "include" on plugin/[private|public|webapp]-files/file tags is not supported (and not documented)
- * TODO: Attribute "path" on plugin/[private|public|webapp]-files/file tags does not support wildcards (ie "css/portal/*.css")
+ * TODO: Attribute "include" on plugin/[private|public|webapp]-files/file tags is not supported
  * @author Lionel HERVIER
  */
-abstract class BaseFilesExtractor implements SourceFileExtractor {
+class BaseFilesExtractor {
 
 	/**
 	 * Extract files
 	 */
-	protected void extract(JFileSystem fs, JFiles jfiles, Closure<String> closure) {
+	void extract(JFileSystem fs, JFiles jfiles, Closure<String> closure) {
 		jfiles.directories.each { dir ->
-			fs.paths("${dir.path}/**/*", closure)
+			fs.paths("${dir.path}/**/*", closure)		// dir.path may be of the form "**/mydir"
 		}
 		jfiles.files.each { file ->
-			fs.paths(file.path, closure)
+			fs.paths(file.path, closure)				// file.path may be of the form "css/*.css"
 		}
 	}
 }
