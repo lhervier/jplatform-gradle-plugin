@@ -31,6 +31,7 @@ class TestPluginXml {
 				</types>
 				<private-files>
 					<directory path="properties" />
+					<file path="docs/license.txt" include="true"/>
 				</private-files>
 				<public-files>
 					<directory path="js" />
@@ -73,9 +74,11 @@ class TestPluginXml {
 		assert pluginXml.types.templates[0].templates[1].labels[1].label == "Gabarit Spécifique"
 		assert pluginXml.types.templates[0].templates[1].labels[1].lang == "fr"
 		
-		assert pluginXml.privateFiles.files.size() == 0
 		assert pluginXml.privateFiles.directories.size() == 1
 		assert pluginXml.privateFiles.directories[0].path == "properties"
+		assert pluginXml.privateFiles.files.size() == 1
+		assert pluginXml.privateFiles.files[0].path == "docs/license.txt"
+		assert pluginXml.privateFiles.files[0].include == "true"
 		
 		assert pluginXml.publicFiles.files.size() == 0
 		assert pluginXml.publicFiles.directories.size() == 4
