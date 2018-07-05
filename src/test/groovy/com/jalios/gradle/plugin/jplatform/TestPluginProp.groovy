@@ -11,6 +11,7 @@ class TestPluginProp {
 		String prop = """
 			prop1: value1
 			prop2: value2
+			# prop3: value3
 			my.prop.1: val1
 			my.prop.2: val2
 		"""
@@ -33,6 +34,7 @@ class TestPluginProp {
 		assert values.size() == 2
 		assert values.containsKey("my.prop.1")
 		assert values.containsKey("my.prop.2")
+		assert !values.containsKey("my.prop3")
 		assert values["my.prop.1"] == "val1"
 		assert values["my.prop.2"] == "val2"
 	}

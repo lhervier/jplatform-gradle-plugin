@@ -60,10 +60,18 @@ class TestPluginXml {
 		assert pluginXml.types.templates[0].templates[0].file == "doAbstractPortletSkinableFullDisplay.jsp"
 		assert pluginXml.types.templates[0].templates[0].dir == "type"
 		assert pluginXml.types.templates[0].templates[0].usage == "full"
+		assert pluginXml.types.templates[0].templates[0].labels[0].label == "Custom Template"
+		assert pluginXml.types.templates[0].templates[0].labels[0].lang == "en"
+		assert pluginXml.types.templates[0].templates[0].labels[1].label == "Gabarit Spécifique"
+		assert pluginXml.types.templates[0].templates[0].labels[1].lang == "fr"
 		assert pluginXml.types.templates[0].templates[1].name == "custom2"
 		assert pluginXml.types.templates[0].templates[1].file == "doAbstractPortletSkinableResultDisplay.jsp"
 		assert pluginXml.types.templates[0].templates[1].dir == null
 		assert pluginXml.types.templates[0].templates[1].usage == "query"
+		assert pluginXml.types.templates[0].templates[1].labels[0].label == "Custom Template"
+		assert pluginXml.types.templates[0].templates[1].labels[0].lang == "en"
+		assert pluginXml.types.templates[0].templates[1].labels[1].label == "Gabarit Spécifique"
+		assert pluginXml.types.templates[0].templates[1].labels[1].lang == "fr"
 		
 		assert pluginXml.privateFiles.files.size() == 0
 		assert pluginXml.privateFiles.directories.size() == 1
