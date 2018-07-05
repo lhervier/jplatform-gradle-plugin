@@ -19,9 +19,9 @@ class JModulePlugin implements Plugin<Project> {
 		project.extensions.create("jModule", JModuleExtension)
 		
 		// Add custom tasks
-		project.task("fetchPlugin", type: FetchPluginTaskImpl, group: "jPlatform")
-		project.task("installPlugin", type: InstallPluginTaskImpl, group: "jPlatform")
-		project.task("fetchTypes", type: FetchTypesTaskImpl, group: "jPlatform")
+		project.task("fetchPlugin", type: FetchPluginTaskImpl, group: "jPlatform", description: "Fetch a newly created plugin into current module")
+		project.task("installPlugin", type: InstallPluginTaskImpl, group: "jPlatform", description: "Install the current module in JPlatform")
+		project.task("fetchTypes", type: FetchTypesTaskImpl, group: "jPlatform", description: "Fetch types from platform into current module")
 		
 		// Add custom dependency configuration
 //		project.configurations {
