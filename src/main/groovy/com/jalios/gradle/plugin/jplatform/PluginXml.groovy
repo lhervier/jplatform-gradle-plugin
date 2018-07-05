@@ -1,5 +1,15 @@
 package com.jalios.gradle.plugin.jplatform
 
+import com.jalios.gradle.plugin.jplatform.model.JDependency
+import com.jalios.gradle.plugin.jplatform.model.JDirectory
+import com.jalios.gradle.plugin.jplatform.model.JFile
+import com.jalios.gradle.plugin.jplatform.model.JFiles
+import com.jalios.gradle.plugin.jplatform.model.JLabel
+import com.jalios.gradle.plugin.jplatform.model.JTemplate
+import com.jalios.gradle.plugin.jplatform.model.JTemplates
+import com.jalios.gradle.plugin.jplatform.model.JType
+import com.jalios.gradle.plugin.jplatform.model.JTypes
+
 /**
  * Representation of a plugin.xml file
  * @author Lionel HERVIER
@@ -15,80 +25,6 @@ class PluginXml {
 	final JFiles privateFiles = new JFiles()
 	final JFiles publicFiles = new JFiles()
 	final JFiles webappFiles = new JFiles()
-	
-	/**
-	 * A dependency
-	 */
-	class JDependency {
-		String name
-		boolean active
-	}
-	
-	/**
-	 * The types tag
-	 */
-	class JTypes {
-		List<JType> types = new ArrayList()
-		List<JTemplates> templates = new ArrayList()
-	}
-	
-	/**
-	 * A type
-	 */
-	class JType {
-		String name
-		List<JFile> files = new ArrayList()
-	}
-	
-	/**
-	 * templates tag
-	 */
-	class JTemplates {
-		String type
-		List<JTemplate> templates = new ArrayList()
-	}
-	
-	/**
-	 * A template
-	 */
-	class JTemplate {
-		String name
-		String file
-		String dir
-		String usage
-		List<JLabel> labels = new ArrayList()
-	}
-	
-	/**
-	 * Files class (for webapp-files, private-files and public-files)
-	 */
-	class JFiles {
-		List<JDirectory> directories = new ArrayList()
-		List<JFile> files = new ArrayList()
-	}
-	
-	/**
-	 * Directory class
-	 */
-	class JDirectory {
-		String path
-	}
-	
-	/**
-	 * File class
-	 */
-	class JFile {
-		String path
-		String include
-	}
-	
-	/**
-	 * A label
-	 */
-	class JLabel {
-		String lang
-		String label
-	}
 	
 	/**
 	 * Constructor

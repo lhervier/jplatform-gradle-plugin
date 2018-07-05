@@ -1,7 +1,7 @@
 package com.jalios.gradle.plugin.jplatform.source.impl
 
 import com.jalios.gradle.plugin.jplatform.JModule
-import com.jalios.gradle.plugin.jplatform.PluginXml.JFiles
+import com.jalios.gradle.plugin.jplatform.model.JFiles
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 
 import groovy.lang.Closure

@@ -1,8 +1,7 @@
 package com.jalios.gradle.plugin.jplatform.source.impl
 
 import com.jalios.gradle.plugin.fs.JFileSystem
-import com.jalios.gradle.plugin.jplatform.PluginXml.JFiles
-import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
+import com.jalios.gradle.plugin.jplatform.model.JFiles
 
 /**
  * Base class for all FilesExtractors
