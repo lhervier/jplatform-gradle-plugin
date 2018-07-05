@@ -15,7 +15,7 @@ class PrivateFilesExtractor extends BaseFilesExtractor implements SourceFileExtr
 	@Override
 	public void extract(JModule module, Closure<String> closure) {
 		this.extract(module.privFs, module.pluginXml.privateFiles) { path ->
-			closure("${module.privFsPath}/${path}")
+			closure("${module.privFsPath}/${path}".toString())
 		}
 	}
 }

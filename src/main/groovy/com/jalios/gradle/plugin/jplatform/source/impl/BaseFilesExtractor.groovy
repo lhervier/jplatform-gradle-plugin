@@ -15,6 +15,9 @@ class BaseFilesExtractor {
 	 */
 	void extract(JFileSystem fs, JFiles jfiles, Closure<String> closure) {
 		jfiles.directories.each { dir ->
+			fs.paths("${dir.path}/*", closure)			// dir.path may be of the form "**/mydir"
+		}
+		jfiles.directories.each { dir ->
 			fs.paths("${dir.path}/**/*", closure)		// dir.path may be of the form "**/mydir"
 		}
 		jfiles.files.each { file ->
