@@ -13,6 +13,7 @@ import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 import com.jalios.gradle.plugin.jplatform.source.impl.PluginXmlExtractor
 import com.jalios.gradle.plugin.jplatform.source.impl.PrivateFilesExtractor
 import com.jalios.gradle.plugin.jplatform.source.impl.PublicFilesExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.TypesJspExtractor
 import com.jalios.gradle.plugin.jplatform.source.impl.TypesStdJspExtractor
 import com.jalios.gradle.plugin.jplatform.source.impl.TypesTemplatesExtractor
 import com.jalios.gradle.plugin.jplatform.source.impl.TypesTypeFileExtractor
@@ -43,7 +44,8 @@ abstract public class BaseTaskImpl extends DefaultTask {
 			new TypesTypeFileExtractor(),			// Extract files declared inside <type> tags (in plugin.xml)
 			new TypesTypeTemplatesXmlExtractor(),	// Extract <type>-templates.xml
 			new TypesTemplatesExtractor(),			// Extract files from <type>-templates.xml and from tag <types>/<templates> in plugin.xml
-			new TypesStdJspExtractor()				// Extract standard jsp files associated with declared types
+			new TypesStdJspExtractor(),				// Extract standard jsp files associated with declared types
+			new TypesJspExtractor()					// Extract custom jsp for declared types
 		]
 		
 		JModule currModule = new JModule(
