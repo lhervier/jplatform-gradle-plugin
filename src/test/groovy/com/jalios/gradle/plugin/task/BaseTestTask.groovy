@@ -18,10 +18,14 @@ abstract class BaseTestTask {
 	protected JModule platformModule
 	
 	protected void addPluginXml(JModule module) {
+		this.addPluginXml(module, "")
+	}
+	protected void addPluginXml(JModule module, String content) {
 		module.rootFs.addFile(
 			"WEB-INF/plugins/${module.name}/plugin.xml", 
 			ByteUtils.extractBytes("""
 				<plugin name="${module.name}">
+					${content}
 				</plugin>
 			""")
 		)

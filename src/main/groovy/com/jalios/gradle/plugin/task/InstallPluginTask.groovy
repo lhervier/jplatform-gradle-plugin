@@ -10,41 +10,43 @@ import com.jalios.gradle.plugin.jplatform.JModule
 class InstallPluginTask implements JPlatformTask {
 
 	void run(JModule platformModule, JModule currModule) {
-		// Files present in current module
-		println "Current module file :"
-		currModule.files.each { path ->
+		println "Relevant files :"
+		println "================"
+		
+		println "Current module files :"
+		currModule.paths.each { path ->
 			println "- ${path}"
 		}
 		
-		// Get platform plugin files (normal, and generated)
+		println "Platform module files :"
+		platformModule.paths.each { path ->
+			println "- ${path}"
+		}
+		
 		println "Platform module generated files :"
-		platformModule.generatedFiles.each { genFile ->
+		platformModule.generatedPaths.each { genFile ->
 			println "- ${genFile.path} generated from ${genFile.source}"
 		}
-		println "Platform module files :"
-		platformModule.files.each { path ->
-			println "- ${path}"
-		}
 		
-		// Remove files that are no longer present in current module
-		println "Removing files that are no longer present in the current module"
-		platformModule.files.each { path ->
-			if( !currModule.files.contains(path) ) {
+		println "Installing module :"
+		println "==================="
+		
+		println "Removing platform module files that are no longer present in the current module"
+		platformModule.paths.each { path ->
+			if( !currModule.paths.contains(path) ) {
 				platformModule.rootFs.delete(path)
 			}
 		}
 		
-		// Remove generated files whose corresponding source no longer exist in current module
-		println "Removing generated files whose corresponding source no longer exist in current module"
-		platformModule.generatedFiles.each { genFile ->
-			if( !currModule.files.contains(genFile.source) ) {
+		println "Removing platform module generated files whose corresponding source no longer exist in the current module"
+		platformModule.generatedPaths.each { genFile ->
+			if( !currModule.paths.contains(genFile.source) ) {
 				platformModule.rootFs.delete(genFile.path)
 			}
 		}
 		
-		// Overwrite platform module files
 		println "Overwriting platform module files"
-		currModule.files.each { path ->
+		currModule.paths.each { path ->
 			currModule.rootFs.getContentAsStream(path) { inStream ->
 				platformModule.rootFs.setContentFromStream(path, inStream)
 			}
