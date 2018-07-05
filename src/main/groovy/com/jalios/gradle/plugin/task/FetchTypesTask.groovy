@@ -1,9 +1,10 @@
 package com.jalios.gradle.plugin.task
 
 import com.jalios.gradle.plugin.ex.JTaskException
-import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.jplatform.JModule
-import com.jalios.gradle.plugin.jplatform.source.impl.TypesExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.TypesStdJspExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.TypesTypeTemplatesXmlExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.TypesTypeXmlExtractor
 
 /**
  * Task to fetch files generated for the set of types declared
@@ -19,12 +20,22 @@ class FetchTypesTask implements JPlatformTask {
 			throw new JTaskException("Current module is empty... Unable to fetch types")
 		}
 		
-		// Using type extractor to extract files from platform plugin
-		// while getting the list of types to extract from current plugin
-		new TypesExtractor().extractGeneratedFilesForTypes(
-				platformModule,
-				currModule.pluginXml 
-		) { path ->
+		// Fetch type.xml file
+		new TypesTypeXmlExtractor().extract(platformModule, currModule.pluginXml) { path ->
+			platformModule.rootFs.getContentAsStream(path) { inStream ->
+				currModule.rootFs.setContentFromStream(path, inStream)
+			}
+		}
+		
+		// Fetch type-templates.xml file
+		new TypesTypeTemplatesXmlExtractor().extract(platformModule, currModule.pluginXml) { path ->
+			platformModule.rootFs.getContentAsStream(path) { inStream ->
+				currModule.rootFs.setContentFromStream(path, inStream)
+			}
+		}
+		
+		// Fetch the standard JSPs
+		new TypesStdJspExtractor().extract(platformModule, currModule.pluginXml) { path ->
 			platformModule.rootFs.getContentAsStream(path) { inStream ->
 				currModule.rootFs.setContentFromStream(path, inStream)
 			}
