@@ -1,16 +1,13 @@
 package com.jalios.gradle.plugin.task
 
-import org.junit.Before
 import org.junit.Test
 
-import com.jalios.gradle.plugin.ex.JTaskException
+import com.jalios.gradle.plugin.fs.FSType
+import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedFileExtractor
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedPath
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
-import com.jalios.gradle.plugin.jplatform.source.impl.PluginXmlExtractor
-import com.jalios.gradle.plugin.test.InMemoryJFileSystem
-import com.jalios.gradle.plugin.test.util.ByteUtils
 
 class TestInstallPluginTask extends BaseTestTask {
 
@@ -29,9 +26,9 @@ class TestInstallPluginTask extends BaseTestTask {
 		
 		this.currModule.init(
 			null, 
-			[{JModule m, Closure<String> closure ->
-				closure("css/styles.css")
-				closure("css/styles2.css")
+			[{JModule m, Closure<JPath> closure ->
+				closure(new JPath(FSType.ROOT, "css/styles.css"))
+				closure(new JPath(FSType.ROOT, "css/styles2.css"))
 			} as SourceFileExtractor]
 		)
 		this.platformModule.init(null, null)
@@ -47,7 +44,7 @@ class TestInstallPluginTask extends BaseTestTask {
 		// css extractors
 		def extractor = {JModule m, Closure<String> closure ->
 			m.rootFs.paths("css/*.css") { path ->
-				closure(path)
+				closure(new JPath(FSType.ROOT, path))
 			}
 		} as SourceFileExtractor
 		
@@ -84,7 +81,10 @@ class TestInstallPluginTask extends BaseTestTask {
 		def extractor = {JModule m, Closure<String> closure ->
 			m.rootFs.paths("css/*.less") { path ->
 				String css = path.substring(0, path.length() - 4) + "css"
-				closure(new GeneratedPath(path: path, source: css))
+				closure(new GeneratedPath(
+					path: new JPath(FSType.ROOT, path), 
+					source: new JPath(FSType.ROOT, css)
+				))
 			}
 		} as GeneratedFileExtractor
 		
@@ -122,15 +122,18 @@ class TestInstallPluginTask extends BaseTestTask {
 		def genExtractor = {JModule m, Closure<String> closure ->
 			m.rootFs.paths("css/*.less") { less ->
 				String css = less.substring(0, less.length() - 4) + "css"
-				closure(new GeneratedPath(path: css, source: less))
+				closure(new GeneratedPath(
+					path: new JPath(FSType.ROOT, css), 
+					source: new JPath(FSType.ROOT, less)
+				))
 			}
 		} as GeneratedFileExtractor
 		
 		// less extractor
 		// => Declare less files
-		def srcExtractor = {JModule m, Closure<String> closure ->
+		def srcExtractor = {JModule m, Closure<JPath> closure ->
 			m.rootFs.paths("css/*.less") { path ->
-				closure(path)
+				closure(new JPath(FSType.ROOT, path))
 			}
 		} as GeneratedFileExtractor
 		

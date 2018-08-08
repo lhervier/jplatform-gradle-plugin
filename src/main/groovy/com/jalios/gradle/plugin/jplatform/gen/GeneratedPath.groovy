@@ -1,6 +1,8 @@
 package com.jalios.gradle.plugin.jplatform.gen
 
+import com.jalios.gradle.plugin.fs.JPath
+
 class GeneratedPath {
-	String path
-	String source
+	JPath path
+	JPath source
 }

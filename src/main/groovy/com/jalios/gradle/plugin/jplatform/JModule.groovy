@@ -1,6 +1,8 @@
 package com.jalios.gradle.plugin.jplatform
 
+import com.jalios.gradle.plugin.fs.FSType
 import com.jalios.gradle.plugin.fs.JFileSystem
+import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedFileExtractor
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedPath
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
@@ -18,17 +20,9 @@ class JModule {
 	final String name
 	
 	/**
-	 * Filesystem of the module
+	 * Filesystems of the module
 	 */
-	final JFileSystem rootFs
-	JFileSystem pubFs
-	JFileSystem privFs
-	
-	/**
-	 * Paths of file systems
-	 */
-	String privFsPath
-	String pubFsPath
+	Map<FSType, JFileSystem> fileSystems = new HashMap()
 	
 	/**
 	 * plugin.prop file
@@ -43,43 +37,61 @@ class JModule {
 	/**
 	 * Paths that compose the module
 	 */
-	List<String> paths = []
+	Set<JPath> paths = new HashSet()
 	
 	/**
 	 * Generated paths inside the module
 	 */
-	List<GeneratedPath> generatedPaths = []
+	List<GeneratedPath> generatedPaths = new ArrayList()
 	
 	/**
 	 * Constructor
 	 */
 	JModule(
 			String name, 
-			JFileSystem rootFs) {
+			JFileSystem rootFs,
+			JFileSystem dataFs) {
 		this.name = name
-		this.rootFs = rootFs
+		this.fileSystems.put(FSType.ROOT, rootFs)
+		this.fileSystems.put(FSType.DATA, dataFs)
+	}
+	
+	/**
+	 * Access to file systems
+	 */
+	JFileSystem getFs(FSType type) {
+		return this.fileSystems.get(type)
+	}
+	JFileSystem getRootFs() {
+		return this.getFs(FSType.ROOT)
+	}
+	JFileSystem getDataFs() {
+		return this.getFs(FSType.DATA)
+	}
+	JFileSystem getPubFs() {
+		return this.getFs(FSType.PUBLIC)
+	}
+	JFileSystem getPrivFs() {
+		return this.getFs(FSType.PRIVATE)
 	}
 	
 	/**
 	 * Loads the module
 	 */
 	void init(List<GeneratedFileExtractor> genFileExtractors, List<SourceFileExtractor> srcFileExtractors) {
-		String privFsPath = "WEB-INF/plugins/${this.name}"
-		JFileSystem privFs = this.rootFs.createFrom(privFsPath)
+		this.fileSystems.put(FSType.PRIVATE, this.rootFs.createFrom("WEB-INF/plugins/${this.name}"))
+		this.fileSystems.put(FSType.PUBLIC, this.rootFs.createFrom("plugins/${this.name}"))
+		
 		if( !privFs.exists("plugin.xml") ) {
 			return
 		}
 		
-		this.privFsPath = privFsPath
-		this.privFs = privFs
-		
-		this.pubFsPath = "plugins/${this.name}"
-		this.pubFs = this.rootFs.createFrom(this.pubFsPath)
-		
+		// Create plugin.xml
 		this.privFs.getContentAsReader("plugin.xml", "UTF-8") { reader ->
 			this.pluginXml = new PluginXml(reader)
 		}
 		
+		// Create plugin.prop
 		if( this.privFs.exists("properties/plugin.prop") ) {
 			this.privFs.getContentAsReader("properties/plugin.prop", "UTF-8") { reader ->
 				this.pluginProp = new PluginProp(reader)
@@ -96,13 +108,13 @@ class JModule {
 		// compute the list of source files
 		srcFileExtractors?.each { extractor ->
 			extractor.extract(this) { path ->
-				this.paths.add(path.toString())
+				this.paths.add(path)
 			}
 		}
 		
 		// Remove generated files from source files list
 		this.generatedPaths.each { genPath ->
-			this.paths.removeElement(genPath.path.toString())
+			this.paths.removeElement(genPath.path)
 		}
 	}
 }

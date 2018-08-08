@@ -13,7 +13,9 @@ import com.jalios.gradle.plugin.test.util.ByteUtils
 abstract class BaseTestTask {
 
 	protected InMemoryJFileSystem currModuleFs
+	protected InMemoryJFileSystem currModuleDataFs
 	protected InMemoryJFileSystem platformModuleFs
+	protected InMemoryJFileSystem platformModuleDataFs
 	protected JModule currModule
 	protected JModule platformModule
 	
@@ -43,10 +45,12 @@ abstract class BaseTestTask {
 	@Before
 	void internalSetUp() {
 		this.currModuleFs = new InMemoryJFileSystem()
-		this.currModule = new JModule("TestPlugin", this.currModuleFs)
+		this.currModuleDataFs = new InMemoryJFileSystem()
+		this.currModule = new JModule("TestPlugin", this.currModuleFs, this.currModuleDataFs)
 		
 		this.platformModuleFs = new InMemoryJFileSystem()
-		this.platformModule = new JModule("TestPlugin", this.platformModuleFs)
+		this.platformModuleDataFs = new InMemoryJFileSystem()
+		this.platformModule = new JModule("TestPlugin", this.platformModuleFs, this.platformModuleDataFs)
 		
 		this.setUp()
 	}

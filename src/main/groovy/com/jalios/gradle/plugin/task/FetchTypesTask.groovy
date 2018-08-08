@@ -21,23 +21,23 @@ class FetchTypesTask implements JPlatformTask {
 		}
 		
 		// Fetch type.xml file
-		new TypesTypeXmlExtractor().extract(platformModule, currModule.pluginXml) { path ->
-			platformModule.rootFs.getContentAsStream(path) { inStream ->
-				currModule.rootFs.setContentFromStream(path, inStream)
+		new TypesTypeXmlExtractor().extract(platformModule, currModule.pluginXml) { jpath ->
+			platformModule.getFs(jpath.type).getContentAsStream(jpath.path) { inStream ->
+				currModule.getFs(jpath.type).setContentFromStream(jpath.path, inStream)
 			}
 		}
 		
 		// Fetch type-templates.xml file
-		new TypesTypeTemplatesXmlExtractor().extract(platformModule, currModule.pluginXml) { path ->
-			platformModule.rootFs.getContentAsStream(path) { inStream ->
-				currModule.rootFs.setContentFromStream(path, inStream)
+		new TypesTypeTemplatesXmlExtractor().extract(platformModule, currModule.pluginXml) { jpath ->
+			platformModule.getFs(jpath.type).getContentAsStream(jpath.path) { inStream ->
+				currModule.getFs(jpath.type).setContentFromStream(jpath.path, inStream)
 			}
 		}
 		
 		// Fetch the standard JSPs
-		new TypesStdJspExtractor().extract(platformModule, currModule.pluginXml) { path ->
-			platformModule.rootFs.getContentAsStream(path) { inStream ->
-				currModule.rootFs.setContentFromStream(path, inStream)
+		new TypesStdJspExtractor().extract(platformModule, currModule.pluginXml) { jpath ->
+			platformModule.getFs(jpath.type).getContentAsStream(jpath.path) { inStream ->
+				currModule.getFs(jpath.type).setContentFromStream(jpath.path, inStream)
 			}
 		}
 	}

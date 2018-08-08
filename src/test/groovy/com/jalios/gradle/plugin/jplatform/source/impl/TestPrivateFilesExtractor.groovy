@@ -5,12 +5,11 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem
 import static org.hamcrest.core.IsCollectionContaining.hasItems
 import static org.junit.Assert.assertThat
 
-import org.hamcrest.CoreMatchers
-import org.hamcrest.core.IsCollectionContaining
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
+import com.jalios.gradle.plugin.fs.FSType
+import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.test.InMemoryJFileSystem
 import com.jalios.gradle.plugin.test.util.ByteUtils
@@ -24,7 +23,7 @@ class TestPrivateFilesExtractor {
 	@Before
 	void setUp() {
 		this.fs = new InMemoryJFileSystem()
-		this.module = new JModule("TestPlugin", this.fs)
+		this.module = new JModule("TestPlugin", this.fs, new InMemoryJFileSystem())
 		this.extractor = new PrivateFilesExtractor()
 	}
 	
@@ -46,13 +45,13 @@ class TestPrivateFilesExtractor {
 		this.fs.addFile("WEB-INF/plugins/TestPlugin/rep/baz.yaml")
 		this.module.init(null, null)
 		
-		List<String> paths = new ArrayList()
-		this.extractor.extract(this.module) { path ->
-			paths.add(path.toString())
+		List<JPath> paths = new ArrayList()
+		this.extractor.extract(this.module) { jpath ->
+			paths.add(jpath)
 		}
 		
-		assertThat(paths, hasItems("WEB-INF/plugins/TestPlugin/rep/foo.xml"))
-		assertThat(paths, not(hasItems("WEB-INF/plugins/TestPlugin/rep/bar.xml")))
+		assertThat(paths, hasItems(new JPath(FSType.PRIVATE, "rep/foo.xml")))
+		assertThat(paths, not(hasItems(new JPath(FSType.PRIVATE, "rep/bar.xml"))))
 	}
 	
 	@Test
@@ -73,14 +72,14 @@ class TestPrivateFilesExtractor {
 		this.fs.addFile("WEB-INF/plugins/TestPlugin/rep/baz.yaml")
 		this.module.init(null, null)
 		
-		List<String> paths = new ArrayList()
-		this.extractor.extract(this.module) { path ->
-			paths.add(path.toString())
+		List<JPath> paths = new ArrayList()
+		this.extractor.extract(this.module) { jpath ->
+			paths.add(jpath)
 		}
 		
 		assertThat(paths, hasItems(
-			"WEB-INF/plugins/TestPlugin/rep/foo.xml",
-			"WEB-INF/plugins/TestPlugin/rep/bar.xml"
+			new JPath(FSType.PRIVATE, "rep/foo.xml"),
+			new JPath(FSType.PRIVATE, "rep/bar.xml")
 		))
 	}
 	
@@ -100,16 +99,17 @@ class TestPrivateFilesExtractor {
 		this.fs.addFile("WEB-INF/plugins/TestPlugin/rep/foo.xml")
 		this.fs.addFile("WEB-INF/plugins/TestPlugin/rep/bar.xml")
 		this.fs.addFile("WEB-INF/plugins/TestPlugin/rep/baz.yaml")
+		this.fs.addFile("WEB-INF/plugins/TestPlugin/other/other.yaml")
 		this.module.init(null, null)
 		
-		List<String> paths = new ArrayList()
-		this.extractor.extract(this.module) { path ->
-			paths.add(path.toString())
+		List<JPath> paths = new ArrayList()
+		this.extractor.extract(this.module) { jpath ->
+			paths.add(jpath)
 		}
 		
 		assert paths.size() == 3
-		assertThat(paths, hasItem("WEB-INF/plugins/TestPlugin/rep/foo.xml"))
-		assertThat(paths, hasItem("WEB-INF/plugins/TestPlugin/rep/bar.xml"))
-		assertThat(paths, hasItem("WEB-INF/plugins/TestPlugin/rep/baz.yaml"))
+		assertThat(paths, hasItem(new JPath(FSType.PRIVATE, "rep/foo.xml")))
+		assertThat(paths, hasItem(new JPath(FSType.PRIVATE, "rep/bar.xml")))
+		assertThat(paths, hasItem(new JPath(FSType.PRIVATE, "rep/baz.yaml")))
 	}
 }

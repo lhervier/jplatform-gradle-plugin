@@ -5,12 +5,12 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem
 import static org.hamcrest.core.IsCollectionContaining.hasItems
 import static org.junit.Assert.assertThat
 
-import org.hamcrest.CoreMatchers
 import org.hamcrest.core.IsCollectionContaining
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
+import com.jalios.gradle.plugin.fs.FSType
+import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.test.InMemoryJFileSystem
 import com.jalios.gradle.plugin.test.util.ByteUtils
@@ -24,7 +24,7 @@ class TestWebappFilesExtractor {
 	@Before
 	void setUp() {
 		this.fs = new InMemoryJFileSystem()
-		this.module = new JModule("TestPlugin", this.fs)
+		this.module = new JModule("TestPlugin", this.fs, new InMemoryJFileSystem())
 		this.extractor = new WebappFilesExtractor()
 	}
 	
@@ -45,13 +45,13 @@ class TestWebappFilesExtractor {
 		this.fs.addFile("my_file_other.txt")
 		this.module.init(null, null)
 		
-		List<String> paths = new ArrayList()
-		this.extractor.extract(this.module) { path ->
-			paths.add(path.toString())
+		List<JPath> paths = new ArrayList()
+		this.extractor.extract(this.module) { jpath ->
+			paths.add(jpath)
 		}
 		
-		assertThat(paths, hasItems("my_file.txt"))
-		assertThat(paths, not(hasItems("my_file_other.txt")))
+		assertThat(paths, hasItems(new JPath(FSType.ROOT, "my_file.txt")))
+		assertThat(paths, not(hasItems(new JPath(FSType.ROOT, "my_file_other.txt"))))
 	}
 	
 	@Test
@@ -72,14 +72,14 @@ class TestWebappFilesExtractor {
 		this.fs.addFile("css/x/baz.less")
 		this.module.init(null, null)
 		
-		List<String> paths = new ArrayList()
-		this.extractor.extract(this.module) { path ->
-			paths.add(path.toString())
+		List<JPath> paths = new ArrayList()
+		this.extractor.extract(this.module) { jpath ->
+			paths.add(jpath)
 		}
 		
 		assert paths.size() == 2
-		assertThat(paths, IsCollectionContaining.hasItem("css/foo.less"))
-		assertThat(paths, IsCollectionContaining.hasItem("css/bar.less"))
+		assertThat(paths, IsCollectionContaining.hasItem(new JPath(FSType.ROOT, "css/foo.less")))
+		assertThat(paths, IsCollectionContaining.hasItem(new JPath(FSType.ROOT, "css/bar.less")))
 	}
 	
 	@Test
@@ -100,14 +100,14 @@ class TestWebappFilesExtractor {
 		this.fs.addFile("css/x/baz.css")
 		this.module.init(null, null)
 		
-		List<String> paths = new ArrayList()
-		this.extractor.extract(this.module) { path ->
-			paths.add(path.toString())
+		List<JPath> paths = new ArrayList()
+		this.extractor.extract(this.module) { jpath ->
+			paths.add(jpath)
 		}
 		
 		assert paths.size() == 3
-		assertThat(paths, hasItem("css/foo.less"))
-		assertThat(paths, hasItem("css/bar.less"))
-		assertThat(paths, hasItem("css/x/baz.css"))
+		assertThat(paths, hasItem(new JPath(FSType.ROOT, "css/foo.less")))
+		assertThat(paths, hasItem(new JPath(FSType.ROOT, "css/bar.less")))
+		assertThat(paths, hasItem(new JPath(FSType.ROOT, "css/x/baz.css")))
 	}
 }

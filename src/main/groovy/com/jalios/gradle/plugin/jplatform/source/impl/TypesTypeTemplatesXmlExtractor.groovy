@@ -3,6 +3,8 @@ package com.jalios.gradle.plugin.jplatform.source.impl
 import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
 
 import com.jalios.gradle.plugin.ex.JTaskException
+import com.jalios.gradle.plugin.fs.JPath
+import com.jalios.gradle.plugin.fs.FSType
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.PluginXml
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
@@ -16,15 +18,15 @@ import groovy.lang.Closure
 class TypesTypeTemplatesXmlExtractor implements SourceFileExtractor {
 
 	@Override
-	public void extract(JModule module, Closure<String> closure) {
+	public void extract(JModule module, Closure<JPath> closure) {
 		this.extract(module, module.pluginXml, closure)
 	}
 	
-	void extract(JModule module, PluginXml pluginXml, Closure<String> closure) {
+	void extract(JModule module, PluginXml pluginXml, Closure<JPath> closure) {
 		pluginXml.types.types.each { type ->
-			String xml = "WEB-INF/data/types/${type.name}/${type.name}-templates.xml"
-			if( module.rootFs.exists(xml) ) {
-				closure(xml.toString())
+			String xml = "types/${type.name}/${type.name}-templates.xml"
+			if( module.dataFs.exists(xml) ) {
+				closure(new JPath(FSType.DATA, xml))
 			}
 		}
 	}

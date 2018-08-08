@@ -10,14 +10,27 @@ import groovy.lang.Closure
 
 class InMemoryJFileSystem extends JFileSystem {
 
-	private Map<String, byte[]> files = new HashMap<>()
+	private Map<String, byte[]> files
+	
+	private String root
+	
+	InMemoryJFileSystem() {
+		this("", new HashMap<>())
+	}
+	
+	private InMemoryJFileSystem(String root, Map<String, byte[]> files) {
+		this.files = files
+		this.root = root
+	}
+	
+	// ===========================================================
 	
 	public void addFile(String name) {
 		this.addFile(name.toString(), new byte[0])
 	}
 	
 	public void addFile(String name, byte[] content) {
-		this.files.put(name.toString(), content)
+		this.files.put(root + name.toString(), content)
 	}
 	
 	boolean match(String path, String pattern) {
@@ -32,25 +45,25 @@ class InMemoryJFileSystem extends JFileSystem {
 	
 	@Override
 	public boolean exists(String path) throws JFileSystemException {
-		return this.files.containsKey(path.toString())
+		return this.files.containsKey(root + path.toString())
 	}
 
 	@Override
 	public void paths(String pattern, Closure<String> closure) throws JFileSystemException {
 		this.files.each { path, content ->
-			if( this.match(path, pattern.toString()) )
-				closure(path)
+			if( this.match(path, root + pattern.toString()) )
+				closure(path.substring(root.length()))
 		}
 	}
 	
 	@Override
 	public void delete(String path) throws JFileSystemException {
-		this.files.remove(path.toString())
+		this.files.remove(root + path.toString())
 	}
 
 	@Override
 	public void setContentFromStream(String path, InputStream inStream) throws JFileSystemException {
-		this.files.put(path.toString(), inStream.bytes)
+		this.files.put(root + path.toString(), inStream.bytes)
 	}
 
 	@Override
@@ -59,7 +72,7 @@ class InMemoryJFileSystem extends JFileSystem {
 			throw new JFileSystemException("File ${path} does not exists. Unable to get content.")
 		}
 		
-		InputStream inStream = new ByteArrayInputStream(this.files.get(path.toString()))
+		InputStream inStream = new ByteArrayInputStream(this.files.get(root + path.toString()))
 		try {
 			closure(inStream)
 		} finally {
@@ -69,14 +82,10 @@ class InMemoryJFileSystem extends JFileSystem {
 
 	@Override
 	public JFileSystem createFrom(String path) throws JFileSystemException {
-		InMemoryJFileSystem ret = new InMemoryJFileSystem()
-		this.paths("${path}/**") { subPath ->
-			ret.files.put(
-					subPath.substring(path.length() + 1), 
-					this.files.get(subPath)
-			)
+		if( !path.endsWith("/") ) {
+			path += "/"
 		}
-		return ret;
+		return new InMemoryJFileSystem(path, this.files)
 	}
 	
 }

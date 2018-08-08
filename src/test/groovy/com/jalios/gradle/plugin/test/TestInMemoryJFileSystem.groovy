@@ -144,4 +144,14 @@ class TestInMemoryJFileSystem {
 			assert reader.readLine() == "012"
 		}
 	}
+	
+	@Test
+	void whenCreatingFrom_thenFileSystemShared() {
+		this.fs.addFile("rep/test.txt", (byte[]) [48, 49, 50])
+		InMemoryJFileSystem subFs = this.fs.createFrom("rep")
+		assert subFs.exists("test.txt")
+		
+		subFs.addFile("test2.txt", (byte[]) [32, 33, 34])
+		assert this.fs.exists("rep/test.txt")
+	}
 }

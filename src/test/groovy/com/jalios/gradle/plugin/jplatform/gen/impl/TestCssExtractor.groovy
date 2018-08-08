@@ -5,9 +5,9 @@ import static org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
+import com.jalios.gradle.plugin.fs.FSType
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedPath
-import com.jalios.gradle.plugin.jplatform.gen.impl.CssExtractor
 import com.jalios.gradle.plugin.test.InMemoryJFileSystem
 import com.jalios.gradle.plugin.test.util.ByteUtils
 
@@ -29,7 +29,8 @@ class TestCssExtractor {
 		)
 		this.module = new JModule(
 			"TestPlugin", 
-			this.fs
+			this.fs,
+			new InMemoryJFileSystem()
 		)
 		this.extractor = new CssExtractor()
 	}
@@ -50,10 +51,14 @@ class TestCssExtractor {
 			gps.add(path)
 		}
 		assert gps.size() == 2
-		assert gps[0].path == "plugins/TestASIPlugin/css/plugin.css"
-		assert gps[0].source == "plugins/TestASIPlugin/css/plugin.less"
-		assert gps[1].path == "plugins/TestASIPlugin/css/other.css"
-		assert gps[1].source == "plugins/TestASIPlugin/css/test.less"
+		assert gps[0].path.path == "plugins/TestASIPlugin/css/plugin.css"
+		assert gps[0].path.type == FSType.ROOT
+		assert gps[0].source.path == "plugins/TestASIPlugin/css/plugin.less"
+		assert gps[0].source.type == FSType.ROOT
+		assert gps[1].path.path == "plugins/TestASIPlugin/css/other.css"
+		assert gps[1].path.type == FSType.ROOT
+		assert gps[1].source.path == "plugins/TestASIPlugin/css/test.less"
+		assert gps[1].source.type == FSType.ROOT
 	}
 
 }

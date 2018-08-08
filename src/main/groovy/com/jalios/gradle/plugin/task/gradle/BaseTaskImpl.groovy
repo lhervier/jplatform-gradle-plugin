@@ -29,7 +29,9 @@ abstract public class BaseTaskImpl extends DefaultTask {
 	@TaskAction
 	final def taskAction() {
 		JFileSystem platformFs = new JFileSystemImpl(this.project.files(jPlatform.path))
+		JFileSystem platformFsData = new JFileSystemImpl(this.project.files(jPlatform.dataPath))
 		JFileSystem moduleFs = new JFileSystemImpl(this.project.files("src/main/module"))
+		JFileSystem moduleFsData = new JFileSystemImpl(this.project.files("src/main/module/WEB-INF/data"))
 		
 		List<GeneratedFileExtractor> genFileExtractors = [
 			new CssExtractor(),
@@ -50,13 +52,15 @@ abstract public class BaseTaskImpl extends DefaultTask {
 		
 		JModule currModule = new JModule(
 			this.project.jModule.name,
-			moduleFs
+			moduleFs,
+			moduleFsData
 		);
 		currModule.init(genFileExtractors, srcFileExtractors)
 
 		JModule platformModule = new JModule(
 			this.project.jModule.name,
-			platformFs
+			platformFs,
+			platformFsData
 		)
 		platformModule.init(genFileExtractors, srcFileExtractors)
 			

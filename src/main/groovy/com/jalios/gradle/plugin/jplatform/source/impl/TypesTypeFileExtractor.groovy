@@ -1,6 +1,8 @@
 package com.jalios.gradle.plugin.jplatform.source.impl
 
 import com.jalios.gradle.plugin.ex.JTaskException
+import com.jalios.gradle.plugin.fs.JPath
+import com.jalios.gradle.plugin.fs.FSType
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.PluginXml
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
@@ -12,15 +14,15 @@ import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 class TypesTypeFileExtractor implements SourceFileExtractor {
 
 	@Override
-	public void extract(JModule module, Closure<String> closure) {
+	public void extract(JModule module, Closure<JPath> closure) {
 		this.extract(module, module.pluginXml, closure)
 	}
 	
-	void extract(JModule module, PluginXml pluginXml, Closure<String> closure) {
+	void extract(JModule module, PluginXml pluginXml, Closure<JPath> closure) {
 		pluginXml.types.types.each { type ->
 			type.files.each { file ->
 				module.rootFs.paths("types/${type.name}/${file.path}") { path ->
-					closure(path.toString())
+					closure(new JPath(FSType.ROOT, path))
 				}
 			}
 		}

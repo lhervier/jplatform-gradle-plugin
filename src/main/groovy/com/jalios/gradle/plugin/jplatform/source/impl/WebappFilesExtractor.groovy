@@ -1,5 +1,7 @@
 package com.jalios.gradle.plugin.jplatform.source.impl
 
+import com.jalios.gradle.plugin.fs.JPath
+import com.jalios.gradle.plugin.fs.FSType
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.model.JFiles
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
@@ -15,8 +17,8 @@ import groovy.lang.Closure
 class WebappFilesExtractor extends BaseFilesExtractor implements SourceFileExtractor {
 
 	@Override
-	public void extract(JModule module, Closure<String> closure) {
-		this.extract(module.rootFs, module.pluginXml.webappFiles, closure)
+	public void extract(JModule module, Closure<JPath> closure) {
+		this.extract(module.rootFs, FSType.ROOT, module.pluginXml.webappFiles, closure)
 	}
 
 }

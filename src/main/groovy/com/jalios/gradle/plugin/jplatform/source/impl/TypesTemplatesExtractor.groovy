@@ -1,6 +1,8 @@
 package com.jalios.gradle.plugin.jplatform.source.impl
 
 import com.jalios.gradle.plugin.ex.JTaskException
+import com.jalios.gradle.plugin.fs.JPath
+import com.jalios.gradle.plugin.fs.FSType
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.PluginXml
 import com.jalios.gradle.plugin.jplatform.TemplateXml
@@ -16,16 +18,16 @@ class TypesTemplatesExtractor implements SourceFileExtractor {
 	 * Extract all source files from types
 	 */
 	@Override
-	public void extract(JModule module, Closure<String> closure) {
+	public void extract(JModule module, Closure<JPath> closure) {
 		// Extract templates from types xml file
 		module.pluginXml.types.types.each { type ->
-			def xml = "WEB-INF/data/types/${type.name}/${type.name}-templates.xml"
-			if( module.rootFs.exists(xml) ) {
-				closure(xml.toString())
-				module.rootFs.getContentAsReader(xml, "UTF-8") { reader ->
+			def xml = "types/${type.name}/${type.name}-templates.xml"
+			if( module.dataFs.exists(xml) ) {
+				closure(new JPath(FSType.DATA, xml))
+				module.dataFs.getContentAsReader(xml, "UTF-8") { reader ->
 					TemplateXml templateXml = new TemplateXml(type.name, reader)
 					templateXml.templates.each { tmpl ->
-						closure("types/${type.name}/${tmpl.file}".toString())
+						closure(new JPath(FSType.ROOT, "types/${type.name}/${tmpl.file}"))
 					}
 				}
 			}
@@ -35,7 +37,7 @@ class TypesTemplatesExtractor implements SourceFileExtractor {
 		module.pluginXml.types.templates.each { tmpls ->
 			String type = tmpls.type
 			tmpls.templates.each { tmpl ->
-				closure("types/${type}/${tmpl.file}".toString())
+				closure(new JPath(FSType.ROOT, "types/${type}/${tmpl.file}"))
 			}
 		}
 	}

@@ -1,5 +1,7 @@
 package com.jalios.gradle.plugin.jplatform.source.impl
 
+import com.jalios.gradle.plugin.fs.JPath
+import com.jalios.gradle.plugin.fs.FSType
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.model.JFiles
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
@@ -13,9 +15,7 @@ import groovy.lang.Closure
  */
 class PrivateFilesExtractor extends BaseFilesExtractor implements SourceFileExtractor {
 	@Override
-	public void extract(JModule module, Closure<String> closure) {
-		this.extract(module.privFs, module.pluginXml.privateFiles) { path ->
-			closure("${module.privFsPath}/${path}".toString())
-		}
+	public void extract(JModule module, Closure<JPath> closure) {
+		this.extract(module.privFs, FSType.PRIVATE, module.pluginXml.privateFiles, closure)
 	}
 }

@@ -54,10 +54,10 @@ class TestFetchTypesTask extends BaseTestTask {
 	@Test
 	void whenTypesNotDeclaredInCurrModule_thenTypesNotFetched() {
 		// Add two types to the platform
-		this.platformModuleFs.addFile("WEB-INF/data/types/MyType/MyType.xml")
-		this.platformModuleFs.addFile("WEB-INF/data/types/MyType/MyType-templates.xml")
-		this.platformModuleFs.addFile("WEB-INF/data/types/MySecondType/MySecondType.xml")
-		this.platformModuleFs.addFile("WEB-INF/data/types/MySecondType/MySecondType-templates.xml")
+		this.platformModuleDataFs.addFile("types/MyType/MyType.xml")
+		this.platformModuleDataFs.addFile("types/MyType/MyType-templates.xml")
+		this.platformModuleDataFs.addFile("types/MySecondType/MySecondType.xml")
+		this.platformModuleDataFs.addFile("types/MySecondType/MySecondType-templates.xml")
 		
 		// Add generated jsps files
 		this.platformModuleFs.addFile("types/MyType/doEditMyType.jsp")
@@ -89,9 +89,9 @@ class TestFetchTypesTask extends BaseTestTask {
 	@Test
 	void whenTypesDeclaredInCurrModule_thenTypesFetched() {
 		// Add two types to the platform
-		this.platformModuleFs.addFile("WEB-INF/data/types/MyType/MyType.xml")
-		this.platformModuleFs.addFile("WEB-INF/data/types/MyType/MyType-templates.xml")
-		this.platformModuleFs.addFile("WEB-INF/data/types/MyType2/MyType2.xml")
+		this.platformModuleDataFs.addFile("types/MyType/MyType.xml")
+		this.platformModuleDataFs.addFile("types/MyType/MyType-templates.xml")
+		this.platformModuleDataFs.addFile("types/MyType2/MyType2.xml")
 		
 		// Add generated jsps files
 		this.platformModuleFs.addFile("types/MyType/doEditMyType.jsp")
@@ -128,12 +128,12 @@ class TestFetchTypesTask extends BaseTestTask {
 		this.task.run(this.platformModule, this.currModule)
 		
 		// Check that files have been fetched
-		assert this.currModuleFs.exists("WEB-INF/data/types/MyType/MyType.xml")
-		assert this.currModuleFs.exists("WEB-INF/data/types/MyType/MyType-templates.xml")
+		assert this.currModuleDataFs.exists("types/MyType/MyType.xml")
+		assert this.currModuleDataFs.exists("types/MyType/MyType-templates.xml")
 		assert this.currModuleFs.exists("types/MyType/doEditMyTypeModal.jsp")
 		
-		assert this.currModuleFs.exists("WEB-INF/data/types/MyType2/MyType2.xml")
-		assert !this.currModuleFs.exists("WEB-INF/data/types/MyType2/MyType2-templates.xml")
+		assert this.currModuleDataFs.exists("types/MyType2/MyType2.xml")
+		assert !this.currModuleDataFs.exists("types/MyType2/MyType2-templates.xml")
 		
 		assert this.currModuleFs.exists("types/MyType2/editMyType2Modal.jsp")
 	}
@@ -141,8 +141,8 @@ class TestFetchTypesTask extends BaseTestTask {
 	@Test
 	void whenCustomJspDeployed_thenCustomJspNotFetched() {
 		// Add two types to the platform
-		this.platformModuleFs.addFile("WEB-INF/data/types/MyType/MyType.xml")
-		this.platformModuleFs.addFile("WEB-INF/data/types/MyType2/MyType2.xml")
+		this.platformModuleDataFs.addFile("types/MyType/MyType.xml")
+		this.platformModuleDataFs.addFile("types/MyType2/MyType2.xml")
 		
 		// Add a set of generated jsps files
 		this.platformModuleFs.addFile("types/MyType/doEditMyType.jsp")

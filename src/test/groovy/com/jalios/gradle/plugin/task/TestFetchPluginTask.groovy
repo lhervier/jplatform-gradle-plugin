@@ -1,13 +1,13 @@
 package com.jalios.gradle.plugin.task
 
-import org.junit.Before
 import org.junit.Test
 
 import com.jalios.gradle.plugin.ex.JTaskException
+import com.jalios.gradle.plugin.fs.FSType
+import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 import com.jalios.gradle.plugin.jplatform.source.impl.PluginXmlExtractor
-import com.jalios.gradle.plugin.test.InMemoryJFileSystem
 import com.jalios.gradle.plugin.test.util.ByteUtils
 
 class TestFetchPluginTask extends BaseTestTask {
@@ -52,7 +52,7 @@ class TestFetchPluginTask extends BaseTestTask {
 			null, 
 			[
 				new Expando(
-					extract: {JModule module, Closure<String> closure -> closure("test1")}
+					extract: {JModule module, Closure<String> closure -> closure(new JPath(FSType.ROOT, "test1"))}
 				) as SourceFileExtractor,
 				new PluginXmlExtractor()
 			]

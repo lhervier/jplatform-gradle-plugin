@@ -1,6 +1,8 @@
 package com.jalios.gradle.plugin.jplatform.source.impl
 
 import com.jalios.gradle.plugin.ex.JTaskException
+import com.jalios.gradle.plugin.fs.JPath
+import com.jalios.gradle.plugin.fs.FSType
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.PluginXml
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
@@ -30,15 +32,15 @@ class TypesStdJspExtractor implements SourceFileExtractor {
 	 * Extract all source files from types
 	 */
 	@Override
-	void extract(JModule module, Closure<String> closure) {
+	void extract(JModule module, Closure<JPath> closure) {
 		this.extract(module, module.pluginXml, closure)
 	}
 	
-	void extract(JModule module, PluginXml pluginXml, Closure<String> closure) {
+	void extract(JModule module, PluginXml pluginXml, Closure<JPath> closure) {
 		pluginXml.types.types.each { type ->
 			this.getStdJsps(type.name).each { jsp ->
 				if( module.rootFs.exists(jsp) ) {
-					closure(jsp)
+					closure(new JPath(FSType.ROOT, jsp))
 				}
 			}
 		}
