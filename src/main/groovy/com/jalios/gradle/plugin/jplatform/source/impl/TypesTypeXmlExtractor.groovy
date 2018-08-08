@@ -25,9 +25,9 @@ class TypesTypeXmlExtractor implements SourceFileExtractor {
 	void extract(JModule module, PluginXml pluginXml, Closure<JPath> closure) {
 		pluginXml.types.types.each { type ->
 			String xml = "types/${type.name}/${type.name}.xml"
-			if( !module.dataFs.exists(xml) )
-				throw new JTaskException("Type '${type.name}' does not exist in module '${module.name}'")
-			closure(new JPath(FSType.DATA, xml))
+			if( module.dataFs.exists(xml) ) {
+				closure(new JPath(FSType.DATA, xml))
+			}
 		}
 	}
 }

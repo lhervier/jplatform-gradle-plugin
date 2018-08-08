@@ -25,8 +25,7 @@ class TestTypesTypeXmlExtractor {
 		this.extractor = new TypesTypeXmlExtractor()
 	}
 	
-	@Test(expected = JTaskException)
-	void whenTypeDoesNotExists_thenError() {
+	void whenTypeDoesNotExists_thenTypeIgnored() {
 		this.fs.addFile(
 			"WEB-INF/plugins/TestPlugin/plugin.xml",
 			ByteUtils.extractBytes("""
@@ -39,8 +38,11 @@ class TestTypesTypeXmlExtractor {
 		)
 		this.module.init(null, null)
 		
-		this.extractor.extract(this.module) {
+		List<JPath> paths = new ArrayList()
+		this.extractor.extract(this.module) { jpath -> 
+			paths.add(jpath)
 		}
+		assert paths.size() == 0
 	}
 	
 	@Test

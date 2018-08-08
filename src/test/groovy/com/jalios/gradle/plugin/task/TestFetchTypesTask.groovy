@@ -30,8 +30,7 @@ class TestFetchTypesTask extends BaseTestTask {
 		this.task.run(this.platformModule, this.currModule)
 	}
 	
-	@Test(expected = JTaskException)
-	void whenTypesDoesNotExist_thenFail() {
+	void whenTypesDoesNotExist_thenTypeIgnored() {
 		// Declare types
 		this.currModuleFs.addFile(
 			"WEB-INF/plugins/${this.currModule.name}/plugin.xml",
