@@ -157,13 +157,17 @@ class TestJFileSystemImpl {
 	
 	@Test
 	void whenSetContentOnNonExistingFile_thenSetContent() {
+		String name = "rep1/rep2/nonexisting.txt"
+		File f = new File(this.root, name)
+		assert !f.exists()
+		
 		this.fs.setContentFromStream(
-			"nonexisting.txt", 
+			name, 
 			new ByteArrayInputStream(
 				ByteUtils.extractBytes("test")
 			)
 		)
-		assert  new File(this.root, "nonexisting.txt").exists()
+		assert f.exists()
 	}
 	
 	@Test
