@@ -6,6 +6,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+import com.jalios.gradle.plugin.test.util.ByteUtils
+
 class TestJFileSystemImpl {
 
 	private File root
@@ -150,6 +152,24 @@ class TestJFileSystemImpl {
 		new File(this.root, "test.txt").setText("Content of the first file", "UTF-8")
 		this.fs.getContentAsReader("test.txt", "UTF-8") { reader ->
 			assert reader.readLine() == "Content of the first file", "UTF-8"
+		}
+	}
+	
+	@Test
+	void whenSetContentOnNonExistingFile_thenSetContent() {
+		this.fs.setContentFromStream(
+			"nonexisting.txt", 
+			new ByteArrayInputStream(
+				ByteUtils.extractBytes("test")
+			)
+		)
+		assert  new File(this.root, "nonexisting.txt").exists()
+	}
+	
+	@Test
+	void whenGetContentOnNonExisting_thenDoNothing() {
+		this.fs.getContentAsStream("nonexisting") { instream ->
+			assert false
 		}
 	}
 }

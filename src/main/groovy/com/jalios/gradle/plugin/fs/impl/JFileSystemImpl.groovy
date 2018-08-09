@@ -60,6 +60,9 @@ class JFileSystemImpl extends JFileSystem {
 	@Override
 	public void getContentAsStream(String path, Closure<InputStream> closure) throws JFileSystemException {
 		File f = new File(this.rootFolder, path)
+		if( !f.exists() ) {
+			return
+		}
 		InputStream fileIn = new FileInputStream(f);
 		try {
 			closure(fileIn)
