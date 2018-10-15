@@ -11,11 +11,11 @@ import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 
 class TestInstallPluginTask extends BaseTestTask {
 
-	InstallPluginTask task
+	PushPluginTask task
 	
 	@Override
 	void setUp() {
-		this.task = new InstallPluginTask()
+		this.task = new PushPluginTask()
 	}
 
 	@Test

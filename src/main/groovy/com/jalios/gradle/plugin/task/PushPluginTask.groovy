@@ -7,7 +7,7 @@ import com.jalios.gradle.plugin.jplatform.JModule
  * This task will install the module into the jPlatform
  * @author Lionel HERVIER
  */
-class InstallPluginTask implements JPlatformTask {
+class PushPluginTask implements JPlatformTask {
 
 	void run(JModule platformModule, JModule currModule) {
 		println "Relevant files :"
