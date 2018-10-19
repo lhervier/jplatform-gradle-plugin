@@ -2,7 +2,6 @@ package com.jalios.gradle.plugin.jplatform
 
 import static org.junit.Assert.*
 
-import org.junit.Before
 import org.junit.Test
 
 class TestTemplateXml {

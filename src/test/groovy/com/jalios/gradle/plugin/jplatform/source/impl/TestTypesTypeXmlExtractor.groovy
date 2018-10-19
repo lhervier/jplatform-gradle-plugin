@@ -3,7 +3,6 @@ package com.jalios.gradle.plugin.jplatform.source.impl
 import org.junit.Before
 import org.junit.Test
 
-import com.jalios.gradle.plugin.ex.JTaskException
 import com.jalios.gradle.plugin.fs.FSType
 import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.jplatform.JModule

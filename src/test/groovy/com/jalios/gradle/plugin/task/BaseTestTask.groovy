@@ -1,12 +1,8 @@
 package com.jalios.gradle.plugin.task
 
 import org.junit.Before
-import org.junit.Test
 
-import com.jalios.gradle.plugin.ex.JTaskException
 import com.jalios.gradle.plugin.jplatform.JModule
-import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
-import com.jalios.gradle.plugin.jplatform.source.impl.PluginXmlExtractor
 import com.jalios.gradle.plugin.test.InMemoryJFileSystem
 import com.jalios.gradle.plugin.test.util.ByteUtils
 
