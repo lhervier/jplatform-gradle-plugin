@@ -25,7 +25,7 @@ class JModulePlugin implements Plugin<Project> {
 		// Executed at the end of the configuration phase
 		project.afterEvaluate {
 			// Get jPlatform path from extension configuration
-			def path = project.jPlatform.path
+			String path = project.jPlatform.path
 			
 			// Add dependency to javax.servlet as compileOnly
 			project.dependencies.add("compileOnly", "javax.servlet:javax.servlet-api:3.1.0")

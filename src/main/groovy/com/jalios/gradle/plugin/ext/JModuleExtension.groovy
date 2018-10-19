@@ -5,10 +5,10 @@ class JModuleExtension {
 	/**
 	 * The module name
 	 */
-	def name
+	String name
 	
 	/**
 	 * List of folders to exclude
 	 */
-	def exclude = []
+	List<String> exclude = []
 }
