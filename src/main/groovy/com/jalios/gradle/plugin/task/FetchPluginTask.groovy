@@ -12,7 +12,7 @@ import com.jalios.gradle.plugin.jplatform.JModule
  * 
  * @author Lionel HERVIER
  */
-class FetchPluginTask implements JPlatformTask {
+class FetchPluginTask extends BaseJPlatformTaskImpl {
 
 	void run(JModule platformModule, JModule currModule) throws JTaskException {
 		// Check that the current module does not exists

@@ -29,6 +29,10 @@ class TestPluginXml {
 						</template>
 					</templates>
 				</types>
+				<jars>
+					<jar path="jar1.jar"/>
+					<jar path="jar2.jar"/>
+				</jars>
 				<private-files>
 					<directory path="properties" />
 					<file path="docs/license.txt" include="true"/>
@@ -73,6 +77,10 @@ class TestPluginXml {
 		assert pluginXml.types.templates[0].templates[1].labels[0].lang == "en"
 		assert pluginXml.types.templates[0].templates[1].labels[1].label == "Gabarit Spécifique"
 		assert pluginXml.types.templates[0].templates[1].labels[1].lang == "fr"
+		
+		assert pluginXml.jars.size() == 2
+		assert pluginXml.jars[0].path == "jar1.jar"
+		assert pluginXml.jars[1].path == "jar2.jar"
 		
 		assert pluginXml.privateFiles.directories.size() == 1
 		assert pluginXml.privateFiles.directories[0].path == "properties"

@@ -4,6 +4,7 @@ import com.jalios.gradle.plugin.jplatform.model.JDependency
 import com.jalios.gradle.plugin.jplatform.model.JDirectory
 import com.jalios.gradle.plugin.jplatform.model.JFile
 import com.jalios.gradle.plugin.jplatform.model.JFiles
+import com.jalios.gradle.plugin.jplatform.model.JJar
 import com.jalios.gradle.plugin.jplatform.model.JLabel
 import com.jalios.gradle.plugin.jplatform.model.JTemplate
 import com.jalios.gradle.plugin.jplatform.model.JTemplates
@@ -21,6 +22,8 @@ class PluginXml {
 	
 	final List<JDependency> dependencies = new ArrayList()
 	final JTypes types
+	
+	final List<JJar> jars = new ArrayList()
 	
 	final JFiles privateFiles = new JFiles()
 	final JFiles publicFiles = new JFiles()
@@ -74,6 +77,12 @@ class PluginXml {
 				ts.templates.add(tmpl)
 			}
 			this.types.templates.add(ts)
+		}
+		
+		// Add jars dependencies
+		xml.jars.jar.each { n ->
+			JJar j = new JJar(path: n["@path"])
+			this.jars.add(j)
 		}
 		
 		// Add private, public and webapp files

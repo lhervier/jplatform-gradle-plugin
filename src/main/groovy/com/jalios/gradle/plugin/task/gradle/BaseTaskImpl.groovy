@@ -24,14 +24,38 @@ import com.jalios.gradle.plugin.task.JPlatformTask
 
 abstract public class BaseTaskImpl extends DefaultTask {
 
+	/**
+	 * The task to execute
+	 * @return the task
+	 */
 	abstract JPlatformTask getTask()
 	
+	/**
+	 * Return the module name
+	 */
+	String getModuleName() {
+		return this.project.jModule.name
+	}
+	
+	/**
+	 * Task execution
+	 * @return
+	 */
 	@TaskAction
 	final def taskAction() {
+		println "Preparing module folder"
+		String path = this.task.prepareModule(
+			this.getModuleName(), 
+			this.project
+		)
+		println "=> Module folder to run task on is : ${path}"
+		
+		println "Initializing JPlatform build"
 		JFileSystem platformFs = new JFileSystemImpl(this.project.file(this.project.jPlatform.path))
 		JFileSystem platformFsData = new JFileSystemImpl(this.project.file(this.project.jPlatform.dataPath))
-		JFileSystem moduleFs = new JFileSystemImpl(this.project.file("src/main/module"))
-		JFileSystem moduleFsData = new JFileSystemImpl(this.project.file("src/main/module/WEB-INF/data"))
+		
+		JFileSystem moduleFs = new JFileSystemImpl(this.project.file(path))
+		JFileSystem moduleFsData = moduleFs.createFrom("WEB-INF/data")
 		
 		List<GeneratedFileExtractor> genFileExtractors = [
 			new CssExtractor(),
@@ -51,19 +75,19 @@ abstract public class BaseTaskImpl extends DefaultTask {
 		]
 		
 		JModule currModule = new JModule(
-			this.project.jModule.name,
+			this.moduleName,
 			moduleFs,
 			moduleFsData
 		);
 		currModule.init(genFileExtractors, srcFileExtractors)
 
 		JModule platformModule = new JModule(
-			this.project.jModule.name,
+			this.moduleName,
 			platformFs,
 			platformFsData
 		)
 		platformModule.init(genFileExtractors, srcFileExtractors)
-			
+		
 		this.task.run(
 			platformModule,
 			currModule

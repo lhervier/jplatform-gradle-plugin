@@ -12,7 +12,7 @@ import com.jalios.gradle.plugin.jplatform.source.impl.TypesTypeXmlExtractor
  * TODO: User should confirm that he is ok pour replace existing files
  * @author Lionel HERVIER
  */
-class FetchTypesTask implements JPlatformTask {
+class FetchTypesTask extends BaseJPlatformTaskImpl {
 
 	@Override
 	void run(JModule platformModule, JModule currModule) throws JTaskException {

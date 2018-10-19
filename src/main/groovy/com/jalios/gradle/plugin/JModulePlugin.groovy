@@ -18,9 +18,24 @@ class JModulePlugin implements Plugin<Project> {
 		project.extensions.create("jModule", JModuleExtension)
 		
 		// Add custom tasks
-		project.task("fetchPlugin", type: FetchPluginTaskImpl, group: "jPlatform", description: "Fetch a newly created plugin into current module")
-		project.task("pushPlugin", type: PushPluginTaskImpl, group: "jPlatform", description: "Install the current module in JPlatform")
-		project.task("fetchTypes", type: FetchTypesTaskImpl, group: "jPlatform", description: "Fetch types from platform into current module")
+		project.task(
+			"fetchPlugin", 
+			type: FetchPluginTaskImpl, 
+			group: "jPlatform", 
+			description: "Fetch a newly created plugin into current module"
+		)
+		project.task(
+			"pushPlugin", 
+			type: PushPluginTaskImpl, 
+			group: "jPlatform", 
+			description: "Push the current module in JPlatform"
+		).dependsOn(project.tasks['build'])
+		project.task(
+			"fetchTypes", 
+			type: FetchTypesTaskImpl, 
+			group: "jPlatform", 
+			description: "Fetch types from platform into current module"
+		)
 		
 		// Executed at the end of the configuration phase
 		project.afterEvaluate {
@@ -32,11 +47,11 @@ class JModulePlugin implements Plugin<Project> {
 			
 			// Add dependencies to all jar files from jPlatform
 			if( path?.trim()) {
-				project.dependencies.add("implementation", project.fileTree(
+				project.dependencies.add("compileOnly", project.fileTree(
 					dir : "${path}/WEB-INF/lib/",
 					include: ['*.jar']
 				))
-				project.dependencies.add("implementation", project.files("${path}/WEB-INF/classes"))
+				project.dependencies.add("compileOnly", project.files("${path}/WEB-INF/classes"))
 			}
 		}
 	}
