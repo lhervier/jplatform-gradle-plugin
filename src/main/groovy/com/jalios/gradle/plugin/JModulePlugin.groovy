@@ -11,7 +11,6 @@ import com.jalios.gradle.plugin.task.gradle.PushPluginTaskImpl
 
 class JModulePlugin implements Plugin<Project> {
 	void apply(Project project) {
-		// jModule projects are java projects
 		project.apply plugin: "java-library"
 		
 		// Declare extension object
@@ -23,21 +22,10 @@ class JModulePlugin implements Plugin<Project> {
 		project.task("pushPlugin", type: PushPluginTaskImpl, group: "jPlatform", description: "Install the current module in JPlatform")
 		project.task("fetchTypes", type: FetchTypesTaskImpl, group: "jPlatform", description: "Fetch types from platform into current module")
 		
-		// Add custom dependency configuration
-//		project.configurations {
-//			jPlatform
-//		}
-		
 		// Executed at the end of the configuration phase
 		project.afterEvaluate {
 			// Get jPlatform path from extension configuration
 			def path = project.jPlatform.path
-			
-			// Add a custom default dependency to a simple module
-			// project.dependencies.add("implementation", "org.apache.commons:commons-lang3:3.7")
-			
-			// Add a custom default dependency to a local jar
-			// project.dependencies.add("implementation", project.files("src/main/libs/gson-2.8.5.jar"))
 			
 			// Add dependency to javax.servlet as compileOnly
 			project.dependencies.add("compileOnly", "javax.servlet:javax.servlet-api:3.1.0")
