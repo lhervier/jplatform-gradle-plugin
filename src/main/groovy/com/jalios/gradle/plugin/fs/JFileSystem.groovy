@@ -2,6 +2,7 @@ package com.jalios.gradle.plugin.fs
 
 import com.jalios.gradle.plugin.ex.JFileSystemException
 import com.jalios.gradle.plugin.jplatform.JModule
+import com.jalios.gradle.plugin.test.util.ByteUtils
 
 import groovy.lang.Closure
 
@@ -17,6 +18,10 @@ abstract class JFileSystem {
 	
 	abstract void setContentFromStream(String path, InputStream inStream) throws JFileSystemException
 	
+	final void setContentFromText(String path, String text, String encoding) throws JFileSystemException {
+		this.setContentFromStream(path, new ByteArrayInputStream(ByteUtils.extractBytes(text, encoding)))
+	}
+	
 	abstract void getContentAsStream(String path, Closure<InputStream> closure) throws JFileSystemException
 	
 	final void getContentAsReader(String path, String encoding, Closure<BufferedReader> closure) throws JFileSystemException {
@@ -29,5 +34,18 @@ abstract class JFileSystem {
 				reader.close()
 			}
 		}
+	}
+	
+	final String getContentAsString(String path, String encoding) {
+		StringBuffer ret = new StringBuffer()
+		char[] buffer = new char[4 * 1024]
+		this.getContentAsReader(path, encoding) { reader ->
+			int read = reader.read(buffer, 0, buffer.length)
+			while( read != -1 ) {
+				ret.append(buffer, 0, read)
+				read = reader.read(buffer, 0, buffer.length)
+			}
+		}
+		return ret.toString()
 	}
 }

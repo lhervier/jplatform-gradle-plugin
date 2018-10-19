@@ -18,6 +18,7 @@ class JFileSystemImpl extends JFileSystem {
 			throw new JFileSystemException("FileSystem root folder must be absolute")
 		}
 		this.rootFolder = rootFolder
+		this.rootFolder.mkdirs()
 	}
 	
 	@Override
@@ -75,11 +76,24 @@ class JFileSystemImpl extends JFileSystem {
 	void delete(String path) throws JFileSystemException {
 		File f = new File(this.rootFolder, path)
 		println "Removing '${f.absolutePath}'"
+		this._delete(f)
+	}
+	
+	private void _delete(File f) throws JFileSystemException {
 		if( !f.exists() ) {
 			return
 		}
-		if( !f.delete() ) {
-			throw new JFileSystemException("Unable to remove file ${path}")
+		if( f.isDirectory() ) {
+			f.listFiles().each { c ->
+				this._delete(c)
+			}
+			if( !f.delete() ) {
+				throw new JFileSystemException("Unable to remove folder ${path}")
+			}
+		} else {
+			if( !f.delete() ) {
+				throw new JFileSystemException("Unable to remove file ${path}")
+			}
 		}
 	}
 }

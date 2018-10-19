@@ -6,6 +6,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.test.util.ByteUtils
 
 class TestJFileSystemImpl {
@@ -25,6 +26,20 @@ class TestJFileSystemImpl {
 		if( !this.root.deleteDir() ) {
 			throw new RuntimeException("Unable to remove '${this.root.absolutePath}")
 		}
+	}
+	
+	@Test
+	void whenNewFsOnNonExistingFolder_thenFolderCreated() {
+		assert !new File(this.root, "sub/folder").exists()
+		JFileSystem fs = new JFileSystemImpl(new File(this.root, "sub/folder"))
+		assert new File(this.root, "sub/folder").exists()
+	}
+	
+	@Test
+	void whenGetContentAsString_thenContentOK() {
+		new File(this.root, "test.txt").text = "Content of the file"
+		String content = this.fs.getContentAsString("test.txt", "UTF-8")
+		assert content == "Content of the file"
 	}
 	
 	@Test
@@ -53,6 +68,23 @@ class TestJFileSystemImpl {
 			paths.add(path)
 		}
 		assert paths.size() == 2
+		assert paths.contains("folder/test1.txt")
+		assert paths.contains("folder/test2.txt")
+	}
+
+	@Test
+	void whenFilesInAndOutFolder_thenExtractionOK() {
+		new File(this.root, "testout.txt").text = "out file"
+		new File(this.root, "folder").mkdir()
+		new File(this.root, "folder/test1.txt").text = "Content of the first file"
+		new File(this.root, "folder/test2.txt").text = "Content of the second file"
+		new File(this.root, "folder/test.other").text = "Content of the second file"
+		List<String> paths = new ArrayList()
+		this.fs.paths("**/*.txt") { path ->
+			paths.add(path)
+		}
+		assert paths.size() == 3
+		assert paths.contains("testout.txt")
 		assert paths.contains("folder/test1.txt")
 		assert paths.contains("folder/test2.txt")
 	}
@@ -145,6 +177,16 @@ class TestJFileSystemImpl {
 	@Test
 	void whenDeletingNonExistingFile_thenDoNothing() {
 		this.fs.delete("test.txt")
+	}
+	
+	@Test
+	void whenDeletingFolder_thenFolderDeleted() {
+		new File(this.root, "folder").mkdir()
+		new File(this.root, "folder/file1").setText("file 1")
+		new File(this.root, "folder/file2").setText("file 1")
+		
+		this.fs.delete("folder")
+		assert !new File(this.root, "folder").exists()
 	}
 	
 	@Test
