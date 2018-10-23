@@ -15,16 +15,17 @@ import com.jalios.gradle.plugin.test.util.ByteUtils
  */
 class PushPluginTask implements JPlatformTask {
 
-	static String MODULE = 'build/module'
+	static String BUILD = 'build/module'
 	
 	static String SRC = 'src/main/module'
 	
 	/**
 	 * Module preparation
 	 */
-	public String prepareModule(String moduleName, JFileSystem fs, List<File> dependencies, String mainJarPath) {
+	@Override
+	public JFileSystem createModuleFs(String moduleName, JFileSystem fs, List<File> dependencies, File mainJar) {
 		JFileSystem srcFs = fs.createFrom(SRC)
-		JFileSystem buildFs = fs.createFrom(MODULE)
+		JFileSystem buildFs = fs.createFrom(BUILD)
 		
 		println "- Checking that WEB-INF/lib is empty"
 		srcFs.paths("WEB-INF/lib/*.jar") {
@@ -55,7 +56,7 @@ class PushPluginTask implements JPlatformTask {
 		}
 		
 		println "- Emptying build folder"
-		fs.delete(MODULE)
+		fs.delete(BUILD)
 		
 		println "- Copying module folder to build folder"
 		srcFs.paths("**/*") { p ->
@@ -71,11 +72,10 @@ class PushPluginTask implements JPlatformTask {
 			is.close()
 		}
 		
-		if( mainJarPath != null ) {
+		if( mainJar != null ) {
 			println "- Copying main jar to WEB-INF/lib"
-			File main = new File(mainJarPath)
-			InputStream is = main.newInputStream()
-			buildFs.setContentFromStream("WEB-INF/lib/${main.name}", is)
+			InputStream is = mainJar.newInputStream()
+			buildFs.setContentFromStream("WEB-INF/lib/${mainJar.name}", is)
 			is.close()
 		}
 		
@@ -93,7 +93,7 @@ class PushPluginTask implements JPlatformTask {
 		String sXml = groovy.xml.XmlUtil.serialize(xml)
 		buildFs.setContentFromStream(pluginXmlPath, new ByteArrayInputStream(ByteUtils.extractBytes(sXml)))
 		
-		return MODULE
+		return buildFs
 	}
 	
 	@Override

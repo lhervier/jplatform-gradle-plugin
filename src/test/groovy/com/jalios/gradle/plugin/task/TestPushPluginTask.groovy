@@ -41,7 +41,7 @@ class TestPushPluginTask extends BaseTestTask {
 		
 		// Initialize task
 		try {
-			this.task.prepareModule("MyPlugin", new JFileSystemImpl(this.root), [], null)
+			this.task.createModuleFs("MyPlugin", new JFileSystemImpl(this.root), [], null)
 		} catch(Exception e) {
 			assert e.getMessage() == "'WEB-INF/lib' folder must be empty. Use gradle dependencies to add jars to your JPlatform module"
 		}
@@ -61,7 +61,7 @@ class TestPushPluginTask extends BaseTestTask {
 		
 		// Initialize task
 		try {
-			this.task.prepareModule("MyPlugin", new JFileSystemImpl(this.root), [], null)
+			this.task.createModuleFs("MyPlugin", new JFileSystemImpl(this.root), [], null)
 		} catch(Exception e) {
 			assert e.getMessage() == "plugin.xml file not found. Unable to push plugin"
 		}
@@ -86,7 +86,7 @@ class TestPushPluginTask extends BaseTestTask {
 		
 		// Initialize task
 		try {
-			this.task.prepareModule("MyPlugin", new JFileSystemImpl(this.root), [], null)
+			this.task.createModuleFs("MyPlugin", new JFileSystemImpl(this.root), [], null)
 		} catch(Exception e) {
 			assert e.getMessage() == "You must not declare jars inside your plugin.xml. Use gradle dependencies instead."
 		}
@@ -121,21 +121,26 @@ class TestPushPluginTask extends BaseTestTask {
 		main.text = "content of main jar"
 		
 		// Prepare module
-		this.task.prepareModule("MyPlugin", fs, dependencies, main.getAbsolutePath())
+		JFileSystem rootFs = this.task.createModuleFs("MyPlugin", fs, dependencies, main)
 		
 		// Check that module has been copied
 		assert fs.exists("build/module/WEB-INF/plugins/MyPlugin/plugin.xml")
+		assert rootFs.exists("WEB-INF/plugins/MyPlugin/plugin.xml")
 		assert fs.exists("build/module/test.css")
+		assert rootFs.exists("test.css")
 		assert fs.exists("build/module/WEB-INF/lib/jar1.jar")
+		assert rootFs.exists("WEB-INF/lib/jar1.jar")
 		assert fs.exists("build/module/WEB-INF/lib/jar2.jar")
+		assert rootFs.exists("WEB-INF/lib/jar2.jar")
 		assert fs.exists("build/module/WEB-INF/lib/main.jar")
+		assert rootFs.exists("WEB-INF/lib/main.jar")
 		
 		// Check that plugin.xml has been adapted
 		XmlParser parser = new XmlParser(false, false)
 		parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
 		parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
 		def xml
-		fs.getContentAsStream("build/module/WEB-INF/plugins/MyPlugin/plugin.xml") { inStream ->
+		rootFs.getContentAsStream("WEB-INF/plugins/MyPlugin/plugin.xml") { inStream ->
 			xml = parser.parse(inStream)
 		}
 		assert xml.jars.jar.size() == 3

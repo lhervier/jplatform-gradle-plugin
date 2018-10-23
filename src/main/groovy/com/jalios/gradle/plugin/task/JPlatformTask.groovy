@@ -7,14 +7,18 @@ import com.jalios.gradle.plugin.jplatform.JModule
 interface JPlatformTask {
 
 	/**
-	 * Prepare the module folder
-	 * @return path to the module folder (relative to gradle project)
-	 * @param fs file system on the current project
+	 * Create the root file system for the project
+	 * @return the root file system
+	 * @param fs file system of the current project
 	 * @param dependencies jars dependencies (as File)
-	 * @param mainJarPath path (relative to project) to the compiled jar
+	 * @param mainJar the compiled jar (as File)
 	 * @return the path to the module source (relative to project)
 	 */
-	String prepareModule(String moduleName, JFileSystem fs, List<File> dependencies, String mainJarPath)
+	JFileSystem createModuleFs(
+			String moduleName, 
+			JFileSystem fs, 
+			List<File> dependencies, 
+			File mainJar)
 	
 	/**
 	 * Run the task

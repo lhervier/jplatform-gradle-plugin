@@ -4,6 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
 import com.jalios.gradle.plugin.fs.JFileSystem
+import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.fs.impl.JFileSystemImpl
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedFileExtractor
@@ -44,18 +45,24 @@ abstract public class BaseTaskImpl extends DefaultTask {
 	 */
 	@TaskAction
 	final def taskAction() {
-		println "Preparing module folder"
-		String path = this.task.prepareModule(
-			this.getModuleName(), 
-			this.project
-		)
-		println "=> Module folder to run task on is : ${path}"
-		
-		println "Initializing JPlatform build"
+		println "Creating platform File system"
 		JFileSystem platformFs = new JFileSystemImpl(this.project.file(this.project.jPlatform.path))
 		JFileSystem platformFsData = new JFileSystemImpl(this.project.file(this.project.jPlatform.dataPath))
 		
-		JFileSystem moduleFs = new JFileSystemImpl(this.project.file(path))
+		println "Extracting dependencies"
+		List<String> dependencies = new ArrayList()
+		this.project.configurations['compile'].each { dep ->
+			dependencies.add(dep)
+		}
+		
+		println "Creating module File system"
+		def archiveTask = project.tasks['jar']
+		JFileSystem moduleFs = this.task.createModuleFs(
+			this.getModuleName(),
+			new JFileSystemImpl(this.project.projectDir),
+			dependencies,
+			project.file(archiveTask.archivePath)
+		)
 		JFileSystem moduleFsData = moduleFs.createFrom("WEB-INF/data")
 		
 		List<GeneratedFileExtractor> genFileExtractors = [
