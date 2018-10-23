@@ -8,6 +8,7 @@ import com.jalios.gradle.plugin.ext.JPlatformExtension
 import com.jalios.gradle.plugin.task.gradle.FetchPluginTaskImpl
 import com.jalios.gradle.plugin.task.gradle.FetchTypesTaskImpl
 import com.jalios.gradle.plugin.task.gradle.PushPluginTaskImpl
+import com.jalios.gradle.plugin.task.gradle.PushTypesTaskImpl
 
 class JModulePlugin implements Plugin<Project> {
 	void apply(Project project) {
@@ -19,6 +20,18 @@ class JModulePlugin implements Plugin<Project> {
 		
 		// Add custom tasks
 		project.task(
+			"fetchTypes", 
+			type: FetchTypesTaskImpl, 
+			group: "jPlatform", 
+			description: "Fetch types from jPlatform into current module"
+		)
+		project.task(
+			"pushTypes", 
+			type: PushTypesTaskImpl, 
+			group: "jPlatform", 
+			description: "Push types from current module into jPlatform"
+		)
+		project.task(
 			"fetchPlugin", 
 			type: FetchPluginTaskImpl, 
 			group: "jPlatform", 
@@ -28,14 +41,8 @@ class JModulePlugin implements Plugin<Project> {
 			"pushPlugin", 
 			type: PushPluginTaskImpl, 
 			group: "jPlatform", 
-			description: "Push the current module in JPlatform"
+			description: "Push the current module in jPlatform"
 		).dependsOn(project.tasks['build'])
-		project.task(
-			"fetchTypes", 
-			type: FetchTypesTaskImpl, 
-			group: "jPlatform", 
-			description: "Fetch types from platform into current module"
-		)
 		
 		// Executed at the end of the configuration phase
 		project.afterEvaluate {
