@@ -41,7 +41,7 @@ class TestPushPluginTask extends BaseTestTask {
 		
 		// Initialize task
 		try {
-			this.task.createModuleFs("MyPlugin", new JFileSystemImpl(this.root), [], null)
+			this.task.createModuleFs("MyPlugin", "1.0", new JFileSystemImpl(this.root), [], null)
 		} catch(Exception e) {
 			assert e.getMessage() == "'WEB-INF/lib' folder must be empty. Use gradle dependencies to add jars to your JPlatform module"
 		}
@@ -61,7 +61,7 @@ class TestPushPluginTask extends BaseTestTask {
 		
 		// Initialize task
 		try {
-			this.task.createModuleFs("MyPlugin", new JFileSystemImpl(this.root), [], null)
+			this.task.createModuleFs("MyPlugin", "1.0", new JFileSystemImpl(this.root), [], null)
 		} catch(Exception e) {
 			assert e.getMessage() == "plugin.xml file not found. Unable to push plugin"
 		}
@@ -86,7 +86,7 @@ class TestPushPluginTask extends BaseTestTask {
 		
 		// Initialize task
 		try {
-			this.task.createModuleFs("MyPlugin", new JFileSystemImpl(this.root), [], null)
+			this.task.createModuleFs("MyPlugin", "1.0", new JFileSystemImpl(this.root), [], null)
 		} catch(Exception e) {
 			assert e.getMessage() == "You must not declare jars inside your plugin.xml. Use gradle dependencies instead."
 		}
@@ -100,7 +100,7 @@ class TestPushPluginTask extends BaseTestTask {
 			"src/main/module/WEB-INF/plugins/MyPlugin/plugin.xml",
 			"""<?xml version="1.0" encoding="UTF-8"?>
 			<!DOCTYPE plugin PUBLIC "-//JALIOS//DTD JCMS-PLUGIN 1.7//EN" "http://support.jalios.com/dtd/jcms-plugin-1.7.dtd">
-			<plugin name="MyPlugin" version="0.1" author="Lionel HERVIER" license="As Is" initialize="true" jcms="" order="0" url="" jsync="false" appserver="">
+			<plugin name="XYZ" version="ABC" author="Lionel HERVIER" license="As Is" initialize="true" jcms="" order="0" url="" jsync="false" appserver="">
 			</plugin>
 			""", 
 			"UTF-8"
@@ -121,7 +121,7 @@ class TestPushPluginTask extends BaseTestTask {
 		main.text = "content of main jar"
 		
 		// Prepare module
-		JFileSystem rootFs = this.task.createModuleFs("MyPlugin", fs, dependencies, main)
+		JFileSystem rootFs = this.task.createModuleFs("MyPlugin", "1.0", fs, dependencies, main)
 		
 		// Check that module has been copied
 		assert fs.exists("build/module/WEB-INF/plugins/MyPlugin/plugin.xml")
@@ -143,6 +143,10 @@ class TestPushPluginTask extends BaseTestTask {
 		rootFs.getContentAsStream("WEB-INF/plugins/MyPlugin/plugin.xml") { inStream ->
 			xml = parser.parse(inStream)
 		}
+		
+		assert xml["@name"] == "MyPlugin"
+		assert xml["@version"] == "1.0"
+		
 		assert xml.jars.jar.size() == 3
 		assert xml.jars.jar[0]["@path"] == "jar1.jar"
 		assert xml.jars.jar[1]["@path"] == "jar2.jar"

@@ -59,6 +59,7 @@ abstract public class BaseTaskImpl extends DefaultTask {
 		def archiveTask = project.tasks['jar']
 		JFileSystem moduleFs = this.task.createModuleFs(
 			this.getModuleName(),
+			project.version,
 			new JFileSystemImpl(this.project.projectDir),
 			dependencies,
 			project.file(archiveTask.archivePath)

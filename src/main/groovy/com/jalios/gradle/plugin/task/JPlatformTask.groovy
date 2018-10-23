@@ -8,7 +8,8 @@ interface JPlatformTask {
 
 	/**
 	 * Create the root file system for the project
-	 * @return the root file system
+	 * @param moduleName name of the module
+	 * @param version version of the module
 	 * @param fs file system of the current project
 	 * @param dependencies jars dependencies (as File)
 	 * @param mainJar the compiled jar (as File)
@@ -16,6 +17,7 @@ interface JPlatformTask {
 	 */
 	JFileSystem createModuleFs(
 			String moduleName, 
+			String version,
 			JFileSystem fs, 
 			List<File> dependencies, 
 			File mainJar)

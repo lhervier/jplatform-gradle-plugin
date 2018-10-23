@@ -7,6 +7,7 @@ import com.jalios.gradle.plugin.ex.JTaskException
 import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.jplatform.JModule
+import com.jalios.gradle.plugin.jplatform.PluginXml
 import com.jalios.gradle.plugin.test.util.ByteUtils
 
 /**
@@ -23,7 +24,12 @@ class PushPluginTask implements JPlatformTask {
 	 * Module preparation
 	 */
 	@Override
-	public JFileSystem createModuleFs(String moduleName, JFileSystem fs, List<File> dependencies, File mainJar) {
+	public JFileSystem createModuleFs(
+			String moduleName, 
+			String version,
+			JFileSystem fs, 
+			List<File> dependencies, 
+			File mainJar) {
 		JFileSystem srcFs = fs.createFrom(SRC)
 		JFileSystem buildFs = fs.createFrom(BUILD)
 		
@@ -38,20 +44,14 @@ class PushPluginTask implements JPlatformTask {
 			throw new JTaskException("plugin.xml file not found. Unable to push plugin")
 		}
 		
-		println "- Parsing plugin.xml"
-		XmlParser parser = new XmlParser(false, false)
-		parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
-		parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
-		def xml
+		println "- Loading plugin.xml"
+		PluginXml srcPluginXml
 		srcFs.getContentAsStream(pluginXmlPath) { inStream -> 
-			xml = parser.parse(inStream)
+			srcPluginXml = new PluginXml(inStream)
 		}
 		
 		println "- Checking that plugin.xml does not contains reference to jar files"
-		if( !xml.jars ) {
-			xml.children().add(0, parser.parseText("<jars/>"))
-		}
-		if( xml.jars.jar.size() != 0 ) {
+		if( srcPluginXml.jars.size() != 0 ) {
 			throw new JTaskException("You must not declare jars inside your plugin.xml. Use gradle dependencies instead.")
 		}
 		
@@ -64,6 +64,16 @@ class PushPluginTask implements JPlatformTask {
 				buildFs.setContentFromStream(p, inStream)
 			}
 		}
+		
+		println "- Loading copied plugin.xml"
+		PluginXml pluginXml
+		buildFs.getContentAsStream(pluginXmlPath) { inStream ->
+			pluginXml = new PluginXml(inStream)
+		}
+		
+		println "- Updating module name and version in plugin.xml"
+		pluginXml.name = moduleName
+		pluginXml.version = version
 		
 		println "- Copying dependencies to WEB-INF/lib"
 		dependencies.each { dep ->
@@ -80,18 +90,14 @@ class PushPluginTask implements JPlatformTask {
 		}
 		
 		println "- Add references to jar files into plugin.xml"
-		JFileSystem libFs = buildFs.createFrom("WEB-INF/lib")
-		def jars = xml.find { n ->
-			n.name() == 'jars' 
-		}.children()
-		libFs.paths("*.jar") { jar ->
-			def toAdd = parser.parseText("<jar path=\"${jar}\"/>")
-			jars.add(toAdd)
+		buildFs.createFrom("WEB-INF/lib").paths("*.jar") { jar ->
+			pluginXml.addJar(jar)
 		}
 		
 		println "- Saving new version of plugin.xml"
-		String sXml = groovy.xml.XmlUtil.serialize(xml)
-		buildFs.setContentFromStream(pluginXmlPath, new ByteArrayInputStream(ByteUtils.extractBytes(sXml)))
+		ByteArrayOutputStream out = new ByteArrayOutputStream()
+		pluginXml.save(out)
+		buildFs.setContentFromStream(pluginXmlPath, new ByteArrayInputStream(out.toByteArray()))
 		
 		return buildFs
 	}
