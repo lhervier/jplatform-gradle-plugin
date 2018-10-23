@@ -97,4 +97,63 @@ class TestPluginXml {
 		
 	}
 
+	@Test
+	void whenChangingName_thenNameChanged() {
+		String xml = """
+			<plugin name="TestASIPlugin" version="0.1" author="Lionel HERVIER" license="As-is" initialize="true" jcms="" order="0" url="" jsync="false" appserver="">
+			</plugin>
+		"""
+		PluginXml pluginXml = new PluginXml(new StringReader(xml))
+		assert pluginXml.name == "TestASIPlugin"
+		
+		pluginXml.name = "OtherPlugin"
+		assert pluginXml.name == "OtherPlugin"
+	}
+	
+	@Test
+	void whenChangingVersion_thenVersionChanged() {
+		String xml = """
+			<plugin name="TestASIPlugin" version="0.1" author="Lionel HERVIER" license="As-is" initialize="true" jcms="" order="0" url="" jsync="false" appserver="">
+			</plugin>
+		"""
+		PluginXml pluginXml = new PluginXml(new StringReader(xml))
+		assert pluginXml.version == "0.1"
+		
+		pluginXml.version = "0.2"
+		assert pluginXml.version == "0.2"
+	}
+	
+	@Test
+	void whenAddingJar_thenJarAdded() {
+		String xml = """
+			<plugin name="TestASIPlugin" version="0.1" author="Lionel HERVIER" license="As-is" initialize="true" jcms="" order="0" url="" jsync="false" appserver="">
+				<jars/>
+			</plugin>
+		"""
+		PluginXml pluginXml = new PluginXml(new StringReader(xml))
+		assert pluginXml.jars.isEmpty()
+		
+		pluginXml.addJar("jar1.jar")
+		assert pluginXml.jars.size() == 1
+		assert pluginXml.jars[0].path == "jar1.jar"
+	}
+	
+	@Test
+	void whenAddingJarAndNoJarsTag_thenJarAdded() {
+		String xml = """
+			<plugin name="TestASIPlugin" version="0.1" author="Lionel HERVIER" license="As-is" initialize="true" jcms="" order="0" url="" jsync="false" appserver="">
+			</plugin>
+		"""
+		PluginXml pluginXml = new PluginXml(new StringReader(xml))
+		assert pluginXml.jars.isEmpty()
+		
+		pluginXml.addJar("jar1.jar")
+		assert pluginXml.jars.size() == 1
+		assert pluginXml.jars[0].path == "jar1.jar"
+		
+		pluginXml.addJar("jar2.jar")
+		assert pluginXml.jars.size() == 2
+		assert pluginXml.jars[0].path == "jar1.jar"
+		assert pluginXml.jars[1].path == "jar2.jar"
+	}
 }
