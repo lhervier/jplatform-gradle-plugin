@@ -4,6 +4,7 @@ import org.gradle.api.Project
 import org.w3c.dom.NodeList
 
 import com.jalios.gradle.plugin.ex.JTaskException
+import com.jalios.gradle.plugin.fs.FSFile
 import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.JPath
@@ -102,6 +103,9 @@ class PushPluginTask implements JPlatformTask {
 		return buildFs
 	}
 	
+	/**
+	 * Task execution
+	 */
 	@Override
 	void run(JModule platformModule, JModule currModule) {
 		println "Relevant files :"
@@ -142,7 +146,20 @@ class PushPluginTask implements JPlatformTask {
 		println "Overwriting platform module files"
 		currModule.paths.each { jpath ->
 			currModule.getFs(jpath.type).getContentAsStream(jpath.path) { inStream ->
-				platformModule.getFs(jpath.type).setContentFromStream(jpath.path, inStream)
+				JFileSystem destFs = platformModule.getFs(jpath.type)
+				if( destFs.exists(jpath.path) ) {
+					JFileSystem srcFs = currModule.getFs(jpath.type)
+					FSFile src = srcFs.path(jpath.path)
+					FSFile dest = destFs.path(jpath.path)
+					if( src.updated <= dest.updated ) {
+						println "'${jpath.path}': Content not changed"
+						return
+					}
+					println "'${jpath.path}': Updating content"
+				} else {
+					println "'${jpath.path}': Creating new file"
+				}
+				destFs.setContentFromStream(jpath.path, inStream)
 			}
 		}
 	}

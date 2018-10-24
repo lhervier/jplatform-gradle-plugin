@@ -8,26 +8,28 @@ import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.fs.impl.JFileSystemImpl
 import com.jalios.gradle.plugin.jplatform.JModule
 import com.jalios.gradle.plugin.jplatform.JPath
+import com.jalios.gradle.plugin.jplatform.PluginXml
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedFileExtractor
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedPath
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.PublicFilesExtractor
+import com.jalios.gradle.plugin.test.InMemoryJFileSystem
 
 class TestPushPluginTask extends BaseTestTask {
 
 	PushPluginTask task
-	
-	File root
-	
+	File tmp
+		
 	@Override
 	void setUp() {
 		this.task = new PushPluginTask()
-		this.root = File.createTempDir()
+		this.tmp = File.createTempDir()
 	}
 
 	@After
 	void destroy() {
-		if( !this.root.deleteDir() ) {
-			throw new RuntimeException("Unable to remove '${this.root.absolutePath}")
+		if( !this.tmp.deleteDir() ) {
+			throw new RuntimeException("Unable to remove '${this.tmp.absolutePath}")
 		}
 	}
 	
@@ -36,12 +38,12 @@ class TestPushPluginTask extends BaseTestTask {
 	@Test
 	void whenJarInWebInfLib_thenFail() {
 		// Create fake plugin with a jar file
-		JFileSystem fs = new JFileSystemImpl(this.root)
-		fs.setContentFromText("src/main/module/WEB-INF/lib/fake.jar", "Definitively not a jar...", "UTF-8")
+		InMemoryJFileSystem rootFs = new InMemoryJFileSystem()
+		rootFs.setContentFromText("src/main/module/WEB-INF/lib/fake.jar", "Definitively not a jar...", "UTF-8")
 		
 		// Initialize task
 		try {
-			this.task.createModuleFs("MyPlugin", "1.0", new JFileSystemImpl(this.root), [], null)
+			this.task.createModuleFs("MyPlugin", "1.0", rootFs, [], null)
 		} catch(Exception e) {
 			assert e.getMessage() == "'WEB-INF/lib' folder must be empty. Use gradle dependencies to add jars to your JPlatform module"
 		}
@@ -50,7 +52,7 @@ class TestPushPluginTask extends BaseTestTask {
 	@Test
 	void whenNoPluginXml_thenPreparationFail() {
 		// Create fake plugin without plugin.xml
-		JFileSystem fs = new JFileSystemImpl(this.root)
+		InMemoryJFileSystem fs = new InMemoryJFileSystem()
 		fs.setContentFromText("src/main/module/plugins/MyPlugin/jsp/test.jsp", """
 			<HTML>
 			<BODY>
@@ -61,7 +63,7 @@ class TestPushPluginTask extends BaseTestTask {
 		
 		// Initialize task
 		try {
-			this.task.createModuleFs("MyPlugin", "1.0", new JFileSystemImpl(this.root), [], null)
+			this.task.createModuleFs("MyPlugin", "1.0", fs, [], null)
 		} catch(Exception e) {
 			assert e.getMessage() == "plugin.xml file not found. Unable to push plugin"
 		}
@@ -70,7 +72,7 @@ class TestPushPluginTask extends BaseTestTask {
 	@Test
 	void whenPluginXmlReferencesJars_thenFail() {
 		// Create fake plugin without plugin.xml
-		JFileSystem fs = new JFileSystemImpl(this.root)
+		InMemoryJFileSystem fs = new InMemoryJFileSystem()
 		fs.setContentFromText(
 			"src/main/module/WEB-INF/plugins/MyPlugin/plugin.xml", 
 			"""<?xml version="1.0" encoding="UTF-8"?>
@@ -86,7 +88,7 @@ class TestPushPluginTask extends BaseTestTask {
 		
 		// Initialize task
 		try {
-			this.task.createModuleFs("MyPlugin", "1.0", new JFileSystemImpl(this.root), [], null)
+			this.task.createModuleFs("MyPlugin", "1.0", fs, [], null)
 		} catch(Exception e) {
 			assert e.getMessage() == "You must not declare jars inside your plugin.xml. Use gradle dependencies instead."
 		}
@@ -95,7 +97,7 @@ class TestPushPluginTask extends BaseTestTask {
 	@Test
 	void whenDependencies_thenDependenciesCopied() {
 		// Create fake plugin without plugin.xml
-		JFileSystem fs = new JFileSystemImpl(this.root)
+		InMemoryJFileSystem fs = new InMemoryJFileSystem()
 		fs.setContentFromText(
 			"src/main/module/WEB-INF/plugins/MyPlugin/plugin.xml",
 			"""<?xml version="1.0" encoding="UTF-8"?>
@@ -107,9 +109,9 @@ class TestPushPluginTask extends BaseTestTask {
 		)
 		fs.setContentFromText("src/main/module/test.css", "css content", "UTF-8")
 		
-		// Create fake dependencies
-		File jar1 = new File(this.root, "jar1.jar")
-		File jar2 = new File(this.root, "jar2.jar")
+		// Create fake dependencies (on disk)
+		File jar1 = new File(this.tmp, "jar1.jar")
+		File jar2 = new File(this.tmp, "jar2.jar")
 		jar1.text = "not a jar content..."
 		jar2.text = "neither a jar content..."
 		List<File> dependencies = new ArrayList()
@@ -117,7 +119,7 @@ class TestPushPluginTask extends BaseTestTask {
 		dependencies.add(jar2)
 		
 		// Create fake main jar
-		File main = new File(this.root, "main.jar")
+		File main = new File(this.tmp, "main.jar")
 		main.text = "content of main jar"
 		
 		// Prepare module
@@ -136,21 +138,23 @@ class TestPushPluginTask extends BaseTestTask {
 		assert rootFs.exists("WEB-INF/lib/main.jar")
 		
 		// Check that plugin.xml has been adapted
-		XmlParser parser = new XmlParser(false, false)
-		parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
-		parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
-		def xml
+		PluginXml pluginXml = null
 		rootFs.getContentAsStream("WEB-INF/plugins/MyPlugin/plugin.xml") { inStream ->
-			xml = parser.parse(inStream)
+			pluginXml = new PluginXml(inStream)
 		}
+		assert pluginXml != null
 		
-		assert xml["@name"] == "MyPlugin"
-		assert xml["@version"] == "1.0"
+		assert pluginXml.name == "MyPlugin"
+		assert pluginXml.version == "1.0"
 		
-		assert xml.jars.jar.size() == 3
-		assert xml.jars.jar[0]["@path"] == "jar1.jar"
-		assert xml.jars.jar[1]["@path"] == "jar2.jar"
-		assert xml.jars.jar[2]["@path"] == "main.jar"
+		assert pluginXml.jars.size() == 3
+		List<String> jars = new ArrayList()
+		pluginXml.jars.each {
+			jars.add(it.path)
+		}
+		assert jars.contains("jar1.jar")
+		assert jars.contains("jar2.jar")
+		assert jars.contains("main.jar")
 	}
 	
 	// ===========================================================================
@@ -302,5 +306,44 @@ class TestPushPluginTask extends BaseTestTask {
 		assert this.platformModule.rootFs.exists("css/styles.css")
 		assert !this.platformModule.rootFs.exists("css/styles2.css")
 		assert !this.platformModule.rootFs.exists("css/styles2.less")
+	}
+	
+	@Test
+	void whenFileNotUpdated_thenFileNotOverwritten() {
+		// Populate plugin
+		this.addPluginXml(
+				this.currModule,
+				"""<public-files>
+					<directory path="images" />
+				</public-files>"""
+		)
+		this.currModuleFs.setContentFromText("images/test.jpg", "image content", "UTF-8")
+		
+		// Initialize modules
+		def extractor = {JModule m, Closure<String> closure ->
+			m.rootFs.paths("images/*.jpg") { fsFile ->
+				closure(new JPath(FSType.ROOT, fsFile.path))
+			}
+		} as SourceFileExtractor
+		this.currModule.init(null, [extractor])
+		this.platformModule.init(null, [extractor])
+		
+		// Check platform fs
+		assert !this.platformModuleFs.exists("images/test.jpg")
+		
+		// Push plugin
+		this.task.run(this.platformModule, this.currModule)
+		
+		// File must have been created
+		assert this.platformModuleFs.exists("images/test.jpg")
+		long updated = this.platformModuleFs.path("images/test.jpg").updated
+		
+		// Push plugin again
+		this.currModule.init(null, [extractor])
+		this.platformModule.init(null, [extractor])
+		this.task.run(this.platformModule, this.currModule)
+		
+		// File must not have been updated
+		assert this.platformModuleFs.path("images/test.jpg").updated == updated
 	}
 }
