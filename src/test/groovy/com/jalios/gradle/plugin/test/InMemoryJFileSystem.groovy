@@ -62,15 +62,17 @@ class InMemoryJFileSystem extends JFileSystem {
 
 	@Override
 	public void paths(String pattern, Closure<FSFile> closure) throws JFileSystemException {
+		List<FSFile> ret = new ArrayList() 
 		this.files.each { path, imf ->
 			if( this.match(path, root + pattern.toString()) ) {
 				FSFile fsFile = new FSFile(
 						path: path.substring(root.length()),
 						updated: imf.updated
 				)
-				closure(fsFile)
+				ret.add(fsFile)
 			}
 		}
+		ret.each(closure)
 	}
 	
 	@Override
