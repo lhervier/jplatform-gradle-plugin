@@ -108,7 +108,7 @@ class InMemoryJFileSystem extends JFileSystem {
 		if( !path.endsWith("/") ) {
 			path += "/"
 		}
-		return new InMemoryJFileSystem(path, this.files)
+		return new InMemoryJFileSystem(root + path, this.files)
 	}
 	
 }
