@@ -157,6 +157,45 @@ class TestPushPluginTask extends BaseTestTask {
 		assert jars.contains("main.jar")
 	}
 	
+	@Test
+	void whenAlreadyCopied_thenDontCopy() {
+		// Create fake plugin without plugin.xml
+		InMemoryJFileSystem fs = new InMemoryJFileSystem()
+		fs.setContentFromText(
+			"src/main/module/WEB-INF/plugins/MyPlugin/plugin.xml",
+			"""<?xml version="1.0" encoding="UTF-8"?>
+			<!DOCTYPE plugin PUBLIC "-//JALIOS//DTD JCMS-PLUGIN 1.7//EN" "http://support.jalios.com/dtd/jcms-plugin-1.7.dtd">
+			<plugin name="XYZ" version="ABC" author="Lionel HERVIER" license="As Is" initialize="true" jcms="" order="0" url="" jsync="false" appserver="">
+			</plugin>
+			""", 
+			"UTF-8"
+		)
+		fs.setContentFromText("src/main/module/test.css", "css content", "UTF-8")
+		
+		// Prepare module
+		JFileSystem rootFs = this.task.createModuleFs("MyPlugin", "1.0", fs, new ArrayList(), null)
+		
+		// Check that module has been copied
+		assert fs.exists("build/module/test.css")
+		assert rootFs.exists("test.css")
+		
+		// Add file
+		long cssUpdated = rootFs.path("test.css").updated
+		fs.setContentFromText("src/main/module/test2.css", "content of second css", "UTF-8")
+		
+		// Prepare module again
+		rootFs = this.task.createModuleFs("MyPlugin", "1.0", fs, new ArrayList(), null)
+		
+		// Check that module has been copied
+		assert fs.exists("build/module/test.css")
+		assert rootFs.exists("test.css")
+		assert fs.exists("build/module/test2.css")
+		assert rootFs.exists("test2.css")
+		
+		// Check first file has not been copied again
+		assert rootFs.path("test.css").updated == cssUpdated
+	}
+	
 	// ===========================================================================
 	
 	@Test

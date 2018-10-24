@@ -45,24 +45,34 @@ class PushPluginTask implements JPlatformTask {
 			throw new JTaskException("plugin.xml file not found. Unable to push plugin")
 		}
 		
-		println "- Loading plugin.xml"
+		println "- Checking that plugin.xml does not contains reference to jar files"
 		PluginXml srcPluginXml
 		srcFs.getContentAsStream(pluginXmlPath) { inStream -> 
 			srcPluginXml = new PluginXml(inStream)
 		}
-		
-		println "- Checking that plugin.xml does not contains reference to jar files"
 		if( srcPluginXml.jars.size() != 0 ) {
 			throw new JTaskException("You must not declare jars inside your plugin.xml. Use gradle dependencies instead.")
 		}
 		
-		println "- Emptying build folder"
-		fs.delete(BUILD)
+		println "- Removing files from build folder"
+		buildFs.paths("**/*") {  fsFile ->
+			if( !srcFs.exists(fsFile.path) ) {
+				println "  - ${fsFile.path}"
+				buildFs.delete(fsFile.path)
+			}
+		}
 		
-		println "- Copying module folder to build folder"
+		println "- Copying files from src to build folder"
 		srcFs.paths("**/*") { fsFile ->
-			srcFs.getContentAsStream(fsFile) { inStream ->
-				buildFs.setContentFromStream(fsFile, inStream)
+			if( buildFs.exists(fsFile.path) ) {
+				FSFile dest = buildFs.path(fsFile.path)
+				if( dest.updated >= fsFile.updated ) {
+					return
+				}
+			}
+			println "  - ${fsFile.path}"
+			srcFs.getContentAsStream(fsFile.path) { inStream ->
+				buildFs.setContentFromStream(fsFile.path, inStream)
 			}
 		}
 		
