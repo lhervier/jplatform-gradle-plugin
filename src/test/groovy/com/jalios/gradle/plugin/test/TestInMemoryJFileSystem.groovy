@@ -19,6 +19,8 @@ class TestInMemoryJFileSystem {
 		assert this.fs.match("folder1/folder38/fichier.txt", "folder1/folder*/fichier.txt")
 		assert !this.fs.match("folder1/folder38/folder/fichier.txt", "folder1/folder*/fichier.txt")
 		assert this.fs.match("folder1/folder38/folder24/test.txt", "folder1/**/test.txt")
+		assert this.fs.match("test.txt", "**/*")
+		assert this.fs.match("folder/test.txt", "folder/**/*")
 	}
 
 	@Test
@@ -62,6 +64,21 @@ class TestInMemoryJFileSystem {
 	}
 
 	@Test
+	void whenExtractingAllFiles_thenExtractionOK() {
+		this.fs.addFile("test1.txt")
+		this.fs.addFile("folder/test2.txt")
+		this.fs.addFile("folder/test.other")
+		List<String> paths = new ArrayList()
+		this.fs.paths("**/*") { fsFile ->
+			paths.add(fsFile.path)
+		}
+		assert paths.size() == 3
+		assert paths.contains("test1.txt")
+		assert paths.contains("folder/test2.txt")
+		assert paths.contains("folder/test.other")
+	}
+	
+	@Test
 	void whenUsingFilenameWildcards_thenExtractionOK() {
 		this.fs.addFile("folder/test1.txt")
 		this.fs.addFile("folder/test2.txt")
@@ -84,7 +101,7 @@ class TestInMemoryJFileSystem {
 		this.fs.addFile("folder2/other.txt")
 		
 		List<String> paths = new ArrayList()
-		this.fs.paths("**" + "/test*.txt") { fsFile ->
+		this.fs.paths("**/test*.txt") { fsFile ->
 			paths.add(fsFile.path)
 		}
 		assert paths.size() == 2
@@ -159,13 +176,13 @@ class TestInMemoryJFileSystem {
 	@Test
 	void whenCreatingNewFile_thenGetLastUpdateDate() {
 		long curr = System.currentTimeMillis()
-		new File(this.root, "test.txt").text = "Hello World !"
+		this.fs.addFile("test.txt", "Hello World !")
 		long updated
 		this.fs.paths("*.txt") { fsFile ->
 			updated = fsFile.updated
 		}
-		assert updated > curr
-		assert updated < System.currentTimeMillis()
+		assert updated >= curr
+		assert updated <= System.currentTimeMillis()
 	}
 	
 	@Test

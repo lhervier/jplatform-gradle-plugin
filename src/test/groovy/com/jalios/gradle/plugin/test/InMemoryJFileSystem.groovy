@@ -1,13 +1,9 @@
 package com.jalios.gradle.plugin.test
 
-import java.io.InputStream
-import java.util.Map
-
 import com.jalios.gradle.plugin.ex.JFileSystemException
 import com.jalios.gradle.plugin.fs.FSFile
 import com.jalios.gradle.plugin.fs.JFileSystem
-
-import groovy.lang.Closure
+import com.jalios.gradle.plugin.test.util.ByteUtils
 
 class InMemoryJFileSystem extends JFileSystem {
 
@@ -35,6 +31,10 @@ class InMemoryJFileSystem extends JFileSystem {
 		this.addFile(name.toString(), new byte[0])
 	}
 	
+	public void addFile(String name, String content) {
+		this.addFile(name, ByteUtils.extractBytes(content, "UTF-8"))
+	}
+	
 	public void addFile(String name, byte[] content) {
 		InMemoryFile imf = new InMemoryFile()
 		imf.content = content
@@ -42,6 +42,10 @@ class InMemoryJFileSystem extends JFileSystem {
 	}
 	
 	boolean match(String path, String pattern) {
+		if( pattern.endsWith("**/*") ) {
+			String rootFolder = pattern.substring(0, pattern.length() - "**/*".length())
+			return path.startsWith(rootFolder)
+		}
 		String regexp = pattern.replaceAll("\\/", "\\\\/")
 		regexp = regexp.replaceAll("\\*\\*", ".%STAR%")
 		regexp = regexp.replaceAll("\\*", "[^\\/]%STAR%")
@@ -79,11 +83,10 @@ class InMemoryJFileSystem extends JFileSystem {
 		InMemoryFile imf = this.files.get(root + path.toString())
 		if( imf == null ) {
 			imf = new InMemoryFile()
+			this.files.put(root + path.toString(), imf)
 		}
 		imf.updated = System.currentTimeMillis()
 		imf.content = inStream.bytes
-		
-		this.files.put(root + path.toString(), imf)
 	}
 
 	@Override

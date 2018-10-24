@@ -53,7 +53,6 @@ class JFileSystemImpl extends JFileSystem {
 	@Override
 	void setContentFromStream(String path, InputStream inStream) throws JFileSystemException {
 		File destFile = new File(this.rootFolder, path)
-		println "Setting content of '${destFile.absolutePath}'"
 		if( destFile.exists() ) {
 			if( !destFile.delete() ) {
 				throw new JFileSystemException("Unable to replace existing file...")

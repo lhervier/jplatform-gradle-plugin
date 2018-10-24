@@ -22,6 +22,14 @@ abstract class JFileSystem {
 	
 	// ======================================================================
 	
+	final FSFile path(String path) throws JFileSystemException {
+		FSFile ret = null
+		this.paths(path) { fsFile -> 
+			ret = fsFile
+		}
+		return ret
+	}
+	
 	final void delete(FSFile file) throws JFileSystemException {
 		this.delete(file.path)
 	}

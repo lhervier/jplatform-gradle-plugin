@@ -2,6 +2,7 @@ package com.jalios.gradle.plugin.fs.impl
 
 import static org.junit.Assert.*
 
+import org.gradle.api.internal.file.pattern.PathMatcher
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -55,6 +56,44 @@ class TestJFileSystemImpl {
 		assert paths.size() == 2
 		assert paths.contains("test1.txt")
 		assert paths.contains("test2.txt")
+	}
+	
+	@Test
+	void whenExtractingAllFiles_thenAllFilesExtracted() {
+		new File(this.root, "test.txt").text = "Content of file"
+		new File(this.root, "folder").mkdir()
+		new File(this.root, "folder/test1.txt").text = "Content of the first file"
+		new File(this.root, "folder/test2.txt").text = "Content of the second file"
+		new File(this.root, "folder/test.other").text = "Content of the second file"
+		List<String> paths = new ArrayList()
+		this.fs.paths("**/*") { fsFile ->
+			paths.add(fsFile.path)
+		}
+		assert paths.size() == 4
+		assert paths.contains("test.txt")
+		assert paths.contains("folder/test1.txt")
+		assert paths.contains("folder/test2.txt")
+		assert paths.contains("folder/test.other")
+	}
+	
+	@Test
+	void whenExtractingAllFilesFromFolder_thenAllFilesExtracted() {
+		new File(this.root, "test.txt").text = "Content of file"
+		new File(this.root, "folder").mkdir()
+		new File(this.root, "folder/test1.txt").text = "Content of the first file"
+		new File(this.root, "folder/test2.txt").text = "Content of the second file"
+		new File(this.root, "folder/test.other").text = "Content of the second file"
+		new File(this.root, "folder/subfolder").mkdir()
+		new File(this.root, "folder/subfolder/test.txt").text = "Content of the first file"
+		List<String> paths = new ArrayList()
+		this.fs.paths("folder/**/*") { fsFile ->
+			paths.add(fsFile.path)
+		}
+		assert paths.size() == 4
+		assert paths.contains("folder/test1.txt")
+		assert paths.contains("folder/test2.txt")
+		assert paths.contains("folder/test.other")
+		assert paths.contains("folder/subfolder/test.txt")
 	}
 	
 	@Test
