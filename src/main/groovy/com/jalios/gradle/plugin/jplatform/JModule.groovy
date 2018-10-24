@@ -98,6 +98,7 @@ class JModule {
 		}
 		
 		// compute the list of generated files
+		this.generatedPaths = new ArrayList()
 		genFileExtractors?.each { extractor ->
 			extractor.extract(this) { genPath -> 
 				this.generatedPaths.add(genPath)
@@ -105,6 +106,7 @@ class JModule {
 		}
 		
 		// compute the list of source files
+		this.paths = new HashSet()
 		srcFileExtractors?.each { extractor ->
 			extractor.extract(this) { path ->
 				this.paths.add(path)
