@@ -7,6 +7,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+import com.jalios.gradle.plugin.fs.FSFile
 import com.jalios.gradle.plugin.fs.JFileSystem
 import com.jalios.gradle.plugin.test.util.ByteUtils
 
@@ -94,6 +95,19 @@ class TestJFileSystemImpl {
 		assert paths.contains("folder/test2.txt")
 		assert paths.contains("folder/test.other")
 		assert paths.contains("folder/subfolder/test.txt")
+	}
+	
+	@Test
+	void whenGettingFile_thenOK() {
+		long now = System.currentTimeMillis()
+		new File(this.root, "test.txt").text = "Content of text file"
+		FSFile f = this.fs.path("test.txt")
+		assert f != null
+		assert f.path == "test.txt"
+		assert f.updated >= now
+		
+		f = this.fs.path("test2.txt")
+		assert f == null
 	}
 	
 	@Test

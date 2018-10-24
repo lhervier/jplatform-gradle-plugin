@@ -1,5 +1,7 @@
 package com.jalios.gradle.plugin.fs.impl
 
+import org.gradle.internal.impldep.bsh.This
+
 import com.jalios.gradle.plugin.ex.JFileSystemException
 import com.jalios.gradle.plugin.fs.FSFile
 import com.jalios.gradle.plugin.fs.JFileSystem
@@ -30,6 +32,17 @@ class JFileSystemImpl extends JFileSystem {
 	@Override
 	boolean exists(String path) throws JFileSystemException {
 		return new File(this.rootFolder, path).exists()
+	}
+	
+	@Override
+	FSFile path(String path) throws JFileSystemException {
+		File f = new File(this.rootFolder, path)
+		if( !f.exists() )
+			return null
+		return new FSFile(
+			path: path,
+			updated: f.lastModified()
+		)
 	}
 	
 	@Override

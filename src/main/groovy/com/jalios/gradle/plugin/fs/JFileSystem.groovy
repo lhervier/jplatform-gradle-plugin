@@ -22,7 +22,7 @@ abstract class JFileSystem {
 	
 	// ======================================================================
 	
-	final FSFile path(String path) throws JFileSystemException {
+	FSFile path(String path) throws JFileSystemException {
 		FSFile ret = null
 		this.paths(path) { fsFile -> 
 			ret = fsFile
