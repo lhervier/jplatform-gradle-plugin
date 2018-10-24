@@ -5,8 +5,8 @@ import org.w3c.dom.NodeList
 
 import com.jalios.gradle.plugin.ex.JTaskException
 import com.jalios.gradle.plugin.fs.JFileSystem
-import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.jplatform.JModule
+import com.jalios.gradle.plugin.jplatform.JPath
 import com.jalios.gradle.plugin.jplatform.PluginXml
 import com.jalios.gradle.plugin.test.util.ByteUtils
 

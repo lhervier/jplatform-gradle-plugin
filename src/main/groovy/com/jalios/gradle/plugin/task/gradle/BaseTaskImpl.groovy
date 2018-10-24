@@ -4,9 +4,9 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
 import com.jalios.gradle.plugin.fs.JFileSystem
-import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.fs.impl.JFileSystemImpl
 import com.jalios.gradle.plugin.jplatform.JModule
+import com.jalios.gradle.plugin.jplatform.JPath
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedFileExtractor
 import com.jalios.gradle.plugin.jplatform.gen.impl.CssExtractor
 import com.jalios.gradle.plugin.jplatform.gen.impl.SignatureXmlExtractor

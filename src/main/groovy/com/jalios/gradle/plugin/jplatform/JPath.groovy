@@ -1,6 +1,8 @@
-package com.jalios.gradle.plugin.fs
+package com.jalios.gradle.plugin.jplatform
 
 import org.codehaus.groovy.runtime.GStringImpl
+
+import com.jalios.gradle.plugin.fs.FSType
 
 class JPath {
 	final String path

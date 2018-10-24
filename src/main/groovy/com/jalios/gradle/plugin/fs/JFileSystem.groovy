@@ -16,13 +16,15 @@ abstract class JFileSystem {
 	
 	abstract void delete(String path) throws JFileSystemException
 	
+	abstract void getContentAsStream(String path, Closure<InputStream> closure) throws JFileSystemException
+	
 	abstract void setContentFromStream(String path, InputStream inStream) throws JFileSystemException
+	
+	// ======================================================================
 	
 	final void setContentFromText(String path, String text, String encoding) throws JFileSystemException {
 		this.setContentFromStream(path, new ByteArrayInputStream(ByteUtils.extractBytes(text, encoding)))
 	}
-	
-	abstract void getContentAsStream(String path, Closure<InputStream> closure) throws JFileSystemException
 	
 	final void getContentAsReader(String path, String encoding, Closure<BufferedReader> closure) throws JFileSystemException {
 		this.getContentAsStream(path) { inStream ->

@@ -2,7 +2,6 @@ package com.jalios.gradle.plugin.jplatform
 
 import com.jalios.gradle.plugin.fs.FSType
 import com.jalios.gradle.plugin.fs.JFileSystem
-import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedFileExtractor
 import com.jalios.gradle.plugin.jplatform.gen.GeneratedPath
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor

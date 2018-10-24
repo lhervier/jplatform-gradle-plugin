@@ -3,9 +3,9 @@ package com.jalios.gradle.plugin.jplatform.source.impl
 import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
 
 import com.jalios.gradle.plugin.ex.JTaskException
-import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.fs.FSType
 import com.jalios.gradle.plugin.jplatform.JModule
+import com.jalios.gradle.plugin.jplatform.JPath
 import com.jalios.gradle.plugin.jplatform.PluginXml
 import com.jalios.gradle.plugin.jplatform.source.SourceFileExtractor
 

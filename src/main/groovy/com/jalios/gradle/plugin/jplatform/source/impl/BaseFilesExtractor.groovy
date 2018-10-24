@@ -1,8 +1,8 @@
 package com.jalios.gradle.plugin.jplatform.source.impl
 
 import com.jalios.gradle.plugin.fs.JFileSystem
-import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.fs.FSType
+import com.jalios.gradle.plugin.jplatform.JPath
 import com.jalios.gradle.plugin.jplatform.model.JFiles
 
 /**

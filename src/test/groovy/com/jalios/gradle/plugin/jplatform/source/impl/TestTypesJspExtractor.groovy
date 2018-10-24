@@ -4,8 +4,8 @@ import org.junit.Before
 import org.junit.Test
 
 import com.jalios.gradle.plugin.fs.FSType
-import com.jalios.gradle.plugin.fs.JPath
 import com.jalios.gradle.plugin.jplatform.JModule
+import com.jalios.gradle.plugin.jplatform.JPath
 import com.jalios.gradle.plugin.test.InMemoryJFileSystem
 import com.jalios.gradle.plugin.test.util.ByteUtils
 
