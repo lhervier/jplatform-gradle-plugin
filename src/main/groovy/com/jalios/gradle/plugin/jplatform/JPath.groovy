@@ -3,6 +3,7 @@ package com.jalios.gradle.plugin.jplatform
 import org.codehaus.groovy.runtime.GStringImpl
 
 import com.jalios.gradle.plugin.fs.FSType
+import com.jalios.gradle.plugin.fs.FSFile
 
 class JPath {
 	final String path
@@ -13,6 +14,10 @@ class JPath {
 		this.type = type
 	}
 
+	JPath(FSType type, FSFile file) {
+		this(type, file.path)
+	}
+	
 	@Override
 	public String toString() {
 		return "JPath [path=" + path + ", type=" + type + "]";

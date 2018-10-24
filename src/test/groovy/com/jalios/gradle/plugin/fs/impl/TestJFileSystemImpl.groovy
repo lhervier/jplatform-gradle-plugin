@@ -49,8 +49,8 @@ class TestJFileSystemImpl {
 		new File(this.root, "test.other").text = "Content of the second file"
 		
 		List<String> paths = new ArrayList()
-		this.fs.paths("*.txt") { path ->
-			paths.add(path)
+		this.fs.paths("*.txt") { fsFile ->
+			paths.add(fsFile.path)
 		}
 		assert paths.size() == 2
 		assert paths.contains("test1.txt")
@@ -64,8 +64,8 @@ class TestJFileSystemImpl {
 		new File(this.root, "folder/test2.txt").text = "Content of the second file"
 		new File(this.root, "folder/test.other").text = "Content of the second file"
 		List<String> paths = new ArrayList()
-		this.fs.paths("**/*.txt") { path ->
-			paths.add(path)
+		this.fs.paths("**/*.txt") { fsFile ->
+			paths.add(fsFile.path)
 		}
 		assert paths.size() == 2
 		assert paths.contains("folder/test1.txt")
@@ -80,8 +80,8 @@ class TestJFileSystemImpl {
 		new File(this.root, "folder/test2.txt").text = "Content of the second file"
 		new File(this.root, "folder/test.other").text = "Content of the second file"
 		List<String> paths = new ArrayList()
-		this.fs.paths("**/*.txt") { path ->
-			paths.add(path)
+		this.fs.paths("**/*.txt") { fsFile ->
+			paths.add(fsFile.path)
 		}
 		assert paths.size() == 3
 		assert paths.contains("testout.txt")
@@ -96,8 +96,8 @@ class TestJFileSystemImpl {
 		new File(this.root, "folder/test2.txt").text = "Content of the second file"
 		new File(this.root, "folder/other.txt").text = "Content of the other file"
 		List<String> paths = new ArrayList()
-		this.fs.paths("folder/test*.txt") { path ->
-			paths.add(path)
+		this.fs.paths("folder/test*.txt") { fsFile ->
+			paths.add(fsFile.path)
 		}
 		assert paths.size() == 2
 		assert paths.contains("folder/test1.txt")
@@ -115,8 +115,8 @@ class TestJFileSystemImpl {
 		new File(this.root, "folder2/test2.txt").text = "Content of the second file"
 		new File(this.root, "folder2/other.txt").text = "Content of the other file"
 		List<String> paths = new ArrayList()
-		this.fs.paths("**/test*.txt") { path ->
-			paths.add(path)
+		this.fs.paths("**/test*.txt") { fsFile ->
+			paths.add(fsFile.path)
 		}
 		assert paths.size() == 2
 		assert paths.contains("folder1/test1.txt")
@@ -135,8 +135,8 @@ class TestJFileSystemImpl {
 		new File(this.root, "folder2/test2.txt").text = "Content of the second file"
 		new File(this.root, "folder2/other.txt").text = "Content of the other file"
 		List<String> paths = new ArrayList()
-		this.fs.paths("**/test*.txt") { path ->
-			paths.add(path)
+		this.fs.paths("**/test*.txt") { fsFile ->
+			paths.add(fsFile.path)
 		}
 		assert paths.size() == 2
 		assert paths.contains("folder1/folder1.1/test1.txt")
@@ -217,5 +217,36 @@ class TestJFileSystemImpl {
 		this.fs.getContentAsStream("nonexisting") { instream ->
 			assert false
 		}
+	}
+	
+	@Test
+	void whenCreatingNewFile_thenGetLastUpdateDate() {
+		long curr = System.currentTimeMillis()
+		new File(this.root, "test.txt").text = "Hello World !"
+		long updated
+		this.fs.paths("*.txt") { fsFile ->
+			updated = fsFile.updated
+		}
+		assert updated > curr
+		assert updated < System.currentTimeMillis()
+	}
+	
+	@Test
+	void whenUpdatingFile_thenLastUpdateDateUpdated() {
+		File f = new File(this.root, "test.txt")
+		long curr = System.currentTimeMillis()
+		f.text = "Hello World !"
+		long updated
+		this.fs.paths("*.txt") { fsFile ->
+			updated = fsFile.updated
+		}
+		assert updated > curr
+		
+		f.text = "Content changed"
+		long updated2
+		this.fs.paths("*.txt") { fsFile ->
+			updated2 = fsFile.updated
+		}
+		assert updated2 > updated
 	}
 }

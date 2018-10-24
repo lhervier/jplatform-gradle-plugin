@@ -4,13 +4,19 @@ import java.io.InputStream
 import java.util.Map
 
 import com.jalios.gradle.plugin.ex.JFileSystemException
+import com.jalios.gradle.plugin.fs.FSFile
 import com.jalios.gradle.plugin.fs.JFileSystem
 
 import groovy.lang.Closure
 
 class InMemoryJFileSystem extends JFileSystem {
 
-	private Map<String, byte[]> files
+	static class InMemoryFile {
+		byte[] content = new byte[0]
+		long updated = System.currentTimeMillis()
+	}
+	
+	private Map<String, InMemoryFile> files
 	
 	private String root
 	
@@ -18,7 +24,7 @@ class InMemoryJFileSystem extends JFileSystem {
 		this("", new HashMap<>())
 	}
 	
-	private InMemoryJFileSystem(String root, Map<String, byte[]> files) {
+	private InMemoryJFileSystem(String root, Map<String, InMemoryFile> files) {
 		this.files = files
 		this.root = root
 	}
@@ -30,7 +36,9 @@ class InMemoryJFileSystem extends JFileSystem {
 	}
 	
 	public void addFile(String name, byte[] content) {
-		this.files.put(root + name.toString(), content)
+		InMemoryFile imf = new InMemoryFile()
+		imf.content = content
+		this.files.put(root + name.toString(), imf)
 	}
 	
 	boolean match(String path, String pattern) {
@@ -49,10 +57,15 @@ class InMemoryJFileSystem extends JFileSystem {
 	}
 
 	@Override
-	public void paths(String pattern, Closure<String> closure) throws JFileSystemException {
-		this.files.each { path, content ->
-			if( this.match(path, root + pattern.toString()) )
-				closure(path.substring(root.length()))
+	public void paths(String pattern, Closure<FSFile> closure) throws JFileSystemException {
+		this.files.each { path, imf ->
+			if( this.match(path, root + pattern.toString()) ) {
+				FSFile fsFile = new FSFile(
+						path: path.substring(root.length()),
+						updated: imf.updated
+				)
+				closure(fsFile)
+			}
 		}
 	}
 	
@@ -63,7 +76,14 @@ class InMemoryJFileSystem extends JFileSystem {
 
 	@Override
 	public void setContentFromStream(String path, InputStream inStream) throws JFileSystemException {
-		this.files.put(root + path.toString(), inStream.bytes)
+		InMemoryFile imf = this.files.get(root + path.toString())
+		if( imf == null ) {
+			imf = new InMemoryFile()
+		}
+		imf.updated = System.currentTimeMillis()
+		imf.content = inStream.bytes
+		
+		this.files.put(root + path.toString(), imf)
 	}
 
 	@Override
@@ -72,7 +92,7 @@ class InMemoryJFileSystem extends JFileSystem {
 			throw new JFileSystemException("File ${path} does not exists. Unable to get content.")
 		}
 		
-		InputStream inStream = new ByteArrayInputStream(this.files.get(root + path.toString()))
+		InputStream inStream = new ByteArrayInputStream(this.files.get(root + path.toString()).content)
 		try {
 			closure(inStream)
 		} finally {

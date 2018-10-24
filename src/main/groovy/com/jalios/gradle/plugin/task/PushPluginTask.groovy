@@ -59,9 +59,9 @@ class PushPluginTask implements JPlatformTask {
 		fs.delete(BUILD)
 		
 		println "- Copying module folder to build folder"
-		srcFs.paths("**/*") { p ->
-			srcFs.getContentAsStream(p) { inStream ->
-				buildFs.setContentFromStream(p, inStream)
+		srcFs.paths("**/*") { fsFile ->
+			srcFs.getContentAsStream(fsFile) { inStream ->
+				buildFs.setContentFromStream(fsFile, inStream)
 			}
 		}
 		
@@ -90,8 +90,8 @@ class PushPluginTask implements JPlatformTask {
 		}
 		
 		println "- Add references to jar files into plugin.xml"
-		buildFs.createFrom("WEB-INF/lib").paths("*.jar") { jar ->
-			pluginXml.addJar(jar)
+		buildFs.createFrom("WEB-INF/lib").paths("*.jar") { fsJar ->
+			pluginXml.addJar(fsJar.path)
 		}
 		
 		println "- Saving new version of plugin.xml"

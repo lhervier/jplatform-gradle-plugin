@@ -39,8 +39,8 @@ class TestInMemoryJFileSystem {
 		this.fs.addFile("test.other")
 		
 		List<String> paths = new ArrayList()
-		this.fs.paths("*.txt") { path ->
-			paths.add(path)
+		this.fs.paths("*.txt") { fsFile ->
+			paths.add(fsFile.path)
 		}
 		assert paths.size() == 2
 		assert paths.contains("test1.txt")
@@ -53,8 +53,8 @@ class TestInMemoryJFileSystem {
 		this.fs.addFile("folder/test2.txt")
 		this.fs.addFile("folder/test.other")
 		List<String> paths = new ArrayList()
-		this.fs.paths("**/*.txt") { path ->
-			paths.add(path)
+		this.fs.paths("**/*.txt") { fsFile ->
+			paths.add(fsFile.path)
 		}
 		assert paths.size() == 2
 		assert paths.contains("folder/test1.txt")
@@ -68,8 +68,8 @@ class TestInMemoryJFileSystem {
 		this.fs.addFile("folder/other.txt")
 		
 		List<String> paths = new ArrayList()
-		this.fs.paths("folder/test*.txt") { path ->
-			paths.add(path)
+		this.fs.paths("folder/test*.txt") { fsFile ->
+			paths.add(fsFile.path)
 		}
 		assert paths.size() == 2
 		assert paths.contains("folder/test1.txt")
@@ -84,8 +84,8 @@ class TestInMemoryJFileSystem {
 		this.fs.addFile("folder2/other.txt")
 		
 		List<String> paths = new ArrayList()
-		this.fs.paths("**" + "/test*.txt") { path ->
-			paths.add(path)
+		this.fs.paths("**" + "/test*.txt") { fsFile ->
+			paths.add(fsFile.path)
 		}
 		assert paths.size() == 2
 		assert paths.contains("folder1/test1.txt")
@@ -100,8 +100,8 @@ class TestInMemoryJFileSystem {
 		this.fs.addFile("folder2/other.txt")
 		
 		List<String> paths = new ArrayList()
-		this.fs.paths("**" + "/test*.txt") { path ->
-			paths.add(path)
+		this.fs.paths("**" + "/test*.txt") { fsFile ->
+			paths.add(fsFile.path)
 		}
 		assert paths.size() == 2
 		assert paths.contains("folder1/folder1.1/test1.txt")
@@ -153,5 +153,36 @@ class TestInMemoryJFileSystem {
 		
 		subFs.addFile("test2.txt", (byte[]) [32, 33, 34])
 		assert this.fs.exists("rep/test.txt")
+	}
+	
+	
+	@Test
+	void whenCreatingNewFile_thenGetLastUpdateDate() {
+		long curr = System.currentTimeMillis()
+		new File(this.root, "test.txt").text = "Hello World !"
+		long updated
+		this.fs.paths("*.txt") { fsFile ->
+			updated = fsFile.updated
+		}
+		assert updated > curr
+		assert updated < System.currentTimeMillis()
+	}
+	
+	@Test
+	void whenUpdatingFile_thenLastUpdateDateUpdated() {
+		long curr = System.currentTimeMillis()
+		this.fs.addFile("test.txt", "Hello World !")
+		long updated
+		this.fs.paths("*.txt") { fsFile ->
+			updated = fsFile.updated
+		}
+		assert updated > curr
+		
+		this.fs.setContentFromText("test.txt", "Content changed", "UTF-8")
+		long updated2
+		this.fs.paths("*.txt") { fsFile ->
+			updated2 = fsFile.updated
+		}
+		assert updated2 > updated
 	}
 }

@@ -21,8 +21,8 @@ class TypesTypeFileExtractor implements SourceFileExtractor {
 	void extract(JModule module, PluginXml pluginXml, Closure<JPath> closure) {
 		pluginXml.types.types.each { type ->
 			type.files.each { file ->
-				module.rootFs.paths("types/${type.name}/${file.path}") { path ->
-					closure(new JPath(FSType.ROOT, path))
+				module.rootFs.paths("types/${type.name}/${file.path}") { fsFile ->
+					closure(new JPath(FSType.ROOT, fsFile.path))
 				}
 			}
 		}

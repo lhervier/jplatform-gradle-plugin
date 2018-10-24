@@ -24,9 +24,9 @@ class TypesJspExtractor implements SourceFileExtractor {
 		}
 		
 		module.pluginXml.types.types.each { type ->
-			module.rootFs.paths("types/${type.name}/*.jsp") { path ->
-				if( !std.contains(path.toString())) {
-					closure(new JPath(FSType.ROOT, path))
+			module.rootFs.paths("types/${type.name}/*.jsp") { file ->
+				if( !std.contains(file.path.toString())) {
+					closure(new JPath(FSType.ROOT, file.path))
 				}
 			}
 		}

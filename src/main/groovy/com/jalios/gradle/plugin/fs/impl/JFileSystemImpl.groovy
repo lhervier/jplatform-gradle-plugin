@@ -1,6 +1,7 @@
 package com.jalios.gradle.plugin.fs.impl
 
 import com.jalios.gradle.plugin.ex.JFileSystemException
+import com.jalios.gradle.plugin.fs.FSFile
 import com.jalios.gradle.plugin.fs.JFileSystem
 
 class JFileSystemImpl extends JFileSystem {
@@ -41,7 +42,11 @@ class JFileSystemImpl extends JFileSystem {
 		}
 		for( File file in scanner ) {
 			String rel = file.absolutePath.substring(this.rootFolder.absolutePath.length() + 1)
-			closure(rel.replace('\\', '/'))
+			FSFile fsFile = new FSFile(
+				path: rel.replace('\\', '/'),
+				updated: file.lastModified()
+			)
+			closure(fsFile)
 		}
 	}
 	

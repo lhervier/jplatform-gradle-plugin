@@ -180,8 +180,8 @@ class TestPushPluginTask extends BaseTestTask {
 	void whenFileRemovedFromCurrent_thenFileRemovedFromPlatform() {
 		// css extractors
 		def extractor = {JModule m, Closure<String> closure ->
-			m.rootFs.paths("css/*.css") { path ->
-				closure(new JPath(FSType.ROOT, path))
+			m.rootFs.paths("css/*.css") { fsFile ->
+				closure(new JPath(FSType.ROOT, fsFile.path))
 			}
 		} as SourceFileExtractor
 		
@@ -216,10 +216,10 @@ class TestPushPluginTask extends BaseTestTask {
 	void whenGeneratedFilesInPlatform_thenGeneratedNotRemoved() {
 		// less generator
 		def extractor = {JModule m, Closure<String> closure ->
-			m.rootFs.paths("css/*.less") { path ->
-				String css = path.substring(0, path.length() - 4) + "css"
+			m.rootFs.paths("css/*.less") { fsFile ->
+				String css = fsFile.path.substring(0, fsFile.path.length() - 4) + "css"
 				closure(new GeneratedPath(
-					path: new JPath(FSType.ROOT, path), 
+					path: new JPath(FSType.ROOT, fsFile.path), 
 					source: new JPath(FSType.ROOT, css)
 				))
 			}
@@ -258,10 +258,10 @@ class TestPushPluginTask extends BaseTestTask {
 		// => Declare generated css files
 		def genExtractor = {JModule m, Closure<String> closure ->
 			m.rootFs.paths("css/*.less") { less ->
-				String css = less.substring(0, less.length() - 4) + "css"
+				String css = less.path.substring(0, less.path.length() - 4) + "css"
 				closure(new GeneratedPath(
 					path: new JPath(FSType.ROOT, css), 
-					source: new JPath(FSType.ROOT, less)
+					source: new JPath(FSType.ROOT, less.path)
 				))
 			}
 		} as GeneratedFileExtractor
@@ -269,8 +269,8 @@ class TestPushPluginTask extends BaseTestTask {
 		// less extractor
 		// => Declare less files
 		def srcExtractor = {JModule m, Closure<JPath> closure ->
-			m.rootFs.paths("css/*.less") { path ->
-				closure(new JPath(FSType.ROOT, path))
+			m.rootFs.paths("css/*.less") { fsFile ->
+				closure(new JPath(FSType.ROOT, fsFile.path))
 			}
 		} as GeneratedFileExtractor
 		

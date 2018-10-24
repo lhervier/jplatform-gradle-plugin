@@ -12,7 +12,7 @@ abstract class JFileSystem {
 	
 	abstract boolean exists(String path) throws JFileSystemException
 	
-	abstract void paths(String pattern, Closure<String> closure) throws JFileSystemException
+	abstract void paths(String pattern, Closure<FSFile> closure) throws JFileSystemException
 	
 	abstract void delete(String path) throws JFileSystemException
 	
@@ -21,6 +21,18 @@ abstract class JFileSystem {
 	abstract void setContentFromStream(String path, InputStream inStream) throws JFileSystemException
 	
 	// ======================================================================
+	
+	final void delete(FSFile file) throws JFileSystemException {
+		this.delete(file.path)
+	}
+	
+	final void getContentAsStream(FSFile file, Closure<InputStream> closure) throws JFileSystemException {
+		this.getContentAsStream(file.path, closure)
+	}
+	
+	final void setContentFromStream(FSFile file, InputStream inStream) throws JFileSystemException {
+		this.setContentFromStream(file.path, inStream)
+	}
 	
 	final void setContentFromText(String path, String text, String encoding) throws JFileSystemException {
 		this.setContentFromStream(path, new ByteArrayInputStream(ByteUtils.extractBytes(text, encoding)))
