@@ -11,6 +11,9 @@ import javax.xml.transform.stream.StreamResult
 import org.w3c.dom.DOMImplementation
 import org.w3c.dom.Document
 import org.w3c.dom.NodeList
+import org.w3c.dom.ls.DOMImplementationLS
+import org.w3c.dom.ls.LSOutput
+import org.w3c.dom.ls.LSSerializer
 
 import com.jalios.gradle.plugin.jplatform.model.JDependency
 import com.jalios.gradle.plugin.jplatform.model.JDirectory
@@ -285,14 +288,11 @@ class PluginXml {
 	 * @param writer to save the file
 	 */
 	void save(OutputStream out) {
-		DOMSource domSource = new DOMSource(this.xml);
-		Transformer transformer = TransformerFactory.newInstance().newTransformer();
-		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		StreamResult sr = new StreamResult(out);
-		transformer.transform(domSource, sr);
+		DOMImplementationLS domImplementationLS = this.xml.getImplementation().getFeature("LS","3.0");
+		LSOutput lsOutput = domImplementationLS.createLSOutput();
+		lsOutput.setByteStream(out);
+		LSSerializer lsSerializer = domImplementationLS.createLSSerializer();
+		lsSerializer.write(this.xml, lsOutput);
+		out.close();
 	}
 }

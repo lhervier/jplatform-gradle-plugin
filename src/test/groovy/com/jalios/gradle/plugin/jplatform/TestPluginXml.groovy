@@ -188,19 +188,22 @@ class TestPluginXml {
 		assert pluginXml.jars[1].path == "jar2.jar"
 	}
 	
-//	@Test
-//	void whenSaving_thenDTDOK() {
-//		String xml = """<?xml version="1.0" encoding="UTF-8"?>
-//<!DOCTYPE plugin PUBLIC "-//JALIOS//DTD JCMS-PLUGIN 1.7//EN" "http://support.jalios.com/dtd/jcms-plugin-1.7.dtd">
-//<plugin name="TestASIPlugin" version="0.1" author="Lionel HERVIER" license="As-is" initialize="true" jcms="" order="0" url="" jsync="false" appserver="">
-//</plugin>"""
-//		PluginXml pluginXml = new PluginXml(new StringReader(xml))
-//		ByteArrayOutputStream out = new ByteArrayOutputStream()
-//		pluginXml.save(out)
-//		String s = new String(out.toByteArray(), "UTF-8")
-//		
-//		List<String> lines = s.readLines()
-//		assert lines[0] == """<?xml version="1.0" encoding="UTF-8"?>"""
-//		assert lines[1] == """<!DOCTYPE plugin PUBLIC "-//JALIOS//DTD JCMS-PLUGIN 1.7//EN" "http://support.jalios.com/dtd/jcms-plugin-1.7.dtd">"""
-//	}
+	@Test
+	void whenSaving_thenDTDOK() {
+		String xml = """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plugin PUBLIC "-//JALIOS//DTD JCMS-PLUGIN 1.7//EN" "http://support.jalios.com/dtd/jcms-plugin-1.7.dtd">
+<plugin name="TestASIPlugin" version="0.1" author="Lionel HERVIER" license="As-is" initialize="true" jcms="" order="0" url="" jsync="false" appserver="">
+		<jars>
+		</jars>
+</plugin>"""
+		PluginXml pluginXml = new PluginXml(xml)
+		ByteArrayOutputStream out = new ByteArrayOutputStream()
+		pluginXml.save(out)
+		String s = new String(out.toByteArray(), "UTF-8")
+		println s
+		
+		List<String> lines = s.readLines()
+		assert lines[0] == """<?xml version="1.0" encoding="UTF-8"?>"""
+		assert lines[1] == """<!DOCTYPE plugin PUBLIC "-//JALIOS//DTD JCMS-PLUGIN 1.7//EN" "http://support.jalios.com/dtd/jcms-plugin-1.7.dtd">"""
+	}
 }
