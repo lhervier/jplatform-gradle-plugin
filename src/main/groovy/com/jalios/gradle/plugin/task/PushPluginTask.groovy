@@ -101,6 +101,7 @@ class PushPluginTask implements JPlatformTask {
 		}
 		
 		println "- Add references to jar files into plugin.xml"
+		pluginXml.jars.clear()
 		buildFs.createFrom("WEB-INF/lib").paths("*.jar") { fsJar ->
 			pluginXml.addJar(fsJar.path)
 		}
