@@ -86,8 +86,8 @@ class JModule {
 		}
 		
 		// Create plugin.xml
-		this.privFs.getContentAsReader("plugin.xml", "UTF-8") { reader ->
-			this.pluginXml = new PluginXml(reader)
+		this.privFs.getContentAsStream("plugin.xml") { inStream ->
+			this.pluginXml = new PluginXml(inStream)
 		}
 		
 		// Create plugin.prop
