@@ -163,7 +163,6 @@ class PushPluginTask implements JPlatformTask {
 					FSFile src = srcFs.path(jpath.path)
 					FSFile dest = destFs.path(jpath.path)
 					if( src.updated <= dest.updated ) {
-						println "'${jpath.path}': Content not changed"
 						return
 					}
 					println "'${jpath.path}': Updating content"
