@@ -22,6 +22,7 @@ import com.jalios.gradle.plugin.jplatform.source.impl.TypesTypeFileExtractor
 import com.jalios.gradle.plugin.jplatform.source.impl.TypesTypeTemplatesXmlExtractor
 import com.jalios.gradle.plugin.jplatform.source.impl.TypesTypeXmlExtractor
 import com.jalios.gradle.plugin.jplatform.source.impl.WebappFilesExtractor
+import com.jalios.gradle.plugin.jplatform.source.impl.WorkflowsFileExtractor
 import com.jalios.gradle.plugin.task.JPlatformTask
 
 abstract public class BaseTaskImpl extends DefaultTask {
@@ -81,7 +82,8 @@ abstract public class BaseTaskImpl extends DefaultTask {
 			new TypesTemplatesExtractor(),			// Extract files from <type>-templates.xml and from tag <types>/<templates> in plugin.xml
 			new TypesStdJspExtractor(),				// Extract standard jsp files associated with declared types
 			new TypesJspExtractor(),				// Extract custom jsp for declared types
-			new JarsExtractor()						// Extract jar files
+			new JarsExtractor(),					// Extract jar files
+			new WorkflowsFileExtractor()			// Extract workflows files
 		]
 		
 		JModule currModule = new JModule(
