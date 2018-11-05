@@ -27,14 +27,18 @@ class TestPluginXml {
 					<templates type="AbstractPortletSkinable">
 						<template name="custom1" file="doAbstractPortletSkinableFullDisplay.jsp" dir="type" usage='full'>
 							<label xml:lang="en">Custom Template</label>
-							<label xml:lang="fr">Gabarit Spécifique</label>
+							<label xml:lang="fr">Gabarit SpÃ©cifique</label>
 						</template>
 						<template name="custom2" file="doAbstractPortletSkinableResultDisplay.jsp" usage='query'>
 							<label xml:lang="en">Custom Template</label>
-							<label xml:lang="fr">Gabarit Spécifique</label>
+							<label xml:lang="fr">Gabarit SpÃ©cifique</label>
 						</template>
 					</templates>
 				</types>
+				<workflows>
+					<workflow id="wf1"/>
+					<workflow id="wf2"/>
+				</workflows>
 				<jars>
 					<jar path="jar1.jar"/>
 					<jar path="jar2.jar"/>
@@ -64,6 +68,10 @@ class TestPluginXml {
 		assert pluginXml.jars.size() == 2
 		assert pluginXml.jars[0].path == "jar1.jar"
 		assert pluginXml.jars[1].path == "jar2.jar"
+		
+		assert pluginXml.workflows.size() == 2
+		assert pluginXml.workflows[0] == "wf1"
+		assert pluginXml.workflows[1] == "wf2"
 		
 		assert pluginXml.labels.size() == 2
 		assert pluginXml.labels[0].lang == "fr"
@@ -96,7 +104,7 @@ class TestPluginXml {
 		assert pluginXml.types.templates[0].templates[0].usage == "full"
 		assert pluginXml.types.templates[0].templates[0].labels[0].label == "Custom Template"
 		assert pluginXml.types.templates[0].templates[0].labels[0].lang == "en"
-		assert pluginXml.types.templates[0].templates[0].labels[1].label == "Gabarit Spécifique"
+		assert pluginXml.types.templates[0].templates[0].labels[1].label == "Gabarit SpÃ©cifique"
 		assert pluginXml.types.templates[0].templates[0].labels[1].lang == "fr"
 		assert pluginXml.types.templates[0].templates[1].name == "custom2"
 		assert pluginXml.types.templates[0].templates[1].file == "doAbstractPortletSkinableResultDisplay.jsp"
@@ -104,7 +112,7 @@ class TestPluginXml {
 		assert pluginXml.types.templates[0].templates[1].usage == "query"
 		assert pluginXml.types.templates[0].templates[1].labels[0].label == "Custom Template"
 		assert pluginXml.types.templates[0].templates[1].labels[0].lang == "en"
-		assert pluginXml.types.templates[0].templates[1].labels[1].label == "Gabarit Spécifique"
+		assert pluginXml.types.templates[0].templates[1].labels[1].label == "Gabarit SpÃ©cifique"
 		assert pluginXml.types.templates[0].templates[1].labels[1].lang == "fr"
 		
 		assert pluginXml.privateFiles.directories.size() == 1

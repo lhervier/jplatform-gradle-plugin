@@ -93,6 +93,27 @@ class PluginXml {
 	}
 	
 	/**
+	 * Returns the workflows
+	 */
+	public List<String> getWorkflows() {
+		List<String> wfs = new ArrayList()
+		
+		// Get the workflows tag
+		org.w3c.dom.Element nWfs = XmlUtils.getFirstChild(this.element, 'workflows')
+		if( nWfs == null ) {
+			return wfs
+		}
+		
+		// Get all the workflow tags
+		nWfs.getElementsByTagName('workflow').each { elt ->
+			String id = elt.getAttribute('id')
+			wfs.add(id)
+		}
+		
+		return wfs
+	}
+	
+	/**
 	 * Returns the jar dependencies	
 	 */
 	public List<JJar> getJars() {
