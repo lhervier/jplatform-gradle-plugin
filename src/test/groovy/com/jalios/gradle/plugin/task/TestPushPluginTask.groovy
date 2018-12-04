@@ -194,6 +194,82 @@ class TestPushPluginTask extends BaseTestTask {
 		assert rootFs.path("test.css").updated == cssUpdated
 	}
 	
+	@Test
+	void whenNoUpdateToPluginXml_thenAddedJarsRemoved() {
+		// Create fake plugin
+		InMemoryJFileSystem fs = new InMemoryJFileSystem()
+		fs.setContentFromText(
+			"src/main/module/WEB-INF/plugins/MyPlugin/plugin.xml",
+			"""<?xml version="1.0" encoding="UTF-8"?>
+			<!DOCTYPE plugin PUBLIC "-//JALIOS//DTD JCMS-PLUGIN 1.7//EN" "http://support.jalios.com/dtd/jcms-plugin-1.7.dtd">
+			<plugin name="XYZ" version="ABC" author="Lionel HERVIER" license="As Is" initialize="true" jcms="" order="0" url="" jsync="false" appserver="">
+			</plugin>
+			""", 
+			"UTF-8"
+		)
+		fs.setContentFromText("src/main/module/test.css", "css content", "UTF-8")
+		File mainJar = new File(this.tmp, "main-1.0.jar")
+		mainJar.text = "fake main jar"
+		
+		// Prepare module
+		JFileSystem rootFs = this.task.createModuleFs(
+				"MyPlugin", 
+				"1.0", 
+				fs, 
+				new ArrayList(), 
+				mainJar
+		)
+		
+		// Check that module has been prepared
+		assert fs.exists("build/module/test.css")
+		assert fs.exists("build/module/WEB-INF/lib/main-1.0.jar")
+		assert rootFs.exists("test.css")
+		assert rootFs.exists("WEB-INF/lib/main-1.0.jar")
+		PluginXml pluginXml = null
+		rootFs.getContentAsStream("WEB-INF/plugins/MyPlugin/plugin.xml") { inStream ->
+			pluginXml = new PluginXml(inStream)
+		}
+		assert pluginXml != null
+		List<String> jars = new ArrayList()
+		pluginXml.jars.each {
+			jars.add(it.path)
+		}
+		assert jars.size() == 1
+		assert jars.contains("main-1.0.jar")
+		
+		// Version changed !
+		mainJar = new File(this.tmp, "main-1.1.jar")
+		mainJar.text = "fake main jar version 1.1"
+		
+		// Prepare module again
+		rootFs = this.task.createModuleFs(
+				"MyPlugin", 
+				"1.1", 
+				fs, 
+				new ArrayList(), 
+				mainJar
+		)
+		
+		// Check that module has been prepared well
+		assert fs.exists("build/module/test.css")
+		assert fs.exists("build/module/WEB-INF/lib/main-1.1.jar")
+		assert !fs.exists("build/module/WEB-INF/lib/main-1.0.jar")
+		assert rootFs.exists("test.css")
+		assert rootFs.exists("WEB-INF/lib/main-1.1.jar")
+		assert !rootFs.exists("WEB-INF/lib/main-1.0.jar")
+		pluginXml = null
+		rootFs.getContentAsStream("WEB-INF/plugins/MyPlugin/plugin.xml") { inStream ->
+			pluginXml = new PluginXml(inStream)
+		}
+		assert pluginXml != null
+		jars = new ArrayList()
+		pluginXml.jars.each {
+			jars.add(it.path)
+		}
+		assert jars.size() == 1
+		assert jars.contains("main-1.1.jar")
+	}
+	
 	// ===========================================================================
 	
 	@Test

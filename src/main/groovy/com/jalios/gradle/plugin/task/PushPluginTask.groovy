@@ -64,7 +64,8 @@ class PushPluginTask implements JPlatformTask {
 		
 		println "- Copying files from src to build folder"
 		srcFs.paths("**/*") { fsFile ->
-			if( buildFs.exists(fsFile.path) ) {
+			// Forcing update of plugin.xml (because we updated it ourself in previous steps !)
+			if( fsFile.path != pluginXmlPath && buildFs.exists(fsFile.path) ) {
 				FSFile dest = buildFs.path(fsFile.path)
 				if( dest.updated >= fsFile.updated ) {
 					return
