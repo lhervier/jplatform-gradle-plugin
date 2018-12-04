@@ -34,18 +34,18 @@ class PushPluginTask implements JPlatformTask {
 		JFileSystem srcFs = fs.createFrom(SRC)
 		JFileSystem buildFs = fs.createFrom(BUILD)
 		
-		println "- Checking that WEB-INF/lib is empty"
+		println "- Checking that WEB-INF/lib is empty in source"
 		srcFs.paths("WEB-INF/lib/*.jar") {
 			throw new JTaskException("'WEB-INF/lib' folder must be empty. Use gradle dependencies to add jars to your JPlatform module")
 		}
 		
-		println "- Checking that plugin.xml exists"
+		println "- Checking that plugin.xml exists in source"
 		String pluginXmlPath = "WEB-INF/plugins/${moduleName}/plugin.xml"
 		if( !srcFs.exists(pluginXmlPath) ) {
 			throw new JTaskException("plugin.xml file not found. Unable to push plugin")
 		}
 		
-		println "- Checking that plugin.xml does not contains reference to jar files"
+		println "- Checking that source plugin.xml does not contains reference to jar files"
 		PluginXml srcPluginXml
 		srcFs.getContentAsStream(pluginXmlPath) { inStream -> 
 			srcPluginXml = new PluginXml(inStream)
@@ -54,7 +54,7 @@ class PushPluginTask implements JPlatformTask {
 			throw new JTaskException("You must not declare jars inside your plugin.xml. Use gradle dependencies instead.")
 		}
 		
-		println "- Removing files from build folder"
+		println "- Removing unnecessary files from build folder"
 		buildFs.paths("**/*") {  fsFile ->
 			if( !srcFs.exists(fsFile.path) ) {
 				println "  - ${fsFile.path}"
@@ -86,15 +86,16 @@ class PushPluginTask implements JPlatformTask {
 		pluginXml.name = moduleName
 		pluginXml.version = version
 		
-		println "- Copying dependencies to WEB-INF/lib"
+		println "- Copying dependencies to WEB-INF/lib/"
 		dependencies.each { dep ->
 			InputStream is = dep.newInputStream()
+			println "    ${dep.name}"
 			buildFs.setContentFromStream("WEB-INF/lib/${dep.name}", is)
 			is.close()
 		}
 		
 		if( mainJar != null ) {
-			println "- Copying main jar to WEB-INF/lib"
+			println "- Copying main jar to WEB-INF/lib/${mainJar.name}"
 			InputStream is = mainJar.newInputStream()
 			buildFs.setContentFromStream("WEB-INF/lib/${mainJar.name}", is)
 			is.close()
@@ -103,6 +104,7 @@ class PushPluginTask implements JPlatformTask {
 		println "- Add references to jar files into plugin.xml"
 		pluginXml.jars.clear()
 		buildFs.createFrom("WEB-INF/lib").paths("*.jar") { fsJar ->
+			println "  - ${fsJar.path}"
 			pluginXml.addJar(fsJar.path)
 		}
 		
@@ -143,6 +145,7 @@ class PushPluginTask implements JPlatformTask {
 		println "Removing platform module files that are no longer present in the current module"
 		platformModule.paths.each { jpath ->
 			if( !currModule.paths.contains(jpath) ) {
+				println "- Removing ${jpath.path} - ${jpath.type}"
 				platformModule.getFs(jpath.type).delete(jpath.path)
 			}
 		}
@@ -150,6 +153,7 @@ class PushPluginTask implements JPlatformTask {
 		println "Removing platform module generated files whose corresponding source no longer exist in the current module"
 		platformModule.generatedPaths.each { genFile ->
 			if( !currModule.paths.contains(genFile.source) ) {
+				println "- Removing ${genFile.path.path} - ${genFile.source.type}"
 				platformModule.getFs(genFile.source.type).delete(genFile.path.path)
 			}
 		}
