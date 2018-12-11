@@ -41,7 +41,8 @@ class JFileSystemImpl extends JFileSystem {
 			return null
 		return new FSFile(
 			path: path,
-			updated: f.lastModified()
+			updated: f.lastModified(),
+			size: f.size()
 		)
 	}
 	

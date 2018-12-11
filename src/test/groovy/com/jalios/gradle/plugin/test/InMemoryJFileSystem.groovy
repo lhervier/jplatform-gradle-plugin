@@ -67,7 +67,8 @@ class InMemoryJFileSystem extends JFileSystem {
 			if( this.match(path, root + pattern.toString()) ) {
 				FSFile fsFile = new FSFile(
 						path: path.substring(root.length()),
-						updated: imf.updated
+						updated: imf.updated,
+						size: imf.content.length
 				)
 				ret.add(fsFile)
 			}

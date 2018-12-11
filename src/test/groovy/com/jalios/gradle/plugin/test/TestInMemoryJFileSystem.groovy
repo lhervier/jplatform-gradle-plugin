@@ -152,6 +152,7 @@ class TestInMemoryJFileSystem {
 		fs2.getContentAsReader(path, "UTF-8") { reader ->
 			assert reader.text == "0123"
 		}
+		fs2.path(path).size == 4
 	}
 	
 	@Test
@@ -160,6 +161,7 @@ class TestInMemoryJFileSystem {
 		this.fs.getContentAsReader("test.txt", "UTF-8") { reader ->
 			assert reader.readLine() == "012"
 		}
+		this.fs.path("test.txt").size == 3
 	}
 	
 	@Test
@@ -170,6 +172,8 @@ class TestInMemoryJFileSystem {
 		
 		subFs.addFile("test2.txt", (byte[]) [32, 33, 34])
 		assert this.fs.exists("rep/test.txt")
+		assert this.fs.path("rep/test.txt").size == 3
+		assert this.fs.path("rep/test2.txt").size == 3
 	}
 	
 	
