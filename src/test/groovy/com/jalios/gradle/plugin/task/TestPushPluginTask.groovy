@@ -270,6 +270,56 @@ class TestPushPluginTask extends BaseTestTask {
 		assert jars.contains("main-1.1.jar")
 	}
 	
+	@Test
+	void whenSizeDiffer_thenFileOverwriten() {
+		String CSS = "css content"
+		String NEW_CSS = "new css content"
+		
+		// Create fake plugin
+		InMemoryJFileSystem fs = new InMemoryJFileSystem()
+		fs.setContentFromText(
+			"src/main/module/WEB-INF/plugins/MyPlugin/plugin.xml",
+			"""<?xml version="1.0" encoding="UTF-8"?>
+			<!DOCTYPE plugin PUBLIC "-//JALIOS//DTD JCMS-PLUGIN 1.7//EN" "http://support.jalios.com/dtd/jcms-plugin-1.7.dtd">
+			<plugin name="XYZ" version="ABC" author="Lionel HERVIER" license="As Is" initialize="true" jcms="" order="0" url="" jsync="false" appserver="">
+			</plugin>
+			""", 
+			"UTF-8"
+		)
+		fs.setContentFromText("src/main/module/test.css", CSS, "UTF-8")
+		
+		// Prepare module
+		JFileSystem rootFs = this.task.createModuleFs(
+				"MyPlugin",
+				"1.0",
+				fs,
+				new ArrayList(),
+				null
+		)
+		
+		// Check that module has been prepared
+		assert fs.exists("build/module/test.css")
+		assert rootFs.exists("test.css")
+		assert rootFs.path("test.css").size == CSS.length()
+		
+		// Update css file in root module
+		rootFs.setContentFromText("test.css", NEW_CSS, "UTF-8")
+		
+		// Reprepare module
+		rootFs = this.task.createModuleFs(
+				"MyPlugin",
+				"1.0",
+				fs,
+				new ArrayList(),
+				null
+		)
+	
+		// Check that css file has been overwriten
+		assert fs.exists("build/module/test.css")
+		assert rootFs.exists("test.css")
+		assert rootFs.path("test.css").size == CSS.length()
+	}
+	
 	// ===========================================================================
 	
 	@Test
@@ -458,5 +508,49 @@ class TestPushPluginTask extends BaseTestTask {
 		
 		// File must not have been updated
 		assert this.platformModuleFs.path("images/test.jpg").updated == updated
+	}
+	
+	@Test
+	void whenFileUpdatedInPlatform_thenFileOverwritten() {
+		String IMAGE_CONTENT = "image content"
+		
+		// Populate plugin
+		this.addPluginXml(
+				this.currModule,
+				"""<public-files>
+					<directory path="images" />
+				</public-files>"""
+		)
+		this.currModuleFs.setContentFromText("images/test.jpg", IMAGE_CONTENT, "UTF-8")
+		
+		// Initialize modules
+		def extractor = {JModule m, Closure<String> closure ->
+			m.rootFs.paths("images/*.jpg") { fsFile ->
+				closure(new JPath(FSType.ROOT, fsFile.path))
+			}
+		} as SourceFileExtractor
+		this.currModule.init(null, [extractor])
+		this.platformModule.init(null, [extractor])
+		
+		// Check platform fs
+		assert !this.platformModuleFs.exists("images/test.jpg")
+		
+		// Push plugin
+		this.task.run(this.platformModule, this.currModule)
+		
+		// File must have been created
+		assert this.platformModuleFs.exists("images/test.jpg")
+		assert this.platformModuleFs.path("images/test.jpg").size == IMAGE_CONTENT.length()
+		
+		// Update file on platform
+		this.platformModuleFs.setContentFromText("images/test.jpg", "new image content", "UTF-8")
+		
+		// Push plugin again
+		this.currModule.init(null, [extractor])
+		this.platformModule.init(null, [extractor])
+		this.task.run(this.platformModule, this.currModule)
+		
+		// File must have been updated
+		assert this.platformModuleFs.path("images/test.jpg").size == IMAGE_CONTENT.length()
 	}
 }

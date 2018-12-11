@@ -67,7 +67,7 @@ class PushPluginTask implements JPlatformTask {
 			// Forcing update of plugin.xml (because we updated it ourself in previous steps !)
 			if( fsFile.path != pluginXmlPath && buildFs.exists(fsFile.path) ) {
 				FSFile dest = buildFs.path(fsFile.path)
-				if( dest.updated >= fsFile.updated ) {
+				if( dest.size == fsFile.size && dest.updated >= fsFile.updated ) {
 					return
 				}
 			}
@@ -167,7 +167,7 @@ class PushPluginTask implements JPlatformTask {
 					JFileSystem srcFs = currModule.getFs(jpath.type)
 					FSFile src = srcFs.path(jpath.path)
 					FSFile dest = destFs.path(jpath.path)
-					if( src.updated <= dest.updated ) {
+					if( dest.size == src.size && src.updated <= dest.updated ) {
 						return
 					}
 					println "'${jpath.path}': Updating content"
